@@ -16,13 +16,15 @@ const buttons = [
     <div>
       <div class="flex items-center space-x-3 px-4 mb-4">
         <img
-          src="../assets/avatar-profile.svg"
+          src="../assets/citrus-chat.png"
           alt="User Avatar"
-          class="w-10 h-10 rounded-full"
+          class="w-14 h-14 rounded-full"
         />
         <div>
           <h1 class="text-2xl font-bold mb-1">Citrus Chat</h1>
-          <p class="text-sm text-gray-300">Admin Dashboard</p>
+          <p class="text-sm text-gray-300 cursor-pointer hover:underline">
+            Mi perfil
+          </p>
         </div>
       </div>
 
