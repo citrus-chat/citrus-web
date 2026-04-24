@@ -5,5 +5,6 @@ import LateralBar from "./components/LateralBar.vue";
 
 <template>
   <LateralBar />
+  <LateralBar />
   <Chat />
 </template>
