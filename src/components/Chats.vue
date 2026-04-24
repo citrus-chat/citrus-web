@@ -143,7 +143,7 @@ const chats = [
         v-for="chat in chats"
         :key="chat.id"
         class="flex items-center p-3 rounded cursor-pointer"
-        :class="chat.selected ? 'border-l-6 border-primary' : ''"
+        :class="chat.selected ? 'border-l-[6px] border-primary' : ''"
       >
         <div class="relative mr-3">
           <img
