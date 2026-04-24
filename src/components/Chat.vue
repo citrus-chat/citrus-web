@@ -2,7 +2,7 @@
 const messages = [
   {
     id: 1,
-    text: "¡Hola a todos!",
+    text: "Hola a todos!",
     owner: "me",
     timestamp: "22/04/2026 - 21:07",
   },

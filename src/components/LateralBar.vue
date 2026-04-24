@@ -51,7 +51,7 @@ const buttons = [
         class="w-[90%] flex items-center p-2 outline-none cursor-pointer hover:bg-primary transition-colors duration-200 rounded"
       >
         <i class="pi pi-cog mr-2" />
-        Ajustes
+        Opciones
       </button>
 
       <button
