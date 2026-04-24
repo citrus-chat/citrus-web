@@ -22,9 +22,12 @@ const buttons = [
         />
         <div>
           <h1 class="text-2xl font-bold mb-1">Citrus Chat</h1>
-          <p class="text-sm text-gray-300 cursor-pointer hover:underline">
+          <button
+            type="button"
+            class="text-sm text-gray-300 cursor-pointer hover:underline"
+          >
             Mi perfil
-          </p>
+          </button>
         </div>
       </div>
 
