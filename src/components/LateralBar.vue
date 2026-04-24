@@ -19,14 +19,18 @@ const buttons = [
           src="../assets/avatar-profile.svg"
           alt="User Avatar"
           class="w-10 h-10 rounded-full"
-        />
+        >
         <div>
-          <h1 class="text-2xl font-bold mb-1">Citrus Chat</h1>
-          <p class="text-sm text-gray-300">Admin Dashboard</p>
+          <h1 class="text-2xl font-bold mb-1">
+            Citrus Chat
+          </h1>
+          <p class="text-sm text-gray-300">
+            Admin Dashboard
+          </p>
         </div>
       </div>
 
-      <hr class="border-gray-500 mb-2" />
+      <hr class="border-gray-500 mb-2">
 
       <div class="flex flex-col justify-center items-center">
         <button
@@ -41,7 +45,7 @@ const buttons = [
     </div>
 
     <div class="flex flex-col justify-center items-center">
-      <hr class="border-gray-500 w-full mb-2" />
+      <hr class="border-gray-500 w-full mb-2">
 
       <button
         class="w-[90%] flex items-center p-2 outline-none cursor-pointer hover:bg-primary transition-colors duration-200 rounded"
