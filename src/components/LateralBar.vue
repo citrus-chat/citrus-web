@@ -1,11 +1,11 @@
 <script setup>
 const buttons = [
-  { icon: 'pi-envelope', label: 'Chats' },
-  { icon: 'pi-users', label: 'Contactos' },
-  { icon: 'pi-flag', label: 'Reportes' },
-  { icon: 'pi-ban', label: 'Sanciones' },
-  { icon: 'pi-chart-bar', label: 'Métricas' },
-  { icon: 'pi-history', label: 'Logs' },
+  { icon: "pi-envelope", label: "Chats" },
+  { icon: "pi-users", label: "Contactos" },
+  { icon: "pi-flag", label: "Reportes" },
+  { icon: "pi-ban", label: "Sanciones" },
+  { icon: "pi-chart-bar", label: "Métricas" },
+  { icon: "pi-history", label: "Logs" },
 ];
 </script>
 
@@ -34,7 +34,7 @@ const buttons = [
           :key="label"
           class="w-[90%] flex items-center p-2 outline-none cursor-pointer hover:bg-primary transition-colors duration-200 rounded"
         >
-          <i :class="`pi ${icon} mr-2`"></i>
+          <i :class="`pi ${icon} mr-2`" />
           {{ label }}
         </button>
       </div>
@@ -46,14 +46,14 @@ const buttons = [
       <button
         class="w-[90%] flex items-center p-2 outline-none cursor-pointer hover:bg-primary transition-colors duration-200 rounded"
       >
-        <i class="pi pi-cog mr-2"></i>
+        <i class="pi pi-cog mr-2" />
         Ajustes
       </button>
 
       <button
         class="w-[90%] flex items-center p-2 outline-none cursor-pointer hover:bg-primary transition-colors duration-200 rounded"
       >
-        <i class="pi pi-question-circle mr-2"></i>
+        <i class="pi pi-question-circle mr-2" />
         Soporte
       </button>
     </div>
