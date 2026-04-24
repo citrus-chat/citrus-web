@@ -1,0 +1,32 @@
+name: Code Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  code_check:
+    name: Linting and Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # Adjust based on your project
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: 1/2 Formatting & Linting
+        run: |
+          npx prettier --check "**/*.{js,ts,vue,json,md}"
+          npx eslint "**/*.{js,ts,vue}"
+
+      - name: 2/2 Unit Tests (Vitest)
+        run: npx vitest run --reporter=verbose
