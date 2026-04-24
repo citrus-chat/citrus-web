@@ -7,7 +7,7 @@ on:
 
 jobs:
   code_check:
-    name: Linting and Testing
+    name: Code Checking
     runs-on: ubuntu-latest
 
     steps:
