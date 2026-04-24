@@ -2,7 +2,7 @@
 const messages = [
   {
     id: 1,
-    text: "Hola a todos!",
+    text: "¡Hola a todos!",
     owner: "me",
     timestamp: "22/04/2026 - 21:07",
   },
@@ -29,7 +29,7 @@ const messages = [
         src="../assets/group-image.jpeg"
         alt="Group Avatar"
         class="w-10 h-10 rounded-full object-cover"
-      >
+      />
       <h2 class="text-lg font-semibold text-secondary">
         Javalinas Empresariales
       </h2>
@@ -52,7 +52,7 @@ const messages = [
               src="../assets/avatar-profile.svg"
               alt="User Avatar"
               class="w-8 h-8 rounded-full mb-1"
-            >
+            />
           </div>
 
           <div
@@ -71,7 +71,7 @@ const messages = [
         type="text"
         placeholder="Escribe un mensaje..."
         class="flex-1 p-2 border border-gray-300 outline rounded focus:outline-none focus:ring-2 focus:ring-primary"
-      >
+      />
       <button
         class="bg-primary text-white px-4 py-2 rounded hover:bg-primary-dark transition-colors duration-200"
       >
