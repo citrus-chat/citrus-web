@@ -22,7 +22,7 @@ const messages = [
 </script>
 
 <template>
-  <section class="flex-[0.6] p-4 flex flex-col">
+  <section class="p-4 flex flex-col">
     <!-- Header del chat -->
     <div class="flex space-x-2 items-center mb-4">
       <img

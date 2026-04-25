@@ -116,21 +116,7 @@ const chats = [
 </script>
 
 <template>
-  <section class="flex-[0.4] p-4 overflow-x-hidden overflow-y-auto">
-    <div
-      class="flex items-center justify-center rounded p-2 mb-4 space-x-1 border border-secondary text-gray-700"
-    >
-      <button class="cursor-pointer">
-        <i class="pi pi-search text-xl" />
-      </button>
-
-      <input
-        type="text"
-        placeholder="Buscar en Citrus Chat..."
-        class="w-full p-2 rounded outline-none bg-transparent"
-      />
-    </div>
-
+  <section class="p-4 overflow-x-hidden overflow-y-auto">
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold mb-4">Chats</h2>
       <button class="cursor-pointer text-primary">
