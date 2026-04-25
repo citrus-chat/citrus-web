@@ -1,10 +1,9 @@
 <script setup>
-import Chat from "./components/Chat.vue";
 import LateralBar from "./components/LateralBar.vue";
+import AppLayout from "./components/AppLayout.vue";
 </script>
 
 <template>
   <LateralBar />
-  <LateralBar />
-  <Chat />
+  <AppLayout />
 </template>

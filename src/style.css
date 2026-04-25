@@ -3,16 +3,31 @@
 @import "primeicons/primeicons.css";
 
 @theme {
-  --color-primary: #f57c00;
-  --color-secondary: #0d1b2a;
-  --color-tertiary: #bf360c;
-  --color-neutral: #415a77;
+    --color-primary: #f57c00;
+    --color-secondary: #0d1b2a;
+    --color-tertiary: #bf360c;
+    --color-neutral: #415a77;
+}
+
+button {
+    outline: none;
 }
 
 #app {
-  background-color: #f3f4f6;
-  font-family: "Roboto", sans-serif;
-  display: flex;
-  height: 100vh;
-  width: 100vw;
+    background-color: #f3f4f6;
+    font-family: "Roboto", sans-serif;
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: all 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+    transform: translateX(20px);
 }
