@@ -120,7 +120,7 @@ const chats = [
     <div
       class="flex items-center justify-center rounded p-2 mb-4 space-x-1 border border-secondary text-gray-700"
     >
-      <button class="cursor-pointer">
+      <button type="button" aria-label="Buscar chats" class="cursor-pointer">
         <i class="pi pi-search text-xl" />
       </button>
 
