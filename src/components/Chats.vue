@@ -133,7 +133,11 @@ const chats = [
 
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold mb-4">Chats</h2>
-      <button class="cursor-pointer text-primary">
+      <button
+        type="button"
+        aria-label="Add chat"
+        class="cursor-pointer text-primary"
+      >
         <i class="pi pi-plus text-xl" />
       </button>
     </div>
