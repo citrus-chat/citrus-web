@@ -22,10 +22,7 @@ const buttons = [
         />
         <div>
           <h1 class="text-2xl font-bold mb-1">Citrus Chat</h1>
-          <button
-            type="button"
-            class="text-sm text-gray-300 cursor-pointer hover:underline"
-          >
+          <button type="button" class="text-sm text-gray-300 hover:underline">
             Mi perfil
           </button>
         </div>
@@ -37,7 +34,7 @@ const buttons = [
         <button
           v-for="{ icon, label } in buttons"
           :key="label"
-          class="w-[90%] flex items-center p-2 outline-none cursor-pointer hover:bg-primary transition-colors duration-200 rounded"
+          class="w-[90%] flex items-center p-2 outline-none hover:bg-primary transition-colors duration-200 rounded"
         >
           <i :class="`pi ${icon} mr-2`" />
           {{ label }}
@@ -49,14 +46,14 @@ const buttons = [
       <hr class="border-gray-500 w-full mb-2" />
 
       <button
-        class="w-[90%] flex items-center p-2 outline-none cursor-pointer hover:bg-primary transition-colors duration-200 rounded"
+        class="w-[90%] flex items-center p-2 outline-none hover:bg-primary transition-colors duration-200 rounded"
       >
         <i class="pi pi-cog mr-2" />
         Ajustes
       </button>
 
       <button
-        class="w-[90%] flex items-center p-2 outline-none cursor-pointer hover:bg-primary transition-colors duration-200 rounded"
+        class="w-[90%] flex items-center p-2 outline-none hover:bg-primary transition-colors duration-200 rounded"
       >
         <i class="pi pi-question-circle mr-2" />
         Soporte

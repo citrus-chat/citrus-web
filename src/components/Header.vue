@@ -7,7 +7,7 @@ defineEmits(["toggleProfile"]);
     <div
       class="flex items-center border border-secondary rounded-lg px-3 py-1 space-x-2 flex-[0.5]"
     >
-      <button class="cursor-pointer">
+      <button class="">
         <i class="pi pi-search text-xl" />
       </button>
 
@@ -19,10 +19,10 @@ defineEmits(["toggleProfile"]);
     </div>
 
     <div class="flex items-center space-x-2">
-      <button class="cursor-pointer ml-4">
+      <button class="ml-4">
         <i class="pi pi-bell text-xl" />
       </button>
-      <button class="cursor-pointer" @click="$emit('toggleProfile')">
+      <button class="" @click="$emit('toggleProfile')">
         <img
           src="../assets/avatar-profile.svg"
           alt="Avatar"
