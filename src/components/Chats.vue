@@ -1,4 +1,7 @@
 <script setup>
+import { ref } from "vue";
+import Modal from "./Modal.vue";
+
 const chats = [
   {
     id: 1,
@@ -113,30 +116,19 @@ const chats = [
     isActive: false,
   },
 ];
+
+const newChat = ref(false);
 </script>
 
 <template>
   <section class="flex-[0.4] p-4 overflow-x-hidden overflow-y-auto">
-    <div
-      class="flex items-center justify-center rounded p-2 mb-4 space-x-1 border border-secondary text-gray-700"
-    >
-      <button type="button" aria-label="Buscar chats" class="cursor-pointer">
-        <i class="pi pi-search text-xl" />
-      </button>
-
-      <input
-        type="text"
-        placeholder="Buscar en Citrus Chat..."
-        class="w-full p-2 rounded outline-none bg-transparent"
-      />
-    </div>
-
     <div class="flex items-center justify-between">
       <h2 class="text-2xl font-bold mb-4">Chats</h2>
       <button
         type="button"
         aria-label="Add chat"
-        class="cursor-pointer text-primary"
+        class="text-primary"
+        @click="newChat = !newChat"
       >
         <i class="pi pi-plus text-xl" />
       </button>
@@ -146,7 +138,7 @@ const chats = [
       <div
         v-for="chat in chats"
         :key="chat.id"
-        class="flex items-center p-3 rounded cursor-pointer"
+        class="flex items-center p-3 rounded"
         :class="chat.selected ? 'border-l-[6px] border-primary' : ''"
       >
         <div class="relative mr-3">
@@ -180,4 +172,7 @@ const chats = [
       </div>
     </div>
   </section>
+  <Teleport to="body">
+    <Modal v-if="newChat" @close-modal="newChat = false" />
+  </Teleport>
 </template>

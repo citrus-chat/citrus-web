@@ -30,17 +30,17 @@
     <div class="flex flex-col items-start w-full space-y-1">
       <p class="font-medium mt-4 uppercase">Quick Actions</p>
 
-      <button class="flex items-center space-x-2 cursor-pointer">
+      <button class="flex items-center space-x-2">
         <i class="pi pi-ticket text-primary" />
         <p class="text-gray-600">Create support ticket</p>
       </button>
 
-      <button class="flex items-center space-x-2 cursor-pointer">
+      <button class="flex items-center space-x-2">
         <i class="pi pi-send text-primary" />
         <p class="text-gray-600">Send Template</p>
       </button>
 
-      <button class="flex items-center space-x-2 cursor-pointer text-red-500">
+      <button class="flex items-center space-x-2 text-red-500">
         <i class="pi pi-ban" />
         <p>Block User</p>
       </button>
