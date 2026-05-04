@@ -16,7 +16,7 @@ const buttons = [
     <div>
       <div class="flex items-center space-x-3 px-4 mb-4">
         <img
-          src="../assets/citrus-chat.png"
+          src="../../citrus-chat.png"
           alt="Citrus Chat logo"
           class="w-14 h-14 rounded-full"
         />

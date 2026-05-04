@@ -151,7 +151,7 @@ const chats = [
       >
         <div class="relative mr-3">
           <img
-            src="../assets/avatar-profile.svg"
+            src="/avatar-profile.svg"
             alt="Avatar"
             class="w-10 h-10 rounded-full"
           />

@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import Chat from "./Chat.vue";
-import Chats from "./Chats.vue";
-import Header from "./Header.vue";
-import Profile from "./Profile.vue";
+import Chat from "../features/chat/Chat.vue";
+import Chats from "../features/chat/Chats.vue";
+import Header from "../layout/Header.vue";
+import Profile from "../features/profile/Profile.vue";
 
 import { ref } from "vue";
 

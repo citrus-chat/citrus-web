@@ -1,6 +1,6 @@
 <script setup>
-import LateralBar from "./components/LateralBar.vue";
-import AppLayout from "./components/AppLayout.vue";
+import LateralBar from "./layout/LateralBar.vue";
+import AppLayout from "./layout/AppLayout.vue";
 </script>
 
 <template>

@@ -26,7 +26,7 @@ const messages = [
     <!-- Header del chat -->
     <div class="flex space-x-2 items-center mb-4">
       <img
-        src="../assets/group-image.jpeg"
+        src="/group-image.jpeg"
         alt="Group Avatar"
         class="w-10 h-10 rounded-full object-cover"
       />
@@ -49,7 +49,7 @@ const messages = [
               {{ message.timestamp }}
             </p>
             <img
-              src="../assets/avatar-profile.svg"
+              src="/avatar-profile.svg"
               alt="User Avatar"
               class="w-8 h-8 rounded-full mb-1"
             />

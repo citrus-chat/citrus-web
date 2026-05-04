@@ -2,7 +2,7 @@
   <section class="flex flex-[0.3] items-center flex-col p-2">
     <img
       class="w-32 h-32 rounded-full"
-      src="../assets/avatar-profile.svg"
+      src="../../avatar-profile.svg"
       alt="Profile Picture"
     />
     <h2 class="text-2xl font-semibold mt-4">John Doe</h2>

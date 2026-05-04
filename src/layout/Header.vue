@@ -24,7 +24,7 @@ defineEmits(["toggleProfile"]);
       </button>
       <button class="cursor-pointer" @click="$emit('toggleProfile')">
         <img
-          src="../assets/avatar-profile.svg"
+          src="../../avatar-profile.svg"
           alt="Avatar"
           class="w-10 h-10 rounded-full"
         />
