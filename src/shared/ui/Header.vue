@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter } from "vue-router";
 
 const router = useRouter();
 
 const goProfile = () => {
-  router.push('/profile');
+  router.push("/profile");
 };
 </script>
 
@@ -23,7 +23,7 @@ const goProfile = () => {
         type="text"
         placeholder="Buscar en Citrus Chat..."
         class="form-control border-0 shadow-none bg-transparent"
-      />
+      >
     </div>
 
     <!-- Actions -->
@@ -32,13 +32,16 @@ const goProfile = () => {
         <i class="bi bi-bell fs-5" />
       </button>
 
-      <button class="btn p-0 border-0" @click="goProfile">
+      <button
+        class="btn p-0 border-0"
+        @click="goProfile"
+      >
         <img
           src="@/shared/assets/avatar-profile.svg"
           alt="Avatar"
           class="rounded-circle"
           style="width: 40px; height: 40px"
-        />
+        >
       </button>
     </div>
   </section>

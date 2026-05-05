@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import Chat from '@/features/chat/presentation/components/Chat.vue';
-import ChatsPage from '@/features/chat/presentation/pages/ChatsPage.vue';
+import Chat from "@/features/chat/presentation/components/Chat.vue";
+import ChatsPage from "@/features/chat/presentation/pages/ChatsPage.vue";
 </script>
 
 <template>

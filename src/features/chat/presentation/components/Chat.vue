@@ -2,21 +2,21 @@
 const messages = [
   {
     id: 1,
-    text: '¡Hola a todos!',
-    owner: 'me',
-    timestamp: '22/04/2026 - 21:07',
+    text: "¡Hola a todos!",
+    owner: "me",
+    timestamp: "22/04/2026 - 21:07",
   },
   {
     id: 2,
-    text: '¿Cómo están?',
-    owner: 'other',
-    timestamp: '22/04/2026 - 21:08',
+    text: "¿Cómo están?",
+    owner: "other",
+    timestamp: "22/04/2026 - 21:08",
   },
   {
     id: 3,
-    text: '¿Alguien tiene novedades sobre el proyecto?',
-    owner: 'other',
-    timestamp: '22/04/2026 - 21:09',
+    text: "¿Alguien tiene novedades sobre el proyecto?",
+    owner: "other",
+    timestamp: "22/04/2026 - 21:09",
   },
 ];
 </script>
@@ -30,7 +30,7 @@ const messages = [
         alt="Group Avatar"
         class="rounded-circle object-fit-cover"
         style="width: 40px; height: 40px"
-      />
+      >
 
       <h2 class="fs-5 fw-semibold text-secondary mb-0">
         Javalinas Empresariales
@@ -60,7 +60,7 @@ const messages = [
               alt="User Avatar"
               class="rounded-circle mb-1"
               style="width: 32px; height: 32px"
-            />
+            >
           </div>
 
           <div
@@ -79,9 +79,11 @@ const messages = [
         type="text"
         placeholder="Escribe un mensaje..."
         class="form-control"
-      />
+      >
 
-      <button class="btn btn-primary px-4">Enviar</button>
+      <button class="btn btn-primary px-4">
+        Enviar
+      </button>
     </div>
   </section>
 </template>
