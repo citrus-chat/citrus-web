@@ -10,7 +10,7 @@ defineEmits(["toggleProfile"]);
       style="max-width: 500px"
     >
       <button class="btn p-0 border-0 header-btn">
-        <i class="bi bi-search fs-5"></i>
+        <i class="bi bi-search fs-5" />
       </button>
 
       <input
@@ -23,7 +23,7 @@ defineEmits(["toggleProfile"]);
     <!-- Actions -->
     <div class="d-flex align-items-center gap-2">
       <button class="btn p-0 border-0 header-btn">
-        <i class="bi bi-bell fs-5"></i>
+        <i class="bi bi-bell fs-5" />
       </button>
 
       <button class="btn p-0 border-0" @click="$emit('toggleProfile')">

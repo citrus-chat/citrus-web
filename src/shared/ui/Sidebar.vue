@@ -42,7 +42,7 @@ const buttons = [
           :key="label"
           class="btn w-100 sidebar-btn text-start text-white d-flex align-items-center gap-2 mb-1"
         >
-          <i :class="icon"></i>
+          <i :class="icon" />
           {{ label }}
         </button>
       </div>
@@ -55,14 +55,14 @@ const buttons = [
       <button
         class="btn w-100 sidebar-btn text-start text-white d-flex align-items-center gap-2 mb-1"
       >
-        <i class="bi bi-gear"></i>
+        <i class="bi bi-gear" />
         Ajustes
       </button>
 
       <button
         class="btn w-100 sidebar-btn text-start text-white d-flex align-items-center gap-2"
       >
-        <i class="bi bi-question-circle"></i>
+        <i class="bi bi-question-circle" />
         Soporte
       </button>
     </div>

@@ -42,7 +42,7 @@ const chats = [
         type="button"
         aria-label="Buscar chats"
       >
-        <i class="bi bi-search"></i>
+        <i class="bi bi-search" />
       </button>
 
       <input
@@ -61,7 +61,7 @@ const chats = [
         aria-label="Add chat"
         class="btn btn-link text-primary p-0"
       >
-        <i class="bi bi-plus-lg fs-5"></i>
+        <i class="bi bi-plus-lg fs-5" />
       </button>
     </div>
 

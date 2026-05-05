@@ -24,17 +24,17 @@
       </p>
 
       <div class="d-flex align-items-center gap-2 mb-2">
-        <i class="bi bi-envelope text-muted"></i>
+        <i class="bi bi-envelope text-muted" />
         <p class="text-muted mb-0">john.doe@example.com</p>
       </div>
 
       <div class="d-flex align-items-center gap-2 mb-2">
-        <i class="bi bi-telephone text-muted"></i>
+        <i class="bi bi-telephone text-muted" />
         <p class="text-muted mb-0">+1 (555) 123-4567</p>
       </div>
 
       <div class="d-flex align-items-center gap-2 mb-2">
-        <i class="bi bi-geo-alt text-muted"></i>
+        <i class="bi bi-geo-alt text-muted" />
         <p class="text-muted mb-0">San Francisco, CA</p>
       </div>
     </div>
@@ -48,21 +48,21 @@
       <button
         class="btn btn-link d-flex align-items-center gap-2 text-start text-muted p-0 mb-2"
       >
-        <i class="bi bi-ticket text-primary"></i>
+        <i class="bi bi-ticket text-primary" />
         <span>Create support ticket</span>
       </button>
 
       <button
         class="btn btn-link d-flex align-items-center gap-2 text-start text-muted p-0 mb-2"
       >
-        <i class="bi bi-send text-primary"></i>
+        <i class="bi bi-send text-primary" />
         <span>Send Template</span>
       </button>
 
       <button
         class="btn btn-link d-flex align-items-center gap-2 text-start text-danger p-0"
       >
-        <i class="bi bi-slash-circle"></i>
+        <i class="bi bi-slash-circle" />
         <span>Block User</span>
       </button>
     </div>
