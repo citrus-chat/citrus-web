@@ -2,30 +2,30 @@
 const chats = [
   {
     id: 1,
-    name: "Javalinas Empresariales",
-    lastMessage: "¿Alguien tiene novedades sobre el proyecto?",
-    timestamp: "10:30 AM",
+    name: 'Javalinas Empresariales',
+    lastMessage: '¿Alguien tiene novedades sobre el proyecto?',
+    timestamp: '10:30 AM',
     selected: true,
     isGroup: true,
-    lastSender: "FrancoGei",
+    lastSender: 'FrancoGei',
     isActive: false,
   },
   {
     id: 2,
-    name: "María",
-    lastMessage: "Nos vemos mañana",
-    timestamp: "9:15 AM",
+    name: 'María',
+    lastMessage: 'Nos vemos mañana',
+    timestamp: '9:15 AM',
     selected: false,
     isGroup: false,
-    lastSender: "María",
+    lastSender: 'María',
     isActive: true,
   },
   {
     id: 3,
-    name: "Carlos",
-    lastMessage: "¿Puedes enviarme el archivo?",
-    timestamp: "8:45 AM",
-    lastSender: "Carlos",
+    name: 'Carlos',
+    lastMessage: '¿Puedes enviarme el archivo?',
+    timestamp: '8:45 AM',
+    lastSender: 'Carlos',
     selected: false,
     isGroup: false,
     isActive: true,
@@ -35,23 +35,6 @@ const chats = [
 
 <template>
   <section class="p-4 overflow-auto" style="flex: 0 0 40%">
-    <!-- Search -->
-    <div class="input-group mb-4">
-      <button
-        class="btn btn-outline-secondary"
-        type="button"
-        aria-label="Buscar chats"
-      >
-        <i class="bi bi-search" />
-      </button>
-
-      <input
-        type="text"
-        placeholder="Buscar en Citrus Chat..."
-        class="form-control"
-      />
-    </div>
-
     <!-- Title -->
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h2 class="fs-3 fw-bold mb-0">Chats</h2>

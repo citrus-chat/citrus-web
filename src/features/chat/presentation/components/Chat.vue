@@ -2,21 +2,21 @@
 const messages = [
   {
     id: 1,
-    text: "¡Hola a todos!",
-    owner: "me",
-    timestamp: "22/04/2026 - 21:07",
+    text: '¡Hola a todos!',
+    owner: 'me',
+    timestamp: '22/04/2026 - 21:07',
   },
   {
     id: 2,
-    text: "¿Cómo están?",
-    owner: "other",
-    timestamp: "22/04/2026 - 21:08",
+    text: '¿Cómo están?',
+    owner: 'other',
+    timestamp: '22/04/2026 - 21:08',
   },
   {
     id: 3,
-    text: "¿Alguien tiene novedades sobre el proyecto?",
-    owner: "other",
-    timestamp: "22/04/2026 - 21:09",
+    text: '¿Alguien tiene novedades sobre el proyecto?',
+    owner: 'other',
+    timestamp: '22/04/2026 - 21:09',
   },
 ];
 </script>

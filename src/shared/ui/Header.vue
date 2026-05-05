@@ -1,12 +1,18 @@
 <script setup lang="ts">
-defineEmits(["toggleProfile"]);
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+
+const goProfile = () => {
+  router.push('/profile');
+};
 </script>
 
 <template>
   <section class="d-flex align-items-center justify-content-between p-2">
     <!-- Search -->
     <div
-      class="d-flex align-items-center border rounded px-3 py-1 gap-2 flex-grow-1 me-3"
+      class="d-flex align-items-center border rounded px-3 py-1 gap-2 grow me-3"
       style="max-width: 500px"
     >
       <button class="btn p-0 border-0 header-btn">
@@ -26,7 +32,7 @@ defineEmits(["toggleProfile"]);
         <i class="bi bi-bell fs-5" />
       </button>
 
-      <button class="btn p-0 border-0" @click="$emit('toggleProfile')">
+      <button class="btn p-0 border-0" @click="goProfile">
         <img
           src="@/shared/assets/avatar-profile.svg"
           alt="Avatar"
