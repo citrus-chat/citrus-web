@@ -12,7 +12,7 @@ const buttons = [
 <template>
   <section
     class="bg-dark text-white d-flex flex-column justify-content-between vh-100 border-end"
-    style="width: 16rem;"
+    style="width: 16rem"
   >
     <div>
       <!-- Header -->
@@ -21,11 +21,13 @@ const buttons = [
           src="@/shared/assets/citrus-chat.png"
           alt="Citrus Chat logo"
           class="rounded-circle"
-          style="width: 56px; height: 56px;"
+          style="width: 56px; height: 56px"
         />
         <div>
           <h5 class="mb-1 fw-bold">Citrus Chat</h5>
-          <button class="btn btn-link text-decoration-none text-secondary p-0 small">
+          <button
+            class="btn btn-link text-decoration-none text-secondary p-0 small"
+          >
             Mi perfil
           </button>
         </div>
@@ -50,12 +52,16 @@ const buttons = [
     <div class="px-2 pb-3">
       <hr class="border-secondary mb-2" />
 
-      <button class="btn w-100 sidebar-btn text-start text-white d-flex align-items-center gap-2 mb-1">
+      <button
+        class="btn w-100 sidebar-btn text-start text-white d-flex align-items-center gap-2 mb-1"
+      >
         <i class="bi bi-gear"></i>
         Ajustes
       </button>
 
-      <button class="btn w-100 sidebar-btn text-start text-white d-flex align-items-center gap-2">
+      <button
+        class="btn w-100 sidebar-btn text-start text-white d-flex align-items-center gap-2"
+      >
         <i class="bi bi-question-circle"></i>
         Soporte
       </button>

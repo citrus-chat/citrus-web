@@ -2,42 +2,46 @@
 const chats = [
   {
     id: 1,
-    name: 'Javalinas Empresariales',
-    lastMessage: '¿Alguien tiene novedades sobre el proyecto?',
-    timestamp: '10:30 AM',
+    name: "Javalinas Empresariales",
+    lastMessage: "¿Alguien tiene novedades sobre el proyecto?",
+    timestamp: "10:30 AM",
     selected: true,
     isGroup: true,
-    lastSender: 'FrancoGei',
+    lastSender: "FrancoGei",
     isActive: false,
   },
   {
     id: 2,
-    name: 'María',
-    lastMessage: 'Nos vemos mañana',
-    timestamp: '9:15 AM',
+    name: "María",
+    lastMessage: "Nos vemos mañana",
+    timestamp: "9:15 AM",
     selected: false,
     isGroup: false,
-    lastSender: 'María',
+    lastSender: "María",
     isActive: true,
   },
   {
     id: 3,
-    name: 'Carlos',
-    lastMessage: '¿Puedes enviarme el archivo?',
-    timestamp: '8:45 AM',
-    lastSender: 'Carlos',
+    name: "Carlos",
+    lastMessage: "¿Puedes enviarme el archivo?",
+    timestamp: "8:45 AM",
+    lastSender: "Carlos",
     selected: false,
     isGroup: false,
     isActive: true,
   },
-]
+];
 </script>
 
 <template>
-  <section class="p-4 overflow-auto" style="flex: 0 0 40%;">
+  <section class="p-4 overflow-auto" style="flex: 0 0 40%">
     <!-- Search -->
     <div class="input-group mb-4">
-      <button class="btn btn-outline-secondary" type="button" aria-label="Buscar chats">
+      <button
+        class="btn btn-outline-secondary"
+        type="button"
+        aria-label="Buscar chats"
+      >
         <i class="bi bi-search"></i>
       </button>
 
@@ -52,7 +56,11 @@ const chats = [
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h2 class="fs-3 fw-bold mb-0">Chats</h2>
 
-      <button type="button" aria-label="Add chat" class="btn btn-link text-primary p-0">
+      <button
+        type="button"
+        aria-label="Add chat"
+        class="btn btn-link text-primary p-0"
+      >
         <i class="bi bi-plus-lg fs-5"></i>
       </button>
     </div>
@@ -70,13 +78,13 @@ const chats = [
             src="@/shared/assets/avatar-profile.svg"
             alt="Avatar"
             class="rounded-circle"
-            style="width: 40px; height: 40px;"
+            style="width: 40px; height: 40px"
           />
 
           <span
             v-if="chat.isActive && !chat.isGroup"
             class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
-            style="width: 12px; height: 12px;"
+            style="width: 12px; height: 12px"
           />
         </div>
 

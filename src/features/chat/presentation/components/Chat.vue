@@ -2,23 +2,23 @@
 const messages = [
   {
     id: 1,
-    text: '¡Hola a todos!',
-    owner: 'me',
-    timestamp: '22/04/2026 - 21:07',
+    text: "¡Hola a todos!",
+    owner: "me",
+    timestamp: "22/04/2026 - 21:07",
   },
   {
     id: 2,
-    text: '¿Cómo están?',
-    owner: 'other',
-    timestamp: '22/04/2026 - 21:08',
+    text: "¿Cómo están?",
+    owner: "other",
+    timestamp: "22/04/2026 - 21:08",
   },
   {
     id: 3,
-    text: '¿Alguien tiene novedades sobre el proyecto?',
-    owner: 'other',
-    timestamp: '22/04/2026 - 21:09',
+    text: "¿Alguien tiene novedades sobre el proyecto?",
+    owner: "other",
+    timestamp: "22/04/2026 - 21:09",
   },
-]
+];
 </script>
 
 <template>
@@ -29,7 +29,7 @@ const messages = [
         src="@/shared/assets/group-image.jpeg"
         alt="Group Avatar"
         class="rounded-circle object-fit-cover"
-        style="width: 40px; height: 40px;"
+        style="width: 40px; height: 40px"
       />
 
       <h2 class="fs-5 fw-semibold text-secondary mb-0">
@@ -43,9 +43,13 @@ const messages = [
         v-for="message in messages"
         :key="message.id"
         class="d-flex mb-2"
-        :class="message.owner === 'me' ? 'justify-content-end' : 'justify-content-start'"
+        :class="
+          message.owner === 'me'
+            ? 'justify-content-end'
+            : 'justify-content-start'
+        "
       >
-        <div style="max-width: 50%;">
+        <div style="max-width: 50%">
           <div class="d-flex align-items-center gap-3">
             <p class="small text-muted p-2 mb-0">
               {{ message.timestamp }}
@@ -55,7 +59,7 @@ const messages = [
               src="@/shared/assets/avatar-profile.svg"
               alt="User Avatar"
               class="rounded-circle mb-1"
-              style="width: 32px; height: 32px;"
+              style="width: 32px; height: 32px"
             />
           </div>
 
@@ -77,9 +81,7 @@ const messages = [
         class="form-control"
       />
 
-      <button class="btn btn-primary px-4">
-        Enviar
-      </button>
+      <button class="btn btn-primary px-4">Enviar</button>
     </div>
   </section>
 </template>

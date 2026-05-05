@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import Chat from '@/features/chat/presentation/components/Chat.vue'
-import ChatsPage from '@/features/chat/presentation/pages/ChatsPage.vue'
-import ProfilePage from '@/features/profile/presentation/pages/ProfilePage.vue'
+import Chat from "@/features/chat/presentation/components/Chat.vue";
+import ChatsPage from "@/features/chat/presentation/pages/ChatsPage.vue";
+import ProfilePage from "@/features/profile/presentation/pages/ProfilePage.vue";
 
-import { ref } from 'vue'
+import { ref } from "vue";
 
-const showProfile = ref(false)
+const showProfile = ref(false);
 </script>
 
 <template>

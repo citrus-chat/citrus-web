@@ -1,20 +1,21 @@
 <template>
-  <section class="d-flex flex-column align-items-center p-3" style="flex: 0 0 30%;">
+  <section
+    class="d-flex flex-column align-items-center p-3"
+    style="flex: 0 0 30%"
+  >
     <!-- Avatar -->
     <img
       class="rounded-circle"
       src="@/shared/assets/avatar-profile.svg"
       alt="Profile Picture"
-      style="width: 128px; height: 128px;"
+      style="width: 128px; height: 128px"
     />
 
     <!-- Name -->
     <h2 class="fs-4 fw-semibold mt-3 mb-1">John Doe</h2>
 
     <!-- Subtitle -->
-    <p class="text-muted mb-3">
-      Software Engineer at Tech Company
-    </p>
+    <p class="text-muted mb-3">Software Engineer at Tech Company</p>
 
     <!-- Contact Info -->
     <div class="w-100">
@@ -44,17 +45,23 @@
         Quick Actions
       </p>
 
-      <button class="btn btn-link d-flex align-items-center gap-2 text-start text-muted p-0 mb-2">
+      <button
+        class="btn btn-link d-flex align-items-center gap-2 text-start text-muted p-0 mb-2"
+      >
         <i class="bi bi-ticket text-primary"></i>
         <span>Create support ticket</span>
       </button>
 
-      <button class="btn btn-link d-flex align-items-center gap-2 text-start text-muted p-0 mb-2">
+      <button
+        class="btn btn-link d-flex align-items-center gap-2 text-start text-muted p-0 mb-2"
+      >
         <i class="bi bi-send text-primary"></i>
         <span>Send Template</span>
       </button>
 
-      <button class="btn btn-link d-flex align-items-center gap-2 text-start text-danger p-0">
+      <button
+        class="btn btn-link d-flex align-items-center gap-2 text-start text-danger p-0"
+      >
         <i class="bi bi-slash-circle"></i>
         <span>Block User</span>
       </button>
