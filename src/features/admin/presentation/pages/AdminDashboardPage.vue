@@ -1,22 +1,18 @@
 <script setup lang="ts">
 const stats = [
-  { label: 'Usuarios', value: 1240, icon: 'bi-people' },
-  { label: 'Chats activos', value: 342, icon: 'bi-chat' },
-  { label: 'Reportes', value: 18, icon: 'bi-flag' },
-  { label: 'Sanciones', value: 7, icon: 'bi-slash-circle' },
-]
+  { label: "Usuarios", value: 1240, icon: "bi-people" },
+  { label: "Chats activos", value: 342, icon: "bi-chat" },
+  { label: "Reportes", value: 18, icon: "bi-flag" },
+  { label: "Sanciones", value: 7, icon: "bi-slash-circle" },
+];
 </script>
 
 <template>
   <section class="p-4">
     <!-- Title -->
     <div class="mb-4">
-      <h2 class="fw-bold mb-1">
-        Dashboard
-      </h2>
-      <p class="text-muted mb-0">
-        Resumen general del sistema
-      </p>
+      <h2 class="fw-bold mb-1">Dashboard</h2>
+      <p class="text-muted mb-0">Resumen general del sistema</p>
     </div>
 
     <!-- Stats -->
@@ -48,9 +44,7 @@ const stats = [
     <!-- Recent activity -->
     <div class="card shadow-sm">
       <div class="card-body">
-        <h5 class="fw-semibold mb-3">
-          Actividad reciente
-        </h5>
+        <h5 class="fw-semibold mb-3">Actividad reciente</h5>
 
         <ul class="list-group list-group-flush">
           <li class="list-group-item d-flex justify-content-between">

@@ -1,28 +1,27 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute } from "vue-router";
 
-const route = useRoute()
+const route = useRoute();
 
 const items = [
-  { icon: 'bi-speedometer2', label: 'Dashboard', to: '/admin' },
-  { icon: 'bi-people', label: 'Usuarios', to: '/admin/users' },
-  { icon: 'bi-flag', label: 'Reportes', to: '/admin/reports' },
-  { icon: 'bi-slash-circle', label: 'Sanciones', to: '/admin/sanctions' },
-  { icon: 'bi-bar-chart', label: 'Métricas', to: '/admin/metrics' },
-  { icon: 'bi-clock-history', label: 'Logs', to: '/admin/logs' },
-]
+  { icon: "bi-speedometer2", label: "Dashboard", to: "/admin" },
+  { icon: "bi-people", label: "Usuarios", to: "/admin/users" },
+  { icon: "bi-flag", label: "Reportes", to: "/admin/reports" },
+  { icon: "bi-slash-circle", label: "Sanciones", to: "/admin/sanctions" },
+  { icon: "bi-bar-chart", label: "Métricas", to: "/admin/metrics" },
+  { icon: "bi-clock-history", label: "Logs", to: "/admin/logs" },
+];
 </script>
 
 <template>
-  <aside class="bg-dark text-white vh-100 d-flex flex-column border-end" style="width: 16rem;">
+  <aside
+    class="bg-dark text-white vh-100 d-flex flex-column border-end"
+    style="width: 16rem"
+  >
     <!-- Top -->
     <div class="px-3 py-3 border-bottom border-secondary">
-      <h5 class="fw-bold mb-0">
-        Citrus Admin
-      </h5>
-      <small class="text-secondary">
-        Panel de control
-      </small>
+      <h5 class="fw-bold mb-0">Citrus Admin</h5>
+      <small class="text-secondary"> Panel de control </small>
     </div>
 
     <!-- Nav -->
@@ -43,11 +42,11 @@ const items = [
 
     <!-- Bottom -->
     <div class="p-2 border-top border-secondary">
-      <button class="btn w-100 text-start text-white d-flex align-items-center gap-2 admin-link">
+      <button
+        class="btn w-100 text-start text-white d-flex align-items-center gap-2 admin-link"
+      >
         <i class="bi bi-box-arrow-right" />
-        <span>
-          Logout
-        </span>
+        <span> Logout </span>
       </button>
     </div>
   </aside>
