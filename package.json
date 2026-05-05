@@ -18,18 +18,23 @@
     "vue-router": "^5.0.6"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@tsconfig/node24": "^24.0.4",
     "@types/node": "^24.12.2",
     "@vitejs/plugin-vue": "^6.0.6",
     "@vue/tsconfig": "^0.9.1",
     "autoprefixer": "^10.5.0",
+    "eslint": "^10.3.0",
+    "eslint-plugin-vue": "^10.9.0",
     "npm-run-all2": "^8.0.4",
     "postcss": "^8.5.14",
     "prettier": "^3.8.3",
     "tailwindcss": "^4.2.4",
     "typescript": "~6.0.0",
+    "typescript-eslint": "^8.59.2",
     "vite": "^8.0.8",
     "vite-plugin-vue-devtools": "^8.1.1",
+    "vue-eslint-parser": "^10.4.0",
     "vue-tsc": "^3.2.6"
   },
   "engines": {
