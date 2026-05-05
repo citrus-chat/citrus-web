@@ -50,3 +50,14 @@ button {
 .chat-item:hover {
   background-color: rgba(13, 110, 253, 0.08);
 }
+.admin-link {
+  text-decoration: none;
+}
+
+.admin-link:hover {
+  background-color: rgba(13, 110, 253, 0.15);
+}
+
+.admin-link.active {
+  background-color: #0d6efd;
+}

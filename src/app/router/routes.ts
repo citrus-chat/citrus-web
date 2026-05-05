@@ -14,4 +14,16 @@ export const routes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: "/admin",
+    component: () => import("@/app/layouts/AdminLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "admin-dashboard",
+        component: () =>
+          import("@/features/admin/presentation/pages/AdminDashboardPage.vue"),
+      },
+    ],
+  },
 ];
