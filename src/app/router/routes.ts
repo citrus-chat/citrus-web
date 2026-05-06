@@ -12,6 +12,12 @@ export const routes: RouteRecordRaw[] = [
         component: () =>
           import("@/features/chat/presentation/pages/ChatPage.vue"),
       },
+      {
+        path: "/profile",
+        name: "profile",
+        component: () =>
+          import("@/features/profile/presentation/pages/ProfilePage.vue"),
+      },
     ],
   },
   {
