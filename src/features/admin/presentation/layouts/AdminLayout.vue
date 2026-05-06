@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import AdminSidebar from "@/features/admin/presentation/components/AdminSidebar.vue";
 import AdminHeader from "@/features/admin/presentation/components/AdminHeader.vue";
+import AdminSidebar from "@/features/admin/presentation/components/AdminSidebar.vue";
 </script>
 
 <template>
