@@ -34,15 +34,10 @@ const chats = [
 </script>
 
 <template>
-  <section
-    class="p-4 overflow-auto"
-    style="flex: 0 0 40%"
-  >
+  <section class="p-4 overflow-auto" style="flex: 0 0 40%">
     <!-- Title -->
     <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="fs-3 fw-bold mb-0">
-        Chats
-      </h2>
+      <h2 class="fs-3 fw-bold mb-0">Chats</h2>
 
       <button
         type="button"
@@ -67,7 +62,7 @@ const chats = [
             alt="Avatar"
             class="rounded-circle"
             style="width: 40px; height: 40px"
-          >
+          />
 
           <span
             v-if="chat.isActive && !chat.isGroup"

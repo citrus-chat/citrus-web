@@ -11,12 +11,8 @@ const stats = [
   <section class="p-4">
     <!-- Title -->
     <div class="mb-4">
-      <h2 class="fw-bold mb-1">
-        Dashboard
-      </h2>
-      <p class="text-muted mb-0">
-        Resumen general del sistema
-      </p>
+      <h2 class="fw-bold mb-1">Dashboard</h2>
+      <p class="text-muted mb-0">Resumen general del sistema</p>
     </div>
 
     <!-- Stats -->
@@ -48,9 +44,7 @@ const stats = [
     <!-- Recent activity -->
     <div class="card shadow-sm">
       <div class="card-body">
-        <h5 class="fw-semibold mb-3">
-          Actividad reciente
-        </h5>
+        <h5 class="fw-semibold mb-3">Actividad reciente</h5>
 
         <ul class="list-group list-group-flush">
           <li class="list-group-item d-flex justify-content-between">

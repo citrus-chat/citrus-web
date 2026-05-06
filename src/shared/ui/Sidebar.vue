@@ -38,13 +38,11 @@ const buttons = [
             alt="Citrus Chat logo"
             class="rounded-circle"
             style="width: 56px; height: 56px"
-          >
+          />
         </button>
 
         <div>
-          <h5 class="mb-1 fw-bold">
-            Citrus Chat
-          </h5>
+          <h5 class="mb-1 fw-bold">Citrus Chat</h5>
           <button
             class="btn btn-link text-decoration-none text-secondary p-0 small"
             @click="goProfile"
@@ -54,7 +52,7 @@ const buttons = [
         </div>
       </div>
 
-      <hr class="border-secondary my-2">
+      <hr class="border-secondary my-2" />
 
       <!-- Navigation -->
       <div class="px-2">
@@ -72,7 +70,7 @@ const buttons = [
 
     <!-- Bottom -->
     <div class="px-2 pb-3">
-      <hr class="border-secondary mb-2">
+      <hr class="border-secondary mb-2" />
 
       <button
         class="btn w-100 sidebar-btn text-start text-white d-flex align-items-center gap-2 mb-1"

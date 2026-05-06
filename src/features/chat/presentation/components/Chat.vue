@@ -30,7 +30,7 @@ const messages = [
         alt="Group Avatar"
         class="rounded-circle object-fit-cover"
         style="width: 40px; height: 40px"
-      >
+      />
 
       <h2 class="fs-5 fw-semibold text-secondary mb-0">
         Javalinas Empresariales
@@ -60,7 +60,7 @@ const messages = [
               alt="User Avatar"
               class="rounded-circle mb-1"
               style="width: 32px; height: 32px"
-            >
+            />
           </div>
 
           <div
@@ -79,11 +79,9 @@ const messages = [
         type="text"
         placeholder="Escribe un mensaje..."
         class="form-control"
-      >
+      />
 
-      <button class="btn btn-primary px-4">
-        Enviar
-      </button>
+      <button class="btn btn-primary px-4">Enviar</button>
     </div>
   </section>
 </template>
