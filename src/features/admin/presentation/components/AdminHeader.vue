@@ -26,11 +26,15 @@ defineProps<{ title?: string }>();
           alt="Admin"
           class="rounded-circle"
           style="width: 36px; height: 36px"
-        />
+        >
 
         <div class="d-none d-md-block">
-          <div class="fw-semibold small">Admin</div>
-          <div class="text-muted small">Superuser</div>
+          <div class="fw-semibold small">
+            Admin
+          </div>
+          <div class="text-muted small">
+            Superuser
+          </div>
         </div>
       </div>
     </div>

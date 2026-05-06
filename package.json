@@ -10,7 +10,8 @@
     "build-only": "vite build",
     "type-check": "vue-tsc --build",
     "format": "prettier --write \"**/*.{js,ts,vue,json,md}\"",
-    "format:check": "prettier --check \"**/*.{js,ts,vue,json,md}\""
+    "format:check": "prettier --check \"**/*.{js,ts,vue,json,md}\"",
+    "lint": "eslint . --fix"
   },
   "dependencies": {
     "bootstrap-icons": "^1.13.1",
@@ -44,11 +45,12 @@
     "node": "^20.19.0 || >=22.12.0"
   },
   "lint-staged": {
-    "*.{js,ts,vue,json,md}": [
-      "prettier --write"
+    "*.{js,mjs,cjs,ts,vue}": [
+      "npx eslint --fix",
+      "npx prettier --write"
     ],
-    "*.{js,ts,vue}": [
-      "eslint --fix"
+    "*.{json,md}": [
+      "npx prettier --write"
     ]
   }
 }

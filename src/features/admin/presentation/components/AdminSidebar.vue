@@ -20,7 +20,9 @@ const items = [
   >
     <!-- Top -->
     <div class="px-3 py-3 border-bottom border-secondary">
-      <h5 class="fw-bold mb-0">Citrus Admin</h5>
+      <h5 class="fw-bold mb-0">
+        Citrus Admin
+      </h5>
       <small class="text-secondary"> Panel de control </small>
     </div>
 
