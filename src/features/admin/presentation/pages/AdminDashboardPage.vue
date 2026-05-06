@@ -25,7 +25,7 @@ const stats = [
         <div class="card shadow-sm h-100">
           <div class="card-body d-flex align-items-center gap-3">
             <div class="bg-primary text-white rounded p-3">
-              <i :class="`bi ${stat.icon} fs-4`"></i>
+              <i :class="`bi ${stat.icon} fs-4`" />
             </div>
 
             <div>
