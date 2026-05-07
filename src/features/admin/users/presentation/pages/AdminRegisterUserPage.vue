@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import { computed, reactive, ref } from "vue";
 
-import { registerUser } from "@/features/admin/users/application/use-cases/registerUser";
+import { ApiError } from "@/core/api/apiError";
+import { registerUserUseCase } from "@/features/admin/users/application/use-cases/registerUserUseCase";
 
 const form = reactive({
   email: "",
@@ -12,6 +13,7 @@ const form = reactive({
 
 const loading = ref(false);
 const error = ref<string | null>(null);
+const fieldErrors = ref<Record<string, string[]> | null>(null);
 const temporaryPassword = ref<string | null>(null);
 const createdUsername = ref<string | null>(null);
 
@@ -26,14 +28,19 @@ const generatedUsernamePreview = computed(() => {
   return `${firstName}_${lastName}`.replace(/\s+/g, "_");
 });
 
+function getFieldError(field: string): string | null {
+  return fieldErrors.value?.[field]?.[0] ?? null;
+}
+
 async function submit() {
   try {
     loading.value = true;
     error.value = null;
+    fieldErrors.value = null;
     temporaryPassword.value = null;
     createdUsername.value = null;
 
-    const result = await registerUser({
+    const result = await registerUserUseCase({
       email: form.email,
       firstName: form.firstName,
       lastName: form.lastName,
@@ -42,14 +49,19 @@ async function submit() {
 
     temporaryPassword.value = result.temporaryPassword;
     createdUsername.value = result.username ?? generatedUsernamePreview.value;
-  } catch {
+  } catch (exception: unknown) {
+    if (exception instanceof ApiError) {
+      error.value = exception.data?.message ?? exception.message;
+      fieldErrors.value = exception.data?.errors ?? null;
+      return;
+    }
+
     error.value = "No se pudo crear el usuario";
   } finally {
     loading.value = false;
   }
 }
 </script>
-
 <template>
   <section class="p-4">
     <div class="d-flex justify-content-between align-items-start mb-4">
@@ -84,9 +96,17 @@ async function submit() {
                     v-model="form.firstName"
                     type="text"
                     class="form-control"
+                    :class="{ 'is-invalid': getFieldError('firstName') }"
                     placeholder="José"
                     required
                   />
+
+                  <div
+                    v-if="getFieldError('firstName')"
+                    class="invalid-feedback"
+                  >
+                    {{ getFieldError("firstName") }}
+                  </div>
                 </div>
 
                 <div class="col-12 col-md-6">
@@ -95,9 +115,17 @@ async function submit() {
                     v-model="form.lastName"
                     type="text"
                     class="form-control"
+                    :class="{ 'is-invalid': getFieldError('lastName') }"
                     placeholder="Pérez"
                     required
                   />
+
+                  <div
+                    v-if="getFieldError('lastName')"
+                    class="invalid-feedback"
+                  >
+                    {{ getFieldError("lastName") }}
+                  </div>
                 </div>
 
                 <div class="col-12">
@@ -110,9 +138,14 @@ async function submit() {
                       v-model="form.email"
                       type="email"
                       class="form-control"
+                      :class="{ 'is-invalid': getFieldError('email') }"
                       placeholder="usuario@citrus.com"
                       required
                     />
+
+                    <div v-if="getFieldError('email')" class="invalid-feedback">
+                      {{ getFieldError("email") }}
+                    </div>
                   </div>
                 </div>
 
@@ -126,9 +159,17 @@ async function submit() {
                       v-model="form.phoneNumber"
                       type="tel"
                       class="form-control"
+                      :class="{ 'is-invalid': getFieldError('phoneNumber') }"
                       placeholder="+59899123456"
                       required
                     />
+
+                    <div
+                      v-if="getFieldError('phoneNumber')"
+                      class="invalid-feedback"
+                    >
+                      {{ getFieldError("phoneNumber") }}
+                    </div>
                   </div>
                 </div>
 
