@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { reactive, ref } from "vue";
+import { ApiError } from "@/core/api/apiError";
 
 import { validateUserAccountUseCase } from "@/features/auth/validate-account/application/use-cases/validateUserAccountUseCase";
 
@@ -12,17 +13,29 @@ const form = reactive({
 const loading = ref(false);
 const error = ref<string | null>(null);
 const success = ref(false);
+const fieldErrors = ref<Record<string, string[]> | null>(null);
+
+function getFieldError(field: string): string | null {
+  return fieldErrors.value?.[field]?.[0] ?? null;
+}
 
 async function submit() {
   try {
     loading.value = true;
     error.value = null;
+    fieldErrors.value = null;
     success.value = false;
 
     await validateUserAccountUseCase({ ...form });
 
     success.value = true;
-  } catch {
+  } catch (exception: unknown) {
+    if (exception instanceof ApiError) {
+      error.value = exception.data?.message ?? exception.message;
+      fieldErrors.value = exception.data?.errors ?? null;
+      return;
+    }
+
     error.value = "No se pudo validar la cuenta";
   } finally {
     loading.value = false;
@@ -54,9 +67,14 @@ async function submit() {
               v-model="form.username"
               type="text"
               class="form-control"
+              :class="{ 'is-invalid': getFieldError('username') }"
               placeholder="jose_perez"
               required
             />
+
+            <div v-if="getFieldError('username')" class="invalid-feedback">
+              {{ getFieldError("username") }}
+            </div>
           </div>
         </div>
 
@@ -70,9 +88,17 @@ async function submit() {
               v-model="form.temporaryPassword"
               type="password"
               class="form-control"
+              :class="{ 'is-invalid': getFieldError('temporaryPassword') }"
               placeholder="Ingresá la contraseña temporal"
               required
             />
+
+            <div
+              v-if="getFieldError('temporaryPassword')"
+              class="invalid-feedback"
+            >
+              {{ getFieldError("temporaryPassword") }}
+            </div>
           </div>
         </div>
 
@@ -86,9 +112,14 @@ async function submit() {
               v-model="form.newPassword"
               type="password"
               class="form-control"
+              :class="{ 'is-invalid': getFieldError('newPassword') }"
               placeholder="Definí tu nueva contraseña"
               required
             />
+
+            <div v-if="getFieldError('newPassword')" class="invalid-feedback">
+              {{ getFieldError("newPassword") }}
+            </div>
           </div>
         </div>
 
