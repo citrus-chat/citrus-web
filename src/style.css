@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
 @import "bootstrap-icons/font/bootstrap-icons.css";
-@theme {
+
+:root {
     --color-primary: #f57c00;
     --color-secondary: #0d1b2a;
     --color-tertiary: #bf360c;
@@ -29,46 +30,52 @@ button {
     opacity: 0;
     transform: translateX(20px);
 }
+
 .min-w-0 {
-  min-width: 0;
+    min-width: 0;
 }
+
 .sidebar-btn:hover {
-  background-color: #0d6efd;
+    background-color: #0d6efd;
 }
+
 .header-btn:hover {
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
 }
+
 .cursor-pointer {
-  cursor: pointer;
+    cursor: pointer;
 }
 
 .min-w-0 {
-  min-width: 0;
+    min-width: 0;
 }
 
 .chat-item:hover {
-  background-color: rgba(13, 110, 253, 0.08);
+    background-color: rgba(13, 110, 253, 0.08);
 }
+
 .admin-link {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .admin-link:hover {
-  background-color: rgba(13, 110, 253, 0.15);
+    background-color: rgba(13, 110, 253, 0.15);
 }
 
 .admin-link.active {
-  background-color: #0d6efd;
+    background-color: #0d6efd;
 }
+
 .admin-link {
-  text-decoration: none;
+    text-decoration: none;
 }
 
 .admin-link:hover {
-  background-color: rgba(13, 110, 253, 0.15);
+    background-color: rgba(13, 110, 253, 0.15);
 }
 
 .admin-link.active {
-  background-color: #0d6efd;
+    background-color: #0d6efd;
 }
