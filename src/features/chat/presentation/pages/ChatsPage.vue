@@ -1,5 +1,21 @@
 <script setup lang="ts">
-const chats = [
+import { ref } from "vue";
+import NewChatModal from "../components/NewChatModal.vue";
+
+interface Chat {
+  id: number;
+  name: string;
+  lastMessage: string;
+  timestamp: string;
+  selected: boolean;
+  isGroup: boolean;
+  lastSender: string;
+  isActive: boolean;
+}
+
+const showModal = ref(false);
+
+const chats = ref<Chat[]>([
   {
     id: 1,
     name: "Javalinas Empresariales",
@@ -30,12 +46,11 @@ const chats = [
     isGroup: false,
     isActive: true,
   },
-];
+]);
 </script>
 
 <template>
   <section class="p-4 overflow-auto" style="flex: 0 0 40%">
-    <!-- Title -->
     <div class="d-flex align-items-center justify-content-between mb-3">
       <h2 class="fs-3 fw-bold mb-0">Chats</h2>
 
@@ -43,12 +58,13 @@ const chats = [
         type="button"
         aria-label="Add chat"
         class="btn btn-link text-primary p-0"
+        @click="showModal = true"
       >
         <i class="bi bi-plus-lg fs-5" />
       </button>
     </div>
 
-    <!-- Chat list -->
+    <!-- Lista de chats -->
     <div class="d-flex flex-column gap-1">
       <div
         v-for="chat in chats"
@@ -92,5 +108,8 @@ const chats = [
         </div>
       </div>
     </div>
+
+    <!-- Modal en componente separado -->
+    <NewChatModal :show="showModal" @close="showModal = false" />
   </section>
 </template>
