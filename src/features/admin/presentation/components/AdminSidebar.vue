@@ -1,52 +1,103 @@
 <script setup lang="ts">
 import { useRoute } from "vue-router";
-
 const route = useRoute();
 
 const items = [
-  { icon: "bi-speedometer2", label: "Dashboard", to: "/admin" },
-  { icon: "bi-people", label: "Usuarios", to: "/admin/users" },
-  { icon: "bi-flag", label: "Reportes", to: "/admin/reports" },
-  { icon: "bi-slash-circle", label: "Sanciones", to: "/admin/sanctions" },
-  { icon: "bi-bar-chart", label: "Métricas", to: "/admin/metrics" },
-  { icon: "bi-clock-history", label: "Logs", to: "/admin/logs" },
+  { icon: "grid", label: "Dashboard", to: "/admin" },
+  { icon: "users", label: "Usuarios", to: "/admin/users" },
+  { icon: "flag", label: "Reportes", to: "/admin/reports" },
 ];
 </script>
 
 <template>
   <aside
-    class="bg-dark text-white vh-100 d-flex flex-column border-end"
-    style="width: 16rem"
+    class="w-72 bg-white/80 border-r border-slate-200 dark:bg-slate-950/80 dark:border-white/10 flex flex-col"
   >
-    <!-- Top -->
-    <div class="px-3 py-3 border-bottom border-secondary">
-      <h5 class="fw-bold mb-0">Citrus Admin</h5>
-      <small class="text-secondary"> Panel de control </small>
+    <div class="px-4 py-4 border-b border-slate-100 dark:border-white/6">
+      <h5 class="text-lg font-semibold">Citrus Admin</h5>
+      <small class="text-slate-500 dark:text-slate-400">Panel de control</small>
     </div>
 
-    <!-- Nav -->
-    <nav class="p-2 flex-grow-1">
+    <nav class="p-3 flex-1 space-y-1">
       <RouterLink
         v-for="item in items"
         :key="item.to"
         :to="item.to"
-        class="btn w-100 text-start d-flex align-items-center gap-2 mb-1 text-white admin-link"
-        :class="{ active: route.path === item.to }"
+        class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/10"
+        :class="{
+          'bg-blue-50 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300':
+            route.path === item.to,
+        }"
       >
-        <i :class="`bi ${item.icon}`" />
-        <span>
-          {{ item.label }}
-        </span>
+        <svg
+          v-if="item.icon === 'grid'"
+          class="h-5 w-5 text-slate-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"
+          />
+        </svg>
+        <svg
+          v-else-if="item.icon === 'users'"
+          class="h-5 w-5 text-slate-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 11a4 4 0 11-8 0 4 4 0 018 0z"
+          />
+        </svg>
+        <svg
+          v-else
+          class="h-5 w-5 text-slate-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M9 12l2 2 4-4"
+          />
+        </svg>
+
+        <span class="truncate">{{ item.label }}</span>
       </RouterLink>
     </nav>
 
-    <!-- Bottom -->
-    <div class="p-2 border-top border-secondary">
+    <div class="p-3 border-t border-slate-100 dark:border-white/6">
       <button
-        class="btn w-100 text-start text-white d-flex align-items-center gap-2 admin-link"
+        class="w-full flex items-center gap-3 rounded-xl px-3 py-2 text-sm text-slate-600 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-white/10"
       >
-        <i class="bi bi-box-arrow-right" />
-        <span> Logout </span>
+        <svg
+          class="h-5 w-5 text-slate-500"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7"
+          />
+        </svg>
+        <span>Logout</span>
       </button>
     </div>
   </aside>

@@ -63,183 +63,170 @@ async function submit() {
 }
 </script>
 <template>
-  <section class="p-4">
-    <div class="d-flex justify-content-between align-items-start mb-4">
-      <div>
-        <h2 class="fw-bold mb-1">Crear usuario</h2>
-        <p class="text-muted mb-0">
-          Alta de usuario creada por un administrador.
-        </p>
-      </div>
-
-      <RouterLink to="/admin/users" class="btn btn-outline-secondary">
-        Volver
-      </RouterLink>
-    </div>
-
-    <div class="row g-4">
-      <div class="col-12 col-lg-7">
-        <div class="card border-0 shadow-sm">
-          <div class="card-header bg-white border-0 pt-4 px-4">
-            <h5 class="fw-semibold mb-1">Datos del usuario</h5>
-            <p class="text-muted small mb-0">
-              El username será generado automáticamente desde nombre y apellido.
-            </p>
-          </div>
-
-          <div class="card-body p-4">
-            <form @submit.prevent="submit">
-              <div class="row g-3">
-                <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold">Nombre</label>
-                  <input
-                    v-model="form.firstName"
-                    type="text"
-                    class="form-control"
-                    :class="{ 'is-invalid': getFieldError('firstName') }"
-                    placeholder="José"
-                    required
-                  />
-
-                  <div
-                    v-if="getFieldError('firstName')"
-                    class="invalid-feedback"
-                  >
-                    {{ getFieldError("firstName") }}
-                  </div>
-                </div>
-
-                <div class="col-12 col-md-6">
-                  <label class="form-label fw-semibold">Apellido</label>
-                  <input
-                    v-model="form.lastName"
-                    type="text"
-                    class="form-control"
-                    :class="{ 'is-invalid': getFieldError('lastName') }"
-                    placeholder="Pérez"
-                    required
-                  />
-
-                  <div
-                    v-if="getFieldError('lastName')"
-                    class="invalid-feedback"
-                  >
-                    {{ getFieldError("lastName") }}
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label fw-semibold">Email</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="bi bi-envelope" />
-                    </span>
-                    <input
-                      v-model="form.email"
-                      type="email"
-                      class="form-control"
-                      :class="{ 'is-invalid': getFieldError('email') }"
-                      placeholder="usuario@citrus.com"
-                      required
-                    />
-
-                    <div v-if="getFieldError('email')" class="invalid-feedback">
-                      {{ getFieldError("email") }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <label class="form-label fw-semibold">Teléfono</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="bi bi-telephone" />
-                    </span>
-                    <input
-                      v-model="form.phoneNumber"
-                      type="tel"
-                      class="form-control"
-                      :class="{ 'is-invalid': getFieldError('phoneNumber') }"
-                      placeholder="+59899123456"
-                      required
-                    />
-
-                    <div
-                      v-if="getFieldError('phoneNumber')"
-                      class="invalid-feedback"
-                    >
-                      {{ getFieldError("phoneNumber") }}
-                    </div>
-                  </div>
-                </div>
-
-                <div class="col-12">
-                  <div class="alert alert-light border mb-0">
-                    <div class="small text-muted mb-1">Username estimado</div>
-                    <code>{{ generatedUsernamePreview }}</code>
-                  </div>
-                </div>
-              </div>
-
-              <div v-if="error" class="alert alert-danger mt-4 mb-0">
-                {{ error }}
-              </div>
-
-              <div class="d-flex justify-content-end gap-2 mt-4">
-                <button
-                  type="reset"
-                  class="btn btn-outline-secondary"
-                  :disabled="loading"
-                >
-                  Limpiar
-                </button>
-
-                <button
-                  type="submit"
-                  class="btn btn-primary px-4"
-                  :disabled="loading"
-                >
-                  <span
-                    v-if="loading"
-                    class="spinner-border spinner-border-sm me-2"
-                    aria-hidden="true"
-                  />
-                  {{ loading ? "Creando..." : "Crear usuario" }}
-                </button>
-              </div>
-            </form>
-          </div>
+  <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="lg:col-span-7">
+      <div class="mb-6 flex items-start justify-between">
+        <div>
+          <h2 class="text-2xl font-bold">Crear usuario</h2>
+          <p class="text-slate-600 dark:text-slate-400">
+            Alta de usuario creada por un administrador.
+          </p>
         </div>
+
+        <RouterLink
+          to="/admin/users"
+          class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-slate-900"
+        >
+          Volver
+        </RouterLink>
       </div>
 
-      <div class="col-12 col-lg-5">
-        <div class="card border-0 shadow-sm h-100">
-          <div class="card-body p-4">
-            <h5 class="fw-semibold mb-3">Resultado</h5>
+      <div
+        class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-slate-900/70"
+      >
+        <div class="p-6">
+          <h5 class="font-semibold mb-2">Datos del usuario</h5>
+          <p class="text-sm text-slate-500 mb-4">
+            El username será generado automáticamente desde nombre y apellido.
+          </p>
 
-            <p class="text-muted">
-              Al crear el usuario, el sistema generará una contraseña temporal y
-              guardará su hash de forma segura.
-            </p>
-
-            <div v-if="temporaryPassword" class="alert alert-success">
-              <div class="fw-semibold mb-2">Usuario creado correctamente</div>
-
-              <div v-if="createdUsername" class="mb-2">
-                Username:
-                <code>{{ createdUsername }}</code>
+          <form class="space-y-4" @submit.prevent="submit">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-semibold mb-1">Nombre</label>
+                <input
+                  v-model="form.firstName"
+                  type="text"
+                  placeholder="José"
+                  required
+                  :class="getFieldError('firstName') ? 'border-red-500' : ''"
+                  class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
+                />
+                <p
+                  v-if="getFieldError('firstName')"
+                  class="mt-1 text-sm text-red-600 dark:text-red-400"
+                >
+                  {{ getFieldError("firstName") }}
+                </p>
               </div>
 
               <div>
-                Contraseña temporal:
-                <strong>{{ temporaryPassword }}</strong>
+                <label class="block text-sm font-semibold mb-1">Apellido</label>
+                <input
+                  v-model="form.lastName"
+                  type="text"
+                  placeholder="Pérez"
+                  required
+                  class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
+                />
+                <p
+                  v-if="getFieldError('lastName')"
+                  class="mt-1 text-sm text-red-600 dark:text-red-400"
+                >
+                  {{ getFieldError("lastName") }}
+                </p>
               </div>
             </div>
 
-            <div v-else class="border rounded p-3 bg-light text-muted small">
-              Todavía no se creó ningún usuario en esta sesión.
+            <div>
+              <label class="block text-sm font-semibold mb-1">Email</label>
+              <input
+                v-model="form.email"
+                type="email"
+                placeholder="usuario@citrus.com"
+                required
+                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
+              />
+              <p
+                v-if="getFieldError('email')"
+                class="mt-1 text-sm text-red-600 dark:text-red-400"
+              >
+                {{ getFieldError("email") }}
+              </p>
             </div>
+
+            <div>
+              <label class="block text-sm font-semibold mb-1">Teléfono</label>
+              <input
+                v-model="form.phoneNumber"
+                type="tel"
+                placeholder="+59899123456"
+                required
+                class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
+              />
+              <p
+                v-if="getFieldError('phoneNumber')"
+                class="mt-1 text-sm text-red-600 dark:text-red-400"
+              >
+                {{ getFieldError("phoneNumber") }}
+              </p>
+            </div>
+
+            <div>
+              <div
+                class="rounded-lg border border-slate-100 bg-slate-50 p-3 text-sm text-slate-600 dark:border-white/6 dark:bg-slate-900/60"
+              >
+                Username estimado:
+                <code class="ml-2">{{ generatedUsernamePreview }}</code>
+              </div>
+            </div>
+
+            <div
+              v-if="error"
+              class="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-900/60 dark:bg-red-950/30 dark:text-red-300"
+            >
+              {{ error }}
+            </div>
+
+            <div class="flex justify-end gap-3 mt-4">
+              <button
+                type="reset"
+                :disabled="loading"
+                class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold dark:border-white/10"
+              >
+                Limpiar
+              </button>
+              <button
+                type="submit"
+                :disabled="loading"
+                class="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white"
+              >
+                {{ loading ? "Creando..." : "Crear usuario" }}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="lg:col-span-5">
+      <div
+        class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
+      >
+        <h5 class="font-semibold mb-3">Resultado</h5>
+        <p class="text-slate-600 dark:text-slate-400 mb-4">
+          Al crear el usuario, el sistema generará una contraseña temporal y
+          guardará su hash de forma segura.
+        </p>
+
+        <div
+          v-if="temporaryPassword"
+          class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-300"
+        >
+          <div class="font-semibold mb-2">Usuario creado correctamente</div>
+          <div v-if="createdUsername" class="mb-2">
+            Username: <code class="ml-2">{{ createdUsername }}</code>
           </div>
+          <div>
+            Contraseña temporal: <strong>{{ temporaryPassword }}</strong>
+          </div>
+        </div>
+
+        <div
+          v-else
+          class="rounded-lg border border-slate-100 p-3 bg-slate-50 text-slate-600 text-sm dark:border-white/6 dark:bg-slate-900/60"
+        >
+          Todavía no se creó ningún usuario en esta sesión.
         </div>
       </div>
     </div>

@@ -4,15 +4,15 @@ import AdminSidebar from "@/features/admin/presentation/components/AdminSidebar.
 </script>
 
 <template>
-  <div class="d-flex vh-100 vw-100 overflow-hidden">
+  <div
+    class="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-100 flex"
+  >
     <AdminSidebar />
 
-    <section
-      class="d-flex flex-column flex-grow-1 min-w-0 overflow-hidden bg-light"
-    >
+    <section class="flex flex-col flex-1 min-w-0">
       <AdminHeader />
 
-      <main class="flex-grow-1 overflow-auto">
+      <main class="flex-1 overflow-auto p-6">
         <router-view />
       </main>
     </section>

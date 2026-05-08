@@ -4,7 +4,7 @@ import ChatsPage from "@/features/chat/presentation/pages/ChatsPage.vue";
 </script>
 
 <template>
-  <div class="d-flex flex-grow-1 h-100 overflow-hidden">
+  <div class="flex flex-1 h-full overflow-hidden">
     <ChatsPage />
     <Chat />
   </div>
