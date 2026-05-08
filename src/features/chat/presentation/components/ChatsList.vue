@@ -1,56 +1,23 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from "vue";
-import "primeicons/primeicons.css";
+import type { ChatRoom } from "../../domain/Chat.ts";
+import { useChatStore } from "../../store/ChatStore.ts";
 
 const NewChatModal = defineAsyncComponent(
   () => import("../components/NewChatModal.vue"),
 );
 
-interface Chat {
-  id: number;
-  name: string;
-  lastMessage: string;
-  timestamp: string;
-  selected: boolean;
-  isGroup: boolean;
-  lastSender: string;
-  isActive: boolean;
-}
-
 const showModal = ref(false);
 
-const chats = ref<Chat[]>([
-  {
-    id: 1,
-    name: "Javalinas Empresariales",
-    lastMessage: "¿Alguien tiene novedades sobre el proyecto?",
-    timestamp: "10:30 AM",
-    selected: true,
-    isGroup: true,
-    lastSender: "FrancoGei",
-    isActive: false,
-  },
-  {
-    id: 2,
-    name: "María",
-    lastMessage: "Nos vemos mañana",
-    timestamp: "9:15 AM",
-    selected: false,
-    isGroup: false,
-    lastSender: "María",
-    isActive: true,
-  },
-  {
-    id: 3,
-    name: "Carlos",
-    lastMessage: "¿Puedes enviarme el archivo?",
-    timestamp: "8:45 AM",
-    lastSender: "Carlos",
-    selected: false,
-    isGroup: false,
-    isActive: true,
-  },
-]);
+const { getChats, getSelectedChat, selectChat } = useChatStore();
+const chats = ref<ChatRoom[] | null>(getChats());
+
+const emit = defineEmits<{ "chat-selected": [chat: ChatRoom | null] }>();
+
+const selectChatEvent = (id: number) => {
+  selectChat(id);
+  emit("chat-selected", getSelectedChat());
+};
 </script>
 
 <template>
@@ -69,7 +36,7 @@ const chats = ref<Chat[]>([
         class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
         @click="showModal = true"
       >
-        <i class="pi pi-plus" />
+        <span class="text-lg leading-none"> + </span>
         Nuevo
       </button>
     </div>
@@ -84,6 +51,7 @@ const chats = ref<Chat[]>([
             ? 'border border-sky-300/70 bg-sky-50 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.15)] dark:border-sky-400/20 dark:bg-sky-500/10 dark:shadow-[inset_0_0_0_1px_rgba(56,189,248,0.08)]'
             : 'bg-transparent hover:bg-slate-100 dark:hover:bg-white/5'
         "
+        @click="selectChatEvent(chat.id)"
       >
         <div class="relative mr-3">
           <img

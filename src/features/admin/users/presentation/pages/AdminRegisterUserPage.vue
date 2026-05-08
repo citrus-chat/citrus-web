@@ -182,7 +182,7 @@ async function submit() {
               <button
                 type="reset"
                 :disabled="loading"
-                class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-sm font-semibold dark:border-white/10"
+                class="rounded-xl border text-red-600 border-slate-300 bg-white px-4 py-2 text-sm font-semibold dark:border-white/10"
               >
                 Limpiar
               </button>
