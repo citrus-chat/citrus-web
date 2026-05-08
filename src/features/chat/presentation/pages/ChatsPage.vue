@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from "vue";
+import "primeicons/primeicons.css";
 
 const NewChatModal = defineAsyncComponent(
   () => import("../components/NewChatModal.vue"),
@@ -68,7 +69,7 @@ const chats = ref<Chat[]>([
         class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
         @click="showModal = true"
       >
-        <span class="text-lg leading-none"> + </span>
+        <i class="pi pi-plus" />
         Nuevo
       </button>
     </div>

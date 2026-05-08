@@ -1,3 +1,7 @@
+<script setup lang="ts">
+import "primeicons/primeicons.css";
+</script>
+
 <template>
   <div class="text-center">
     <img
@@ -10,80 +14,59 @@
       Software Engineer at Tech Company
     </p>
 
-    <div class="mt-4">
-      <div
-        class="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300 mb-2"
+    <div class="flex flex-col mt-4">
+      <h2
+        class="text-md font-semibold uppercase text-slate-700 dark:text-slate-300 mb-2"
       >
         Contact Information
-      </div>
-      <div class="space-y-2 text-sm text-slate-600 dark:text-slate-300">
-        <div class="flex items-center gap-2 justify-center">
-          <svg
-            class="h-4 w-4 text-slate-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M16 12H8m8 4H8M3 7h18"
-            /></svg
-          ><span>john.doe@example.com</span>
+      </h2>
+
+      <div class="flex flex-col space-y-2 text-base">
+        <div class="flex justify-center items-center space-x-2">
+          <i class="pi pi-envelope" />
+          <p>john.doe@example.com</p>
         </div>
-        <div class="flex items-center gap-2 justify-center">
-          <svg
-            class="h-4 w-4 text-slate-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"
-            /></svg
-          ><span>+1 (555) 123-4567</span>
-        </div>
-        <div class="flex items-center gap-2 justify-center">
-          <svg
-            class="h-4 w-4 text-slate-400"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M17 8h2a2 2 0 012 2v8a2 2 0 01-2 2h-2M7 8H5a2 2 0 00-2 2v8a2 2 0 002 2h2"
-            /></svg
-          ><span>San Francisco, CA</span>
+
+        <div class="flex justify-center items-center space-x-2">
+          <i class="pi pi-phone" />
+          <p>+598 99 999 999</p>
         </div>
       </div>
     </div>
 
-    <div class="mt-6 space-y-2">
-      <button
-        class="inline-flex items-center gap-2 text-sm text-slate-700 hover:text-slate-900 dark:text-slate-300"
+    <div class="flex flex-col mt-4">
+      <h2
+        class="text-md font-semibold uppercase text-slate-700 dark:text-slate-300 mb-2"
       >
-        Create support ticket
-      </button>
-      <button
-        class="inline-flex items-center gap-2 text-sm text-slate-700 hover:text-slate-900 dark:text-slate-300"
-      >
-        Send Template
-      </button>
-      <button
-        class="inline-flex items-center gap-2 text-sm text-red-600 hover:text-red-700"
-      >
-        Block User
-      </button>
+        Acciones rápidas
+      </h2>
+
+      <div class="flex flex-col space-y-2 text-base">
+        <div class="flex justify-center items-center space-x-2">
+          <i class="pi pi-ticket" />
+          <button
+            class="text-sm text-slate-700 hover:text-slate-900 dark:text-slate-300"
+          >
+            Create support ticket
+          </button>
+        </div>
+
+        <div class="flex justify-center items-center space-x-2">
+          <i class="pi pi-send" />
+          <button
+            class="text-sm text-slate-700 hover:text-slate-900 dark:text-slate-300"
+          >
+            Send Template
+          </button>
+        </div>
+
+        <div
+          class="flex justify-center items-center space-x-2 text-red-500 hover:text-red-600"
+        >
+          <i class="pi pi-ban" />
+          <button class="text-sm">Block User</button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
