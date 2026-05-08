@@ -1,68 +1,85 @@
 <script setup lang="ts">
 const stats = [
-  { label: "Usuarios", value: 1240, icon: "bi-people" },
-  { label: "Chats activos", value: 342, icon: "bi-chat" },
-  { label: "Reportes", value: 18, icon: "bi-flag" },
-  { label: "Sanciones", value: 7, icon: "bi-slash-circle" },
+  { label: "Usuarios", value: 1240 },
+  { label: "Chats activos", value: 342 },
+  { label: "Reportes", value: 18 },
+  { label: "Sanciones", value: 7 },
 ];
 </script>
 
 <template>
-  <section class="p-4">
-    <!-- Title -->
-    <div class="mb-4">
-      <h2 class="fw-bold mb-1">Dashboard</h2>
-      <p class="text-muted mb-0">Resumen general del sistema</p>
+  <section>
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold">Dashboard</h2>
+      <p class="text-slate-600 dark:text-slate-400">
+        Resumen general del sistema
+      </p>
     </div>
 
-    <!-- Stats -->
-    <div class="row g-3 mb-4">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
       <div
         v-for="stat in stats"
         :key="stat.label"
-        class="col-12 col-md-6 col-lg-3"
+        class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
       >
-        <div class="card shadow-sm h-100">
-          <div class="card-body d-flex align-items-center gap-3">
-            <div class="bg-primary text-white rounded p-3">
-              <i :class="`bi ${stat.icon} fs-4`" />
-            </div>
+        <div class="flex items-center gap-4">
+          <div
+            class="h-12 w-12 rounded-lg bg-blue-600 text-white flex items-center justify-center"
+          >
+            <svg
+              class="h-6 w-6"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M3 7h4v4H3zM10 7h4v4h-4zM17 7h4v4h-4zM3 14h4v4H3zM10 14h4v4h-4zM17 14h4v4h-4z"
+              />
+            </svg>
+          </div>
 
-            <div>
-              <h5 class="mb-0 fw-bold">
-                {{ stat.value }}
-              </h5>
-              <small class="text-muted">
-                {{ stat.label }}
-              </small>
+          <div>
+            <div class="text-lg font-semibold">
+              {{ stat.value }}
+            </div>
+            <div class="text-sm text-slate-500 dark:text-slate-400">
+              {{ stat.label }}
             </div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Recent activity -->
-    <div class="card shadow-sm">
-      <div class="card-body">
-        <h5 class="fw-semibold mb-3">Actividad reciente</h5>
+    <div
+      class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
+    >
+      <h5 class="font-semibold mb-3">Actividad reciente</h5>
+      <ul class="space-y-3">
+        <li
+          class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-300"
+        >
+          <span>Nuevo usuario registrado</span>
+          <small class="text-slate-500 dark:text-slate-400">hace 5 min</small>
+        </li>
 
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Nuevo usuario registrado</span>
-            <small class="text-muted">hace 5 min</small>
-          </li>
+        <li
+          class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-300"
+        >
+          <span>Reporte enviado</span>
+          <small class="text-slate-500 dark:text-slate-400">hace 20 min</small>
+        </li>
 
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Reporte enviado</span>
-            <small class="text-muted">hace 20 min</small>
-          </li>
-
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Usuario bloqueado</span>
-            <small class="text-muted">hace 1 hora</small>
-          </li>
-        </ul>
-      </div>
+        <li
+          class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-300"
+        >
+          <span>Usuario bloqueado</span>
+          <small class="text-slate-500 dark:text-slate-400">hace 1 hora</small>
+        </li>
+      </ul>
     </div>
   </section>
 </template>

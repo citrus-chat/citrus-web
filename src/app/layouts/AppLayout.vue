@@ -1,18 +1,26 @@
 <script setup lang="ts">
-import Sidebar from "@/shared/ui/Sidebar.vue";
-import Header from "@/shared/ui/Header.vue";
+import { defineAsyncComponent } from "vue";
+
+const Sidebar = defineAsyncComponent(() => import("@/shared/ui/Sidebar.vue"));
+const Header = defineAsyncComponent(() => import("@/shared/ui/Header.vue"));
 </script>
 
 <template>
-  <div class="d-flex vh-100 vw-100 overflow-hidden">
-    <Sidebar class="shrink-0" style="width: 16rem" />
+  <div
+    class="min-h-screen bg-slate-50 text-slate-950 dark:bg-slate-950 dark:text-slate-100"
+  >
+    <div
+      class="flex min-h-screen bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.08),_transparent_34%),linear-gradient(180deg,_#f8fafc_0%,_#e2e8f0_100%)] dark:bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.12),_transparent_34%),linear-gradient(180deg,_#020617_0%,_#0b1020_100%)]"
+    >
+      <Sidebar />
 
-    <section class="d-flex flex-column flex-grow-1 min-w-0 overflow-hidden">
-      <Header />
+      <section class="flex min-w-0 flex-1 flex-col overflow-hidden">
+        <Header />
 
-      <main class="flex-grow-1 overflow-hidden">
-        <router-view />
-      </main>
-    </section>
+        <main class="flex-1 overflow-hidden px-4 pb-4">
+          <router-view />
+        </main>
+      </section>
+    </div>
   </div>
 </template>

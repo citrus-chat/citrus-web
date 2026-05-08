@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import NewChatModal from "../components/NewChatModal.vue";
+import { defineAsyncComponent, ref } from "vue";
+
+const NewChatModal = defineAsyncComponent(
+  () => import("../components/NewChatModal.vue"),
+);
 
 interface Chat {
   id: number;
@@ -50,55 +53,63 @@ const chats = ref<Chat[]>([
 </script>
 
 <template>
-  <section class="p-4 overflow-auto" style="flex: 0 0 40%">
-    <div class="d-flex align-items-center justify-content-between mb-3">
-      <h2 class="fs-3 fw-bold mb-0">Chats</h2>
+  <section
+    class="flex h-full min-h-0 flex-col rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-[0_20px_80px_rgba(15,23,42,0.15)] dark:border-white/10 dark:bg-slate-950/80 dark:shadow-[0_20px_80px_rgba(0,0,0,0.35)]"
+    style="flex: 0 0 38%"
+  >
+    <div class="mb-3 flex items-center justify-between">
+      <h2 class="mb-0 text-2xl font-bold text-slate-900 dark:text-slate-50">
+        Chats
+      </h2>
 
       <button
         type="button"
         aria-label="Add chat"
-        class="btn btn-link text-primary p-0"
+        class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
         @click="showModal = true"
       >
-        <i class="bi bi-plus-lg fs-5" />
+        <span class="text-lg leading-none"> + </span>
+        Nuevo
       </button>
     </div>
 
-    <!-- Lista de chats -->
-    <div class="d-flex flex-column gap-1">
+    <div class="flex flex-1 min-h-0 flex-col gap-2 overflow-auto pr-1">
       <div
         v-for="chat in chats"
         :key="chat.id"
-        class="d-flex align-items-center p-3 rounded cursor-pointer chat-item"
-        :class="{ 'border-start border-5 border-primary': chat.selected }"
+        class="chat-item flex cursor-pointer items-center rounded-2xl p-3 transition"
+        :class="
+          chat.selected
+            ? 'border border-sky-300/70 bg-sky-50 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.15)] dark:border-sky-400/20 dark:bg-sky-500/10 dark:shadow-[inset_0_0_0_1px_rgba(56,189,248,0.08)]'
+            : 'bg-transparent hover:bg-slate-100 dark:hover:bg-white/5'
+        "
       >
-        <div class="position-relative me-3">
+        <div class="relative mr-3">
           <img
             src="@/shared/assets/avatar-profile.svg"
             alt="Avatar"
-            class="rounded-circle"
-            style="width: 40px; height: 40px"
+            class="h-10 w-10 rounded-full object-cover"
           />
 
           <span
             v-if="chat.isActive && !chat.isGroup"
-            class="position-absolute bottom-0 end-0 bg-success border border-2 border-white rounded-circle"
-            style="width: 12px; height: 12px"
+            class="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"
           />
         </div>
 
-        <div class="d-flex flex-column flex-grow-1 min-w-0">
-          <div class="d-flex align-items-center justify-content-between w-100">
-            <h3 class="fs-5 fw-semibold mb-0 text-truncate">
+        <div class="flex flex-col flex-1 min-w-0">
+          <div class="flex items-center justify-between w-full">
+            <h3
+              class="mb-0 truncate text-sm font-semibold text-slate-900 dark:text-slate-100"
+            >
               {{ chat.name }}
             </h3>
-
-            <span class="small text-muted ms-2 flex-shrink-0">
-              {{ chat.timestamp }}
-            </span>
+            <span class="text-xs text-slate-500 dark:text-slate-400">{{
+              chat.timestamp
+            }}</span>
           </div>
 
-          <p class="small text-muted text-truncate mb-0">
+          <p class="truncate text-sm text-slate-600 dark:text-slate-400">
             {{
               chat.isGroup
                 ? `${chat.lastSender}: ${chat.lastMessage}`
@@ -109,7 +120,6 @@ const chats = ref<Chat[]>([
       </div>
     </div>
 
-    <!-- Modal en componente separado -->
     <NewChatModal :show="showModal" @close="showModal = false" />
   </section>
 </template>

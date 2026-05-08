@@ -1,55 +1,89 @@
 <template>
-  <!-- Avatar centrado manualmente -->
   <div class="text-center">
     <img
-      class="rounded-circle"
       src="@/shared/assets/avatar-profile.svg"
       alt="Profile Picture"
-      style="width: 128px; height: 128px"
+      class="mx-auto h-32 w-32 rounded-full object-cover"
     />
-    <h2 class="fs-4 fw-semibold mt-3 mb-1">John Doe</h2>
-    <p class="text-muted mb-3">Software Engineer at Tech Company</p>
-  </div>
-
-  <!-- Contact Information -->
-  <div class="mt-3 d-flex flex-column align-items-center">
-    <p class="fw-bold text-uppercase mb-2 small text-black">
-      Contact Information
+    <h2 class="text-xl font-semibold mt-3 mb-1">John Doe</h2>
+    <p class="text-slate-600 dark:text-slate-400 mb-3">
+      Software Engineer at Tech Company
     </p>
-    <div class="d-flex align-items-center gap-2 mb-2">
-      <i class="bi bi-envelope text-muted" />
-      <p class="text-muted mb-0">john.doe@example.com</p>
-    </div>
-    <div class="d-flex align-items-center gap-2 mb-2">
-      <i class="bi bi-telephone text-muted" />
-      <p class="text-muted mb-0">+1 (555) 123-4567</p>
-    </div>
-    <div class="d-flex align-items-center gap-2">
-      <i class="bi bi-geo-alt text-muted" />
-      <p class="text-muted mb-0">San Francisco, CA</p>
-    </div>
-  </div>
 
-  <!-- Quick Actions -->
-  <div class="mt-4 d-flex flex-column align-items-center">
-    <p class="fw-bold text-uppercase mb-2 small text-black">Quick Actions</p>
-    <button
-      class="btn btn-link d-flex align-items-center gap-2 text-muted p-0 mb-2"
-    >
-      <i class="bi bi-ticket text-primary" />
-      <span>Create support ticket</span>
-    </button>
-    <button
-      class="btn btn-link d-flex align-items-center gap-2 text-muted p-0 mb-2"
-    >
-      <i class="bi bi-send text-primary" />
-      <span>Send Template</span>
-    </button>
-    <button
-      class="btn btn-link d-flex align-items-center gap-2 text-danger p-0"
-    >
-      <i class="bi bi-slash-circle" />
-      <span>Block User</span>
-    </button>
+    <div class="mt-4">
+      <div
+        class="text-xs font-semibold uppercase text-slate-700 dark:text-slate-300 mb-2"
+      >
+        Contact Information
+      </div>
+      <div class="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+        <div class="flex items-center gap-2 justify-center">
+          <svg
+            class="h-4 w-4 text-slate-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M16 12H8m8 4H8M3 7h18"
+            /></svg
+          ><span>john.doe@example.com</span>
+        </div>
+        <div class="flex items-center gap-2 justify-center">
+          <svg
+            class="h-4 w-4 text-slate-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8"
+            /></svg
+          ><span>+1 (555) 123-4567</span>
+        </div>
+        <div class="flex items-center gap-2 justify-center">
+          <svg
+            class="h-4 w-4 text-slate-400"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M17 8h2a2 2 0 012 2v8a2 2 0 01-2 2h-2M7 8H5a2 2 0 00-2 2v8a2 2 0 002 2h2"
+            /></svg
+          ><span>San Francisco, CA</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-6 space-y-2">
+      <button
+        class="inline-flex items-center gap-2 text-sm text-slate-700 hover:text-slate-900 dark:text-slate-300"
+      >
+        Create support ticket
+      </button>
+      <button
+        class="inline-flex items-center gap-2 text-sm text-slate-700 hover:text-slate-900 dark:text-slate-300"
+      >
+        Send Template
+      </button>
+      <button
+        class="inline-flex items-center gap-2 text-sm text-red-600 hover:text-red-700"
+      >
+        Block User
+      </button>
+    </div>
   </div>
 </template>
