@@ -26,18 +26,26 @@ const messages = [
     class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white/80 shadow-[0_20px_80px_rgba(15,23,42,0.15)] dark:border-white/10 dark:bg-slate-950/80 dark:shadow-[0_20px_80px_rgba(0,0,0,0.35)]"
   >
     <div
-      class="flex items-center gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
+      class="flex justify-between items-center gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
     >
-      <img
-        src="@/shared/assets/group-image.jpeg"
-        alt="Group Avatar"
-        class="h-9 w-9 rounded-full object-cover"
-      />
-      <div>
-        <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
-          Javalinas Empresariales
-        </h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400">Grupo activo</p>
+      <div class="flex space-x-3 flex-1">
+        <img
+          src="@/shared/assets/group-image.jpeg"
+          alt="Group Avatar"
+          class="h-9 w-9 rounded-full object-cover"
+        />
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
+            Javalinas Empresariales
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Grupo activo</p>
+        </div>
+      </div>
+
+      <div class="flex space-x-3">
+        <i class="pi pi-phone text-slate-500 dark:text-slate-400" />
+        <i class="pi pi-video text-slate-500 dark:text-slate-400" />
+        <i class="pi pi-ellipsis-v text-slate-500 dark:text-slate-400" />
       </div>
     </div>
 

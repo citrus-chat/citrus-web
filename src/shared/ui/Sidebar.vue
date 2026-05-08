@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent, computed } from "vue";
 import { useRouter } from "vue-router";
+import "primeicons/primeicons.css";
 
 const ThemeToggle = defineAsyncComponent(
   () => import("@/shared/ui/ThemeToggle.vue"),
@@ -11,9 +12,9 @@ const goProfile = () => router.push("/profile");
 const goChats = () => router.push("/");
 
 const items = [
-  { icon: "chat", label: "Chats", to: "/" },
-  { icon: "users", label: "Contactos", to: "/contacts" },
-  { icon: "flag", label: "Reportes", to: "/reports" },
+  { icon: "pi-comments", label: "Chats", to: "/" },
+  { icon: "pi-users", label: "Contactos", to: "/contacts" },
+  { icon: "pi-flag", label: "Reportes", to: "/reports" },
 ];
 
 const current = computed(() => router.currentRoute.value.path);
@@ -58,51 +59,7 @@ const current = computed(() => router.currentRoute.value.path);
                 current === item.to,
             }"
           >
-            <svg
-              v-if="item.icon === 'chat'"
-              class="h-5 w-5 text-current"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4-.8L3 20l1.2-3.6A7.963 7.963 0 013 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-              />
-            </svg>
-            <svg
-              v-else-if="item.icon === 'users'"
-              class="h-5 w-5 text-current"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M17 20h5v-2a4 4 0 00-3-3.87M9 20H4v-2a4 4 0 013-3.87M16 11a4 4 0 11-8 0 4 4 0 018 0z"
-              />
-            </svg>
-            <svg
-              v-else
-              class="h-5 w-5 text-current"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 13l4 4L19 7"
-              />
-            </svg>
+            <i class="pi" :class="item.icon" />
 
             <span class="truncate">{{ item.label }}</span>
           </RouterLink>
