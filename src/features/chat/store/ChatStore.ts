@@ -1,57 +1,21 @@
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import type { ChatRoom } from "../domain/Chat.ts";
+import type { Message } from "../domain/Message.ts";
+import { getAllMessages, getChats } from "../infrastructure/api/chatApi.ts";
+
+const selectedChat = ref<ChatRoom | null>(null);
+
+const chats = ref<ChatRoom[]>(getChats());
+
+const allMessages = ref<Message[]>(getAllMessages());
 
 export const useChatStore = () => {
-  //const chats = ref<ChatRoom[]>([]);
-  const selectedChat = ref<ChatRoom | null>(null);
-  const chats = ref<ChatRoom[]>([
-    {
-      id: 1,
-      name: "Javalinas Empresariales",
-      lastMessage: "¿Alguien tiene novedades sobre el proyecto?",
-      timestamp: "10:30 AM",
-      selected: false,
-      isGroup: true,
-      lastSender: "FrancoGei",
-      isActive: false,
-    },
-    {
-      id: 2,
-      name: "María",
-      lastMessage: "Nos vemos mañana",
-      timestamp: "9:15 AM",
-      selected: false,
-      isGroup: false,
-      lastSender: "María",
-      isActive: true,
-    },
-    {
-      id: 3,
-      name: "Carlos",
-      lastMessage: "¿Puedes enviarme el archivo?",
-      timestamp: "8:45 AM",
-      lastSender: "Carlos",
-      selected: false,
-      isGroup: false,
-      isActive: true,
-    },
-  ]);
-
-  const getSelectedChat = (): ChatRoom | null => {
-    const storedChat = localStorage.getItem("selectedChat");
-    if (storedChat) {
-      selectedChat.value = JSON.parse(storedChat);
-    } else {
-      selectedChat.value = null;
-    }
-    return selectedChat.value;
-  };
-
-  // TODO: reemplazar por chats de la API
-  const getChats = (): ChatRoom[] | null => chats.value;
+  const messages = computed(() =>
+    allMessages.value.filter((m) => m.chatId === selectedChat.value?.id),
+  );
 
   const selectChat = (id: number | null) => {
-    const chat = chats.value.find((c) => c.id === id) || null;
+    const chat = chats.value.find((c) => c.id === id) ?? null;
     selectedChat.value = chat;
     if (chat) {
       localStorage.setItem("selectedChat", JSON.stringify(chat));
@@ -60,9 +24,28 @@ export const useChatStore = () => {
     }
   };
 
+  const lastMessageChatText = computed(() => (chatId: number) => {
+    const chatMessages = allMessages.value.filter((m) => m.chatId === chatId);
+    return chatMessages.at(-1)?.text ?? "";
+  });
+
+  const lastMessageChatTime = computed(() => (chatId: number) => {
+    const chatMessages = allMessages.value.filter((m) => m.chatId === chatId);
+    const last = chatMessages.at(-1);
+    return last?.deliveredAt
+      ? new Date(last.deliveredAt).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })
+      : "";
+  });
+
   return {
-    getSelectedChat,
-    getChats,
+    chats,
+    selectedChat,
+    messages,
     selectChat,
+    lastMessageChatText,
+    lastMessageChatTime,
   };
 };

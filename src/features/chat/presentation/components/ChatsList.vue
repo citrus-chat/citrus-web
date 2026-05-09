@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from "vue";
-import type { ChatRoom } from "../../domain/Chat.ts";
 import { useChatStore } from "../../store/ChatStore.ts";
 
 const NewChatModal = defineAsyncComponent(
@@ -9,15 +8,13 @@ const NewChatModal = defineAsyncComponent(
 
 const showModal = ref(false);
 
-const { getChats, getSelectedChat, selectChat } = useChatStore();
-const chats = ref<ChatRoom[] | null>(getChats());
-
-const emit = defineEmits<{ "chat-selected": [chat: ChatRoom | null] }>();
-
-const selectChatEvent = (id: number) => {
-  selectChat(id);
-  emit("chat-selected", getSelectedChat());
-};
+const {
+  chats,
+  selectedChat,
+  selectChat,
+  lastMessageChatText,
+  lastMessageChatTime,
+} = useChatStore();
 </script>
 
 <template>
@@ -47,11 +44,11 @@ const selectChatEvent = (id: number) => {
         :key="chat.id"
         class="chat-item flex cursor-pointer items-center rounded-2xl p-3 transition"
         :class="
-          chat.selected
+          selectedChat?.id === chat.id
             ? 'border border-sky-300/70 bg-sky-50 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.15)] dark:border-sky-400/20 dark:bg-sky-500/10 dark:shadow-[inset_0_0_0_1px_rgba(56,189,248,0.08)]'
             : 'bg-transparent hover:bg-slate-100 dark:hover:bg-white/5'
         "
-        @click="selectChatEvent(chat.id)"
+        @click="selectChat(chat.id)"
       >
         <div class="relative mr-3">
           <img
@@ -61,7 +58,7 @@ const selectChatEvent = (id: number) => {
           />
 
           <span
-            v-if="chat.isActive && !chat.isGroup"
+            v-if="chat.type === 'direct'"
             class="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"
           />
         </div>
@@ -73,17 +70,12 @@ const selectChatEvent = (id: number) => {
             >
               {{ chat.name }}
             </h3>
-            <span class="text-xs text-slate-500 dark:text-slate-400">{{
-              chat.timestamp
-            }}</span>
           </div>
-
-          <p class="truncate text-sm text-slate-600 dark:text-slate-400">
-            {{
-              chat.isGroup
-                ? `${chat.lastSender}: ${chat.lastMessage}`
-                : chat.lastMessage
-            }}
+          <p class="text-sm text-slate-600 dark:text-slate-400">
+            {{ lastMessageChatText(chat.id) }}
+          </p>
+          <p class="text-xs text-slate-500 dark:text-slate-400">
+            {{ lastMessageChatTime(chat.id) }}
           </p>
         </div>
       </div>

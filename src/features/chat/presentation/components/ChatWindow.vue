@@ -1,24 +1,7 @@
 <script setup lang="ts">
-const messages = [
-  {
-    id: 1,
-    text: "¡Hola a todos!",
-    owner: "me",
-    timestamp: "22/04/2026 - 21:07",
-  },
-  {
-    id: 2,
-    text: "¿Cómo están?",
-    owner: "other",
-    timestamp: "22/04/2026 - 21:08",
-  },
-  {
-    id: 3,
-    text: "¿Alguien tiene novedades sobre el proyecto?",
-    owner: "other",
-    timestamp: "22/04/2026 - 21:09",
-  },
-];
+import { useChatStore } from "../../store/ChatStore";
+
+const { messages, selectedChat } = useChatStore();
 </script>
 
 <template>
@@ -29,15 +12,15 @@ const messages = [
       class="flex items-center gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
     >
       <img
-        src="@/shared/assets/group-image.jpeg"
+        src="@/shared/assets/avatar-profile.svg"
         alt="Group Avatar"
         class="h-9 w-9 rounded-full object-cover"
       />
       <div>
         <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
-          Javalinas Empresariales
+          {{ selectedChat?.name }}
         </h2>
-        <p class="text-xs text-slate-500 dark:text-slate-400">Grupo activo</p>
+        <!-- <p class="text-xs text-slate-500 dark:text-slate-400">Grupo activo</p> -->
       </div>
     </div>
 
@@ -46,15 +29,22 @@ const messages = [
         v-for="message in messages"
         :key="message.id"
         class="flex"
-        :class="message.owner === 'me' ? 'justify-end' : 'justify-start'"
+        :class="message.sender === 'me' ? 'justify-end' : 'justify-start'"
       >
         <div class="max-w-[70%]">
           <div
             class="mb-2 flex items-center gap-3"
-            :class="message.owner === 'me' ? 'justify-end' : 'justify-start'"
+            :class="message.sender === 'me' ? 'justify-end' : 'justify-start'"
           >
             <p class="text-xs text-slate-500 dark:text-slate-500">
-              {{ message.timestamp }}
+              {{
+                message.deliveredAt
+                  ? new Date(message.deliveredAt).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  : ""
+              }}
             </p>
             <img
               src="@/shared/assets/avatar-profile.svg"
@@ -65,7 +55,7 @@ const messages = [
 
           <div
             :class="
-              message.owner === 'me'
+              message.sender === 'me'
                 ? 'ml-auto rounded-2xl rounded-br-md bg-blue-600 px-4 py-2 text-sm text-white shadow-sm'
                 : 'rounded-2xl rounded-bl-md bg-slate-100 px-4 py-2 text-sm text-slate-900 shadow-sm ring-1 ring-slate-200 dark:bg-slate-800/90 dark:text-slate-100 dark:ring-white/5'
             "

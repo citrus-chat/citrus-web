@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
-import type { ChatRoom } from "../../domain/Chat.ts";
 import ChatsList from "../components/ChatsList.vue";
 import ChatWindow from "../components/ChatWindow.vue";
 import { useChatStore } from "../../store/ChatStore.ts";
 
-const { getSelectedChat } = useChatStore();
-const selectedChat = ref<ChatRoom | null>(getSelectedChat());
+const { selectedChat } = useChatStore();
 </script>
 
 <template>
