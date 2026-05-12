@@ -79,3 +79,22 @@ export const getAllMessages = (): Message[] => {
     },
   ];
 };
+
+export const getCountChats = (): number => {
+  return getChats().length;
+};
+
+export const createChat = (
+  name: string,
+  type: "group" | "direct",
+): ChatRoom => {
+  const newChat: ChatRoom = {
+    id: getCountChats() + 1,
+    name,
+    type,
+    createdBy: 1, // Suponemos que el usuario actual tiene ID 1
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  };
+  return newChat;
+};

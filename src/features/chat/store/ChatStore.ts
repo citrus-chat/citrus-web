@@ -1,7 +1,11 @@
 import { ref, computed } from "vue";
 import type { ChatRoom } from "../domain/Chat.ts";
 import type { Message } from "../domain/Message.ts";
-import { getAllMessages, getChats } from "../infrastructure/api/chatApi.ts";
+import {
+  getAllMessages,
+  getChats,
+  createChat,
+} from "../infrastructure/api/chatApi.ts";
 
 const selectedChat = ref<ChatRoom | null>(null);
 
@@ -14,8 +18,20 @@ export const useChatStore = () => {
     allMessages.value.filter((m) => m.chatId === selectedChat.value?.id),
   );
 
-  const selectChat = (id: number | null) => {
-    const chat = chats.value.find((c) => c.id === id) ?? null;
+  const chatExists = (name: string) => {
+    return chats.value.some((c) => c.name.toLowerCase() === name.toLowerCase());
+  };
+
+  const addChat = (name: string, type: "group" | "direct") => {
+    if (chatExists(name)) {
+      alert("A chat with this name already exists.");
+      return;
+    }
+    chats.value.unshift(createChat(name, type));
+  };
+
+  const selectChat = (name: string | null) => {
+    const chat = chats.value.find((c) => c.name === name) ?? null;
     selectedChat.value = chat;
     if (chat) {
       localStorage.setItem("selectedChat", JSON.stringify(chat));
@@ -45,7 +61,10 @@ export const useChatStore = () => {
     selectedChat,
     messages,
     selectChat,
+    createChat,
     lastMessageChatText,
     lastMessageChatTime,
+    chatExists,
+    addChat,
   };
 };
