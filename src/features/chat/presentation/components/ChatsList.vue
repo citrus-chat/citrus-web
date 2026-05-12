@@ -48,7 +48,7 @@ const {
             ? 'border border-sky-300/70 bg-sky-50 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.15)] dark:border-sky-400/20 dark:bg-sky-500/10 dark:shadow-[inset_0_0_0_1px_rgba(56,189,248,0.08)]'
             : 'bg-transparent hover:bg-slate-100 dark:hover:bg-white/5'
         "
-        @click="selectChat(chat.id)"
+        @click="selectChat(chat.name)"
       >
         <div class="relative mr-3">
           <img

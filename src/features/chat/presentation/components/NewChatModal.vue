@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { watch, ref } from "vue";
+import { useChatStore } from "../../store/ChatStore";
 const props = defineProps<{ show: boolean }>();
 const emit = defineEmits<{ close: [] }>();
+const { addChat, selectChat } = useChatStore();
 
 const visible = ref(props.show);
 
@@ -12,6 +14,38 @@ watch(
 watch(visible, (v) => {
   if (!v) emit("close");
 });
+
+const contacts = [
+  { id: 1, name: "John Doe" },
+  { id: 2, name: "Jane Smith" },
+  { id: 3, name: "Bob Lee" },
+];
+
+const onSubmit = (e: Event) => {
+  e.preventDefault();
+
+  const selectedContacts = contacts.filter(
+    (contact) =>
+      (document.getElementById(`contact-${contact.id}`) as HTMLInputElement)
+        ?.checked,
+  );
+
+  if (selectedContacts.length === 0) {
+    alert("Please select at least one contact to start a chat.");
+    return;
+  }
+
+  if (selectedContacts.length > 1) {
+    alert(
+      "Group chat creation is not implemented yet. Please select only one contact.",
+    );
+    return;
+  }
+
+  addChat(selectedContacts[0]!.name, "direct");
+  selectChat(selectedContacts[0]!.name);
+  visible.value = false;
+};
 </script>
 
 <template>
@@ -25,8 +59,9 @@ watch(visible, (v) => {
         @click="visible = false"
       />
 
-      <div
+      <form
         class="relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-lg dark:bg-slate-900/80"
+        @submit="onSubmit"
       >
         <div class="flex items-center justify-between mb-4">
           <h3 class="text-lg font-semibold">Nuevo chat</h3>
@@ -39,67 +74,34 @@ watch(visible, (v) => {
         </div>
 
         <div class="space-y-4">
-          <div
-            class="flex items-center gap-3 rounded-lg border border-slate-200 p-2 dark:border-white/10"
+          <button
+            class="w-full flex items-center gap-3 rounded-lg border border-slate-200 p-2 dark:border-white/10"
           >
-            <svg
-              class="h-5 w-5 text-slate-400"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M21 21l-4.35-4.35m0 0A7 7 0 1111 4a7 7 0 015.65 11.65z"
-              />
-            </svg>
+            <i class="pi pi-search" />
             <input
               type="text"
               placeholder="Nombre del chat o usuario"
               class="flex-1 bg-transparent outline-none"
             />
-          </div>
+          </button>
 
           <p class="text-sm text-slate-500 dark:text-slate-400">
             CONTACTOS FRECUENTES
           </p>
 
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <img
-                  src="@/shared/assets/avatar-profile.svg"
-                  class="h-7 w-7 rounded-full"
-                />
-                <span>John Doe</span>
-              </div>
-              <input type="checkbox" />
+          <div
+            v-for="contact in contacts"
+            :key="contact.id"
+            class="flex items-center justify-between"
+          >
+            <div class="flex items-center gap-3">
+              <img
+                src="@/shared/assets/avatar-profile.svg"
+                class="h-7 w-7 rounded-full"
+              />
+              <span>{{ contact.name }}</span>
             </div>
-
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <img
-                  src="@/shared/assets/avatar-profile.svg"
-                  class="h-7 w-7 rounded-full"
-                />
-                <span>Jane Smith</span>
-              </div>
-              <input type="checkbox" />
-            </div>
-
-            <div class="flex items-center justify-between">
-              <div class="flex items-center gap-3">
-                <img
-                  src="@/shared/assets/avatar-profile.svg"
-                  class="h-7 w-7 rounded-full"
-                />
-                <span>Bob Lee</span>
-              </div>
-              <input type="checkbox" />
-            </div>
+            <input :id="`contact-${contact.id}`" type="checkbox" />
           </div>
         </div>
 
@@ -114,7 +116,7 @@ watch(visible, (v) => {
             Iniciar chat
           </button>
         </div>
-      </div>
+      </form>
     </div>
   </transition>
 </template>
