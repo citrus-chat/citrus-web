@@ -20,7 +20,6 @@ const { messages, selectedChat } = useChatStore();
         <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
           {{ selectedChat?.name }}
         </h2>
-        <!-- <p class="text-xs text-slate-500 dark:text-slate-400">Grupo activo</p> -->
       </div>
     </div>
 

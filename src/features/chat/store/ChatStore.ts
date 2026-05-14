@@ -18,6 +18,8 @@ export const useChatStore = () => {
     allMessages.value.filter((m) => m.chatId === selectedChat.value?.id),
   );
 
+  const chatsIsEmpty = computed(() => chats.value.length === 0);
+
   const chatExists = (name: string) => {
     return chats.value.some((c) => c.name.toLowerCase() === name.toLowerCase());
   };
@@ -60,10 +62,11 @@ export const useChatStore = () => {
     chats,
     selectedChat,
     messages,
-    selectChat,
-    createChat,
     lastMessageChatText,
     lastMessageChatTime,
+    chatsIsEmpty,
+    selectChat,
+    createChat,
     chatExists,
     addChat,
   };

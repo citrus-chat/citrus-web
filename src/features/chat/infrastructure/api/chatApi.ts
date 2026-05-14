@@ -3,30 +3,30 @@ import type { Message } from "../../domain/Message";
 
 export const getChats = (): ChatRoom[] => {
   return [
-    {
-      id: 1,
-      type: "group",
-      name: "Javalinas Empresariales",
-      createdBy: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 2,
-      type: "direct",
-      name: "María",
-      createdBy: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
-    {
-      id: 3,
-      type: "direct",
-      name: "Carlos",
-      createdBy: 1,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    },
+    // {
+    //   id: 1,
+    //   type: "group",
+    //   name: "Javalinas Empresariales",
+    //   createdBy: 1,
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    // },
+    // {
+    //   id: 2,
+    //   type: "direct",
+    //   name: "María",
+    //   createdBy: 1,
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    // },
+    // {
+    //   id: 3,
+    //   type: "direct",
+    //   name: "Carlos",
+    //   createdBy: 1,
+    //   createdAt: new Date(),
+    //   updatedAt: new Date(),
+    // },
   ];
 };
 
