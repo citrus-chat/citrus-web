@@ -6,6 +6,12 @@ export const authRoutes: RouteRecordRaw[] = [
     component: () => import("@/app/layouts/AuthLayout.vue"),
     children: [
       {
+        path: "login",
+        name: "login",
+        component: () =>
+          import("@/features/auth/login/presentation/pages/LoginPage.vue"),
+      },
+      {
         path: "validate-account",
         name: "validate-account",
         component: () =>
