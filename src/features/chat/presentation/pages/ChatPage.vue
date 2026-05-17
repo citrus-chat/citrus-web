@@ -1,9 +1,21 @@
 <script setup lang="ts">
+import { ref } from "vue";
 import ChatsList from "../components/ChatsList.vue";
 import ChatWindow from "../components/ChatWindow.vue";
-import { useChatStore } from "../../store/ChatStore.ts";
+import NewChatModal from "../components/NewChatModal.vue";
+import { useChatStore } from "../../store/ChatStore";
 
 const { selectedChat, chatsIsEmpty } = useChatStore();
+
+const isNewChatModalOpen = ref(false);
+
+const openNewChatModal = () => {
+  isNewChatModalOpen.value = true;
+};
+
+const closeNewChatModal = () => {
+  isNewChatModalOpen.value = false;
+};
 </script>
 
 <template>
@@ -25,6 +37,7 @@ const { selectedChat, chatsIsEmpty } = useChatStore();
       </p>
       <button
         class="px-4 py-2 bg-orange-700 text-white rounded-md hover:bg-orange-600 transition-colors flex items-center space-x-2"
+        @click="openNewChatModal"
       >
         <i class="pi pi-plus" />
         <span>Nueva Conversación</span>
@@ -48,5 +61,11 @@ const { selectedChat, chatsIsEmpty } = useChatStore();
         </div>
       </div>
     </div>
+
+    <NewChatModal
+      v-if="isNewChatModalOpen"
+      :show="isNewChatModalOpen"
+      @close="closeNewChatModal"
+    />
   </div>
 </template>
