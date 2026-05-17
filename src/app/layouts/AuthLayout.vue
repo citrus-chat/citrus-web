@@ -1,9 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useRoute } from "vue-router";
 import useTheme from "@/shared/composables/useTheme";
 
 const { isDark, toggleTheme } = useTheme();
 const dark = computed(() => isDark());
+
+const route = useRoute();
+const showHeader = computed(() => route.name !== "login");
 </script>
 
 <template>
@@ -44,7 +48,7 @@ const dark = computed(() => isDark());
     </button>
 
     <section class="w-full max-w-md">
-      <div class="text-center mb-6">
+      <div v-if="showHeader" class="text-center mb-6">
         <img
           src="@/shared/assets/citrus-chat.png"
           alt="Citrus Chat"
@@ -57,9 +61,7 @@ const dark = computed(() => isDark());
         </p>
       </div>
 
-      <div
-        class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
-      >
+      <div class="w-full">
         <router-view />
       </div>
     </section>
