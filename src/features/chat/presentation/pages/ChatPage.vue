@@ -1,21 +1,9 @@
 <script setup lang="ts">
-import { ref } from "vue";
 import ChatsList from "../components/ChatsList.vue";
 import ChatWindow from "../components/ChatWindow.vue";
-import NewChatModal from "../components/NewChatModal.vue";
 import { useChatStore } from "../../store/ChatStore";
 
 const { selectedChat, chatsIsEmpty } = useChatStore();
-
-const isNewChatModalOpen = ref(false);
-
-const openNewChatModal = () => {
-  isNewChatModalOpen.value = true;
-};
-
-const closeNewChatModal = () => {
-  isNewChatModalOpen.value = false;
-};
 </script>
 
 <template>
@@ -31,17 +19,9 @@ const closeNewChatModal = () => {
       />
       <h2 class="text-2xl font-semibold">Bandeja de Entrada vacía</h2>
       <p class="text-center text-slate-500">
-        No tienes conversaciones aún. Inicia una nueva desde el panel lateral
-        para comenzar a colaborar con tus contactos. ¡CitrusChat hace que la
-        comunicación sea fácil y segura!
+        Buscá una persona en el buscador superior para iniciar una conversación.
+        ¡CitrusChat hace que la comunicación sea fácil y segura!
       </p>
-      <button
-        class="px-4 py-2 bg-orange-700 text-white rounded-md hover:bg-orange-600 transition-colors flex items-center space-x-2"
-        @click="openNewChatModal"
-      >
-        <i class="pi pi-plus" />
-        <span>Nueva Conversación</span>
-      </button>
     </div>
     <ChatsList v-else />
     <ChatWindow v-if="selectedChat" :chat="selectedChat" class="flex-1" />
@@ -61,11 +41,5 @@ const closeNewChatModal = () => {
         </div>
       </div>
     </div>
-
-    <NewChatModal
-      v-if="isNewChatModalOpen"
-      :show="isNewChatModalOpen"
-      @close="closeNewChatModal"
-    />
   </div>
 </template>
