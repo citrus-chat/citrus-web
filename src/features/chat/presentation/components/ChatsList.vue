@@ -1,12 +1,5 @@
 <script setup lang="ts">
-import { defineAsyncComponent, ref } from "vue";
 import { useChatStore } from "../../store/ChatStore.ts";
-
-const NewChatModal = defineAsyncComponent(
-  () => import("../components/NewChatModal.vue"),
-);
-
-const showModal = ref(false);
 
 const {
   chats,
@@ -22,20 +15,10 @@ const {
     class="flex h-full min-h-0 flex-col rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-[0_20px_80px_rgba(15,23,42,0.15)] dark:border-white/10 dark:bg-slate-950/80 dark:shadow-[0_20px_80px_rgba(0,0,0,0.35)]"
     style="flex: 0 0 38%"
   >
-    <div class="mb-3 flex items-center justify-between">
+    <div class="mb-3">
       <h2 class="mb-0 text-2xl font-bold text-slate-900 dark:text-slate-50">
         Chats
       </h2>
-
-      <button
-        type="button"
-        aria-label="Add chat"
-        class="inline-flex items-center gap-2 rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
-        @click="showModal = true"
-      >
-        <span class="text-lg leading-none"> + </span>
-        Nuevo
-      </button>
     </div>
 
     <div class="flex flex-1 min-h-0 flex-col gap-2 overflow-auto pr-1">
@@ -80,7 +63,5 @@ const {
         </div>
       </div>
     </div>
-
-    <NewChatModal :show="showModal" @close="showModal = false" />
   </section>
 </template>
