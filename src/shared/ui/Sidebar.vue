@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { defineAsyncComponent, computed } from "vue";
 import { useRouter } from "vue-router";
+import { useChatStore } from "@/features/chat/store/ChatStore";
+import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import "primeicons/primeicons.css";
 
 const ThemeToggle = defineAsyncComponent(
@@ -8,12 +10,12 @@ const ThemeToggle = defineAsyncComponent(
 );
 
 const router = useRouter();
-const goProfile = () => router.push("/profile");
+const { openUserProfile, currentUser } = useChatStore();
 const goChats = () => router.push("/");
 
 const items = [
   { icon: "pi-comments", label: "Chats", to: "/" },
-  { icon: "pi-users", label: "Contactos", to: "/contacts" },
+  // { icon: "pi-users", label: "Contactos", to: "/contacts" },
   { icon: "pi-flag", label: "Reportes", to: "/reports" },
 ];
 
@@ -38,12 +40,6 @@ const current = computed(() => router.currentRoute.value.path);
           <h5 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
             Citrus Chat
           </h5>
-          <button
-            class="text-sm text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-            @click="goProfile"
-          >
-            Mi perfil
-          </button>
         </div>
       </div>
 
@@ -70,21 +66,31 @@ const current = computed(() => router.currentRoute.value.path);
     <div class="px-3 pb-4 mt-auto">
       <div class="border-t border-slate-200 pt-3 dark:border-white/10">
         <div class="flex items-center justify-between gap-3">
-          <div class="flex items-center gap-3">
+          <button
+            type="button"
+            class="flex min-w-0 items-center gap-3 rounded-2xl px-2 py-2 text-left transition hover:bg-slate-100 dark:hover:bg-white/5"
+            @click="openUserProfile(currentUser)"
+          >
             <img
-              src="@/shared/assets/avatar-profile.svg"
-              alt="Me"
+              :src="currentUser.avatar ?? avatarProfile"
+              alt="Mi perfil"
               class="h-10 w-10 rounded-full object-cover"
             />
-            <div class="text-sm">
+            <div class="min-w-0 text-sm">
               <div class="font-semibold text-slate-900 dark:text-slate-100">
-                Usuario
+                {{ currentUser.name }}
               </div>
-              <div class="text-xs text-slate-500 dark:text-slate-400">
-                Online
+              <div class="truncate text-xs text-slate-500 dark:text-slate-400">
+                {{
+                  currentUser.status === "online"
+                    ? "Online"
+                    : currentUser.status === "away"
+                      ? "Ausente"
+                      : "Offline"
+                }}
               </div>
             </div>
-          </div>
+          </button>
 
           <ThemeToggle />
         </div>

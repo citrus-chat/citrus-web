@@ -1,8 +1,14 @@
 <script setup lang="ts">
 import { defineAsyncComponent } from "vue";
+import { useChatStore } from "@/features/chat/store/ChatStore";
 
 const Sidebar = defineAsyncComponent(() => import("@/shared/ui/Sidebar.vue"));
 const Header = defineAsyncComponent(() => import("@/shared/ui/Header.vue"));
+const UserProfilePanel = defineAsyncComponent(
+  () => import("@/features/chat/presentation/components/UserProfilePanel.vue"),
+);
+
+const { isUserProfilePanelOpen } = useChatStore();
 </script>
 
 <template>
@@ -17,9 +23,13 @@ const Header = defineAsyncComponent(() => import("@/shared/ui/Header.vue"));
       <section class="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header />
 
-        <main class="flex-1 overflow-hidden px-4 pb-4">
-          <router-view />
-        </main>
+        <div class="flex min-h-0 flex-1 overflow-hidden">
+          <main class="flex min-w-0 flex-1 overflow-hidden px-4 pb-4">
+            <router-view />
+          </main>
+
+          <UserProfilePanel v-if="isUserProfilePanelOpen" />
+        </div>
       </section>
     </div>
   </div>

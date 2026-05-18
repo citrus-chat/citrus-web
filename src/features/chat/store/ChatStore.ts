@@ -1,21 +1,12 @@
 import { ref, computed } from "vue";
 import type { ChatRoom } from "../domain/Chat.ts";
 import type { Message } from "../domain/Message.ts";
+import type { WorkspaceUser } from "../domain/WorkspaceUser.ts";
 import {
   getAllMessages,
   getChats,
   createChat,
 } from "../infrastructure/api/chatApi.ts";
-
-// Workspace user interface
-export interface WorkspaceUser {
-  id: string;
-  name: string;
-  username: string;
-  email: string;
-  status: "online" | "offline" | "away";
-  avatar?: string;
-}
 
 // Mock workspace users
 const mockWorkspaceUsers: WorkspaceUser[] = [
@@ -25,6 +16,10 @@ const mockWorkspaceUsers: WorkspaceUser[] = [
     username: "john.doe",
     email: "john@example.com",
     status: "online",
+    role: "Product Engineer",
+    timezone: "America/New_York",
+    phoneNumber: "+1 (555) 010-1201",
+    bio: "Construyendo la capa de producto y experiencia en CitrusChat.",
   },
   {
     id: "user-2",
@@ -32,6 +27,10 @@ const mockWorkspaceUsers: WorkspaceUser[] = [
     username: "jane.smith",
     email: "jane@example.com",
     status: "online",
+    role: "Customer Success",
+    timezone: "Europe/London",
+    phoneNumber: "+44 20 5555 0102",
+    bio: "Acompaño cuentas y procesos de adopción en workspace.",
   },
   {
     id: "user-3",
@@ -39,6 +38,10 @@ const mockWorkspaceUsers: WorkspaceUser[] = [
     username: "bob.johnson",
     email: "bob@example.com",
     status: "away",
+    role: "Backend Developer",
+    timezone: "America/Chicago",
+    phoneNumber: "+1 (555) 010-1203",
+    bio: "Integraciones, APIs y sistemas internos.",
   },
   {
     id: "user-4",
@@ -46,6 +49,10 @@ const mockWorkspaceUsers: WorkspaceUser[] = [
     username: "alice.williams",
     email: "alice@example.com",
     status: "offline",
+    role: "Product Designer",
+    timezone: "America/Mexico_City",
+    phoneNumber: "+52 55 5555 0104",
+    bio: "Diseño flujos claros y consistentes para colaboración.",
   },
   {
     id: "user-5",
@@ -53,10 +60,28 @@ const mockWorkspaceUsers: WorkspaceUser[] = [
     username: "carlos.martinez",
     email: "carlos@example.com",
     status: "online",
+    role: "Engineering Manager",
+    timezone: "America/Argentina/Buenos_Aires",
+    phoneNumber: "+54 11 5555 0105",
+    bio: "Coordino ejecución técnica y visión de plataforma.",
   },
 ];
 
+const currentWorkspaceUser: WorkspaceUser = {
+  id: "user-me",
+  name: "Usuario",
+  username: "usuario.citrus",
+  email: "usuario@citruschat.dev",
+  role: "Workspace Lead",
+  status: "online",
+  timezone: "America/Argentina/Buenos_Aires",
+  phoneNumber: "+54 11 5555 0000",
+  bio: "Perfil personal de CitrusChat para pruebas de UX tipo Slack.",
+  isCurrentUser: true,
+};
+
 const selectedChat = ref<ChatRoom | null>(null);
+const selectedProfileUser = ref<WorkspaceUser | null>(null);
 
 const chats = ref<ChatRoom[]>(getChats());
 
@@ -68,6 +93,10 @@ export const useChatStore = () => {
   );
 
   const chatsIsEmpty = computed(() => chats.value.length === 0);
+  const currentUser = computed(() => currentWorkspaceUser);
+  const isUserProfilePanelOpen = computed(
+    () => selectedProfileUser.value !== null,
+  );
 
   const chatExists = (name: string) => {
     return chats.value.some((c) => c.name.toLowerCase() === name.toLowerCase());
@@ -107,6 +136,22 @@ export const useChatStore = () => {
     selectChat(user.name);
   };
 
+  const openUserProfile = (user: WorkspaceUser) => {
+    selectedProfileUser.value = user;
+  };
+
+  const closeUserProfile = () => {
+    selectedProfileUser.value = null;
+  };
+
+  const findWorkspaceUserByName = (name: string) => {
+    return (
+      mockWorkspaceUsers.find(
+        (user: WorkspaceUser) => user.name.toLowerCase() === name.toLowerCase(),
+      ) ?? null
+    );
+  };
+
   const lastMessageChatText = computed(() => (chatId: number) => {
     const chatMessages = allMessages.value.filter((m) => m.chatId === chatId);
     return chatMessages.at(-1)?.text ?? "";
@@ -135,6 +180,12 @@ export const useChatStore = () => {
     chatExists,
     addChat,
     openDirectMessage,
+    openUserProfile,
+    closeUserProfile,
+    selectedProfileUser,
+    isUserProfilePanelOpen,
+    currentUser,
+    findWorkspaceUserByName,
     workspaceUsers: computed(() => mockWorkspaceUsers),
   };
 };

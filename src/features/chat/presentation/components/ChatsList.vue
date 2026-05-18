@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useChatStore } from "../../store/ChatStore.ts";
+import avatarProfile from "@/shared/assets/avatar-profile.svg";
 
 const {
   chats,
@@ -7,7 +8,17 @@ const {
   selectChat,
   lastMessageChatText,
   lastMessageChatTime,
+  findWorkspaceUserByName,
+  openUserProfile,
 } = useChatStore();
+
+const openChatUserProfile = (chatName: string) => {
+  const user = findWorkspaceUserByName(chatName);
+
+  if (!user) return;
+
+  openUserProfile(user);
+};
 </script>
 
 <template>
@@ -35,9 +46,17 @@ const {
       >
         <div class="relative mr-3">
           <img
-            src="@/shared/assets/avatar-profile.svg"
+            :src="avatarProfile"
             alt="Avatar"
             class="h-10 w-10 rounded-full object-cover"
+            :class="
+              chat.type === 'direct'
+                ? 'cursor-pointer ring-1 ring-transparent transition hover:ring-orange-400/40'
+                : ''
+            "
+            @click.stop="
+              chat.type === 'direct' && openChatUserProfile(chat.name)
+            "
           />
 
           <span
@@ -50,6 +69,14 @@ const {
           <div class="flex items-center justify-between w-full">
             <h3
               class="mb-0 truncate text-sm font-semibold text-slate-900 dark:text-slate-100"
+              :class="
+                chat.type === 'direct'
+                  ? 'cursor-pointer hover:text-orange-500 dark:hover:text-orange-300'
+                  : ''
+              "
+              @click.stop="
+                chat.type === 'direct' && openChatUserProfile(chat.name)
+              "
             >
               {{ chat.name }}
             </h3>
