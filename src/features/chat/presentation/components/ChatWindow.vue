@@ -1,7 +1,16 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import { useChatStore } from "../../store/ChatStore";
+import avatarProfile from "@/shared/assets/avatar-profile.svg";
 
-const { messages, selectedChat } = useChatStore();
+const { messages, selectedChat, findWorkspaceUserByName, openUserProfile } =
+  useChatStore();
+
+const selectedChatUser = computed(() => {
+  if (!selectedChat.value || selectedChat.value.type !== "direct") return null;
+
+  return findWorkspaceUserByName(selectedChat.value.name);
+});
 </script>
 
 <template>
@@ -11,12 +20,34 @@ const { messages, selectedChat } = useChatStore();
     <div
       class="flex items-center gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
     >
-      <img
-        src="@/shared/assets/avatar-profile.svg"
-        alt="Group Avatar"
-        class="h-9 w-9 rounded-full object-cover"
-      />
-      <div>
+      <button
+        v-if="selectedChatUser"
+        type="button"
+        class="flex items-center gap-3 rounded-2xl px-2 py-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-white/5"
+        @click="openUserProfile(selectedChatUser)"
+      >
+        <img
+          :src="selectedChatUser.avatar ?? avatarProfile"
+          :alt="selectedChatUser.name"
+          class="h-9 w-9 rounded-full object-cover"
+        />
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
+            {{ selectedChat?.name }}
+          </h2>
+          <p class="text-xs text-slate-500 dark:text-slate-400">Ver perfil</p>
+        </div>
+      </button>
+
+      <div v-else>
+        <img
+          :src="avatarProfile"
+          alt="Group Avatar"
+          class="h-9 w-9 rounded-full object-cover"
+        />
+      </div>
+
+      <div v-if="!selectedChatUser">
         <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
           {{ selectedChat?.name }}
         </h2>
