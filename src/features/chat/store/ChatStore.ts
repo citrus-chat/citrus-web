@@ -113,11 +113,8 @@ export const useChatStore = () => {
   const selectChat = (name: string | null) => {
     const chat = chats.value.find((c) => c.name === name) ?? null;
     selectedChat.value = chat;
-    if (chat) {
-      localStorage.setItem("selectedChat", JSON.stringify(chat));
-    } else {
-      localStorage.removeItem("selectedChat");
-    }
+    localStorage.removeItem("selectedChat");
+    localStorage.setItem("selectedChat", JSON.stringify(chat));
   };
 
   const openDirectMessage = (user: WorkspaceUser) => {
@@ -168,6 +165,23 @@ export const useChatStore = () => {
       : "";
   });
 
+  const sendMessage = (chatId: number, text: string) => {
+    if (!chatId || !text.trim() || chatId === 0) {
+      alert("Chat ID and message text are required.");
+      return;
+    }
+    const newMessage: Message = {
+      id: allMessages.value.length + 1,
+      chatId,
+      senderDeviceId: 1,
+      replyToMessageId: null,
+      text,
+      sender: "me",
+      deliveredAt: new Date(),
+    };
+    allMessages.value.push(newMessage);
+  };
+
   return {
     chats,
     selectedChat,
@@ -187,5 +201,6 @@ export const useChatStore = () => {
     currentUser,
     findWorkspaceUserByName,
     workspaceUsers: computed(() => mockWorkspaceUsers),
+    sendMessage,
   };
 };

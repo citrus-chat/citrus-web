@@ -24,7 +24,11 @@ const { selectedChat, chatsIsEmpty } = useChatStore();
       </p>
     </div>
     <ChatsList v-else />
-    <ChatWindow v-if="selectedChat" :chat="selectedChat" class="flex-1" />
+    <ChatWindow
+      v-if="selectedChat"
+      :chat="selectedChat"
+      class="flex-1 min-h-0 overflow-y-auto"
+    />
     <div
       v-else
       class="flex-1 flex-col flex items-center justify-center text-slate-400 space-y-2"

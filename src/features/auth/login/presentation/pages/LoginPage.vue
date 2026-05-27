@@ -1,11 +1,11 @@
 <template>
   <div class="min-h-screen flex items-center justify-center">
     <div
-      class="relative w-full max-w-[420px] px-6 py-8 rounded-2xl border border-slate-200 bg-white/90 dark:bg-slate-900/80 dark:border-white/10 shadow-lg backdrop-blur-md"
+      class="relative w-full max-w-105 px-6 py-8 rounded-2xl border border-slate-200 bg-white/90 dark:bg-slate-900/80 dark:border-white/10 shadow-lg backdrop-blur-md"
     >
       <!-- subtle decorative glow -->
       <div
-        class="absolute -inset-1 -z-10 rounded-2xl bg-gradient-to-br from-blue-50/40 to-transparent dark:from-indigo-900/30"
+        class="absolute -inset-1 -z-10 rounded-2xl bg-linear-to-br from-blue-50/40 to-transparent dark:from-indigo-900/30"
       />
 
       <div class="flex flex-col items-center gap-2 mb-6">
@@ -54,7 +54,7 @@
             <input
               v-model="form.email"
               type="email"
-              class="w-full rounded-lg border border-slate-700/40 bg-slate-800/60 text-sm pl-10 pr-3 py-2 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              class="w-full rounded-lg border dark:text-white border-slate-700/40 bg-slate-800/60 text-sm pl-10 pr-3 py-2 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
               placeholder="tu@correo.com"
               autocomplete="email"
             />
@@ -87,7 +87,7 @@
             <input
               v-model="form.password"
               :type="showPassword ? 'text' : 'password'"
-              class="w-full rounded-lg border border-slate-700/40 bg-slate-800/60 text-sm pl-10 pr-10 py-2 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
+              class="w-full rounded-lg border dark:text-white border-slate-700/40 bg-slate-800/60 text-sm pl-10 pr-10 py-2 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
               placeholder="••••••••"
               autocomplete="current-password"
             />

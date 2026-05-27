@@ -1,15 +1,42 @@
 <script setup lang="ts">
-import { computed } from "vue";
+import { computed, nextTick, watch } from "vue";
+import "primeicons/primeicons.css";
 import { useChatStore } from "../../store/ChatStore";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
+import { ref } from "vue";
 
-const { messages, selectedChat, findWorkspaceUserByName, openUserProfile } =
-  useChatStore();
+const {
+  messages,
+  selectedChat,
+  findWorkspaceUserByName,
+  openUserProfile,
+  sendMessage,
+} = useChatStore();
+
+const messageChat = ref("");
+const messagesContainer = ref<HTMLElement | null>(null);
 
 const selectedChatUser = computed(() => {
   if (!selectedChat.value || selectedChat.value.type !== "direct") return null;
 
   return findWorkspaceUserByName(selectedChat.value.name);
+});
+
+const handleMessage = () => {
+  if (!selectedChat.value) {
+    alert("No chat selected.");
+    return;
+  }
+
+  sendMessage(selectedChat.value.id, messageChat.value);
+};
+
+watch(messages, async () => {
+  await nextTick();
+  messagesContainer.value?.scrollTo({
+    top: messagesContainer.value.scrollHeight,
+    behavior: "smooth",
+  });
 });
 </script>
 
@@ -54,7 +81,10 @@ const selectedChatUser = computed(() => {
       </div>
     </div>
 
-    <div class="flex-1 overflow-auto px-4 py-4 space-y-4">
+    <div
+      ref="messagesContainer"
+      class="flex-1 overflow-auto px-4 py-4 space-y-4"
+    >
       <div
         v-for="message in messages"
         :key="message.id"
@@ -82,7 +112,6 @@ const selectedChatUser = computed(() => {
               class="h-8 w-8 rounded-full object-cover"
             />
           </div>
-
           <div
             :class="
               message.sender === 'me'
@@ -90,6 +119,12 @@ const selectedChatUser = computed(() => {
                 : 'rounded-2xl rounded-bl-md bg-slate-100 px-4 py-2 text-sm text-slate-900 shadow-sm ring-1 ring-slate-200 dark:bg-slate-800/90 dark:text-slate-100 dark:ring-white/5'
             "
           >
+            <p
+              class="mb-1 text-xs font-medium text-slate-500 dark:text-slate-400"
+              :class="message.sender === 'me' ? 'text-right' : 'text-left'"
+            >
+              {{ message.sender }}
+            </p>
             {{ message.text }}
           </div>
         </div>
@@ -101,12 +136,20 @@ const selectedChatUser = computed(() => {
     >
       <div class="mx-auto flex max-w-4xl items-center gap-3">
         <input
+          v-model="messageChat"
           type="text"
           placeholder="Escribe un mensaje..."
           class="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-500/60 focus:ring-2 focus:ring-sky-500/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500"
         />
+        <div>
+          <i class="pi pi-paperclip cursor-pointer text-2xl" />
+          <input id="file-upload" type="file" class="hidden" />
+        </div>
+
         <button
           class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+          @keypress.enter="handleMessage"
+          @click="handleMessage"
         >
           Enviar
         </button>
