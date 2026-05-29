@@ -3,30 +3,23 @@ import type { Message } from "../../domain/Message";
 
 export const getChats = (): ChatRoom[] => {
   return [
-    // {
-    //   id: 1,
-    //   type: "group",
-    //   name: "Javalinas Empresariales",
-    //   createdBy: 1,
-    //   createdAt: new Date(),
-    //   updatedAt: new Date(),
-    // },
-    // {
-    //   id: 2,
-    //   type: "direct",
-    //   name: "María",
-    //   createdBy: 1,
-    //   createdAt: new Date(),
-    //   updatedAt: new Date(),
-    // },
-    // {
-    //   id: 3,
-    //   type: "direct",
-    //   name: "Carlos",
-    //   createdBy: 1,
-    //   createdAt: new Date(),
-    //   updatedAt: new Date(),
-    // },
+    {
+      id: 1,
+      type: "group",
+      name: "Javalinas Empresariales",
+      createdBy: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
+
+    {
+      id: 2,
+      type: "direct",
+      name: "Carlos",
+      createdBy: 1,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    },
   ];
 };
 
@@ -70,11 +63,11 @@ export const getAllMessages = (): Message[] => {
     },
     {
       id: 5,
-      chatId: 3,
+      chatId: 2,
       senderDeviceId: 5,
       replyToMessageId: null,
       text: "¿Puedes enviarme el archivo?",
-      sender: "giabi",
+      sender: "Carlos",
       deliveredAt: new Date("2026-05-08T09:45:00"),
     },
   ];
@@ -97,4 +90,18 @@ export const createChat = (
     updatedAt: new Date(),
   };
   return newChat;
+};
+
+export const sendMessage = (Message: Message): Message => {
+  const { id, chatId, senderDeviceId, replyToMessageId, text } = Message;
+  const newMessage: Message = {
+    id,
+    chatId,
+    senderDeviceId,
+    replyToMessageId,
+    text,
+    sender: "me",
+    deliveredAt: Message.deliveredAt ?? new Date(),
+  };
+  return newMessage;
 };

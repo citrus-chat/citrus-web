@@ -1,6 +1,11 @@
 <script setup lang="ts">
 import { useChatStore } from "../../store/ChatStore.ts";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
+import "primeicons/primeicons.css";
+import { ref } from "vue";
+import NewChatModal from "./NewChatModal.vue";
+
+const show = ref(false);
 
 const {
   chats,
@@ -26,10 +31,15 @@ const openChatUserProfile = (chatName: string) => {
     class="flex h-full min-h-0 flex-col rounded-2xl border border-slate-200 bg-white/80 p-4 shadow-[0_20px_80px_rgba(15,23,42,0.15)] dark:border-white/10 dark:bg-slate-950/80 dark:shadow-[0_20px_80px_rgba(0,0,0,0.35)]"
     style="flex: 0 0 38%"
   >
-    <div class="mb-3">
+    <div class="flex justify-between mb-3">
       <h2 class="mb-0 text-2xl font-bold text-slate-900 dark:text-slate-50">
         Chats
       </h2>
+      <button @click="show = true">
+        <i
+          class="pi pi-plus cursor-pointer text-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+        />
+      </button>
     </div>
 
     <div class="flex flex-1 min-h-0 flex-col gap-2 overflow-auto pr-1">
@@ -90,5 +100,6 @@ const openChatUserProfile = (chatName: string) => {
         </div>
       </div>
     </div>
+    <NewChatModal :show="show" @close="show = false" />
   </section>
 </template>
