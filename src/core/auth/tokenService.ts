@@ -1,3 +1,5 @@
+import { adminAccessCache } from "@/core/auth/adminAccessCache";
+
 const TOKEN_KEY = "access_token";
 
 export const tokenService = {
@@ -29,6 +31,11 @@ export const tokenService = {
 
   removeAccessToken() {
     this.removeToken();
+    try {
+      adminAccessCache.clearAdminAccessCache();
+    } catch {
+      // ignore
+    }
   },
 
   hasAccessToken(): boolean {

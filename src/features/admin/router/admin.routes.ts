@@ -5,6 +5,10 @@ export const adminRoutes: RouteRecordRaw[] = [
     path: "/admin",
     component: () =>
       import("@/features/admin/presentation/layouts/AdminLayout.vue"),
+    meta: {
+      requiresAuth: true,
+      requiresAdmin: true,
+    },
     children: [
       {
         path: "",

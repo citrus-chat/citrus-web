@@ -209,8 +209,8 @@ import { tokenService } from "@/core/auth/tokenService";
 const router = useRouter();
 
 const form = reactive<ILoginRequest>({
-  email: "",
-  password: "",
+  email: "admin@citruschat.com",
+  password: "Admin123!",
 });
 
 const loading = ref(false);

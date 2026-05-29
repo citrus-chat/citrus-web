@@ -1,9 +1,11 @@
 <script setup lang="ts">
-import { defineAsyncComponent, computed } from "vue";
+import { defineAsyncComponent, computed, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useChatStore } from "@/features/chat/store/ChatStore";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import "primeicons/primeicons.css";
+import { tokenService } from "@/core/auth/tokenService";
+import { checkAdminAccess } from "@/features/admin/application/use-cases/checkAdminAccess";
 
 const ThemeToggle = defineAsyncComponent(
   () => import("@/shared/ui/ThemeToggle.vue"),
@@ -20,6 +22,14 @@ const items = [
 ];
 
 const current = computed(() => router.currentRoute.value.path);
+
+const isAdmin = ref(false);
+
+onMounted(async () => {
+  const token = tokenService.getAccessToken();
+  if (!token) return;
+  isAdmin.value = await checkAdminAccess();
+});
 </script>
 
 <template>
@@ -58,6 +68,15 @@ const current = computed(() => router.currentRoute.value.path);
             <i class="pi" :class="item.icon" />
 
             <span class="truncate">{{ item.label }}</span>
+          </RouterLink>
+
+          <RouterLink
+            v-if="isAdmin"
+            to="/admin"
+            class="flex items-center gap-3 rounded-xl px-3 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-white/5 dark:hover:text-slate-100"
+          >
+            <i class="pi pi-cog" />
+            <span class="truncate">Admin</span>
           </RouterLink>
         </nav>
       </div>
