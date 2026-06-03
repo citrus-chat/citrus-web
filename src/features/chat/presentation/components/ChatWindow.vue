@@ -45,39 +45,58 @@ watch(messages, async () => {
     class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white/80 shadow-[0_20px_80px_rgba(15,23,42,0.15)] dark:border-white/10 dark:bg-slate-950/80 dark:shadow-[0_20px_80px_rgba(0,0,0,0.35)]"
   >
     <div
-      class="flex items-center gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
+      class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
     >
-      <button
-        v-if="selectedChatUser"
-        type="button"
-        class="flex items-center gap-3 rounded-2xl px-2 py-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-white/5"
-        @click="openUserProfile(selectedChatUser)"
-      >
-        <img
-          :src="selectedChatUser.avatar ?? avatarProfile"
-          :alt="selectedChatUser.name"
-          class="h-9 w-9 rounded-full object-cover"
-        />
-        <div>
+      <div class="flex items-center w-full space-x-3">
+        <button
+          v-if="selectedChatUser"
+          type="button"
+          class="flex items-center gap-3 rounded-2xl px-2 py-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-white/5"
+          @click="openUserProfile(selectedChatUser)"
+        >
+          <img
+            :src="selectedChatUser.avatar ?? avatarProfile"
+            :alt="selectedChatUser.name"
+            class="h-9 w-9 rounded-full object-cover"
+          />
+          <div>
+            <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
+              {{ selectedChat?.name }}
+            </h2>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Ver perfil</p>
+          </div>
+        </button>
+
+        <div v-else>
+          <img
+            :src="avatarProfile"
+            alt="Group Avatar"
+            class="h-9 w-9 rounded-full object-cover"
+          />
+        </div>
+
+        <div v-if="!selectedChatUser">
           <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
             {{ selectedChat?.name }}
           </h2>
-          <p class="text-xs text-slate-500 dark:text-slate-400">Ver perfil</p>
         </div>
-      </button>
-
-      <div v-else>
-        <img
-          :src="avatarProfile"
-          alt="Group Avatar"
-          class="h-9 w-9 rounded-full object-cover"
-        />
       </div>
-
-      <div v-if="!selectedChatUser">
-        <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
-          {{ selectedChat?.name }}
-        </h2>
+      <div class="flex items-center gap-4">
+        <button>
+          <i
+            class="pi pi-video cursor-pointer text-2xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+          />
+        </button>
+        <button>
+          <i
+            class="pi pi-phone cursor-pointer text-xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+          />
+        </button>
+        <button>
+          <i
+            class="pi pi-ellipsis-v cursor-pointer text-xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+          />
+        </button>
       </div>
     </div>
 
