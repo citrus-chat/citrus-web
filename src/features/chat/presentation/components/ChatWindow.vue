@@ -13,8 +13,34 @@ const {
   sendMessage,
 } = useChatStore();
 
+const menuButtons = [
+  { icon: "pi pi-thumbtack", label: "Fijar" },
+  { icon: "pi pi-reply", label: "Reenviar" },
+  { icon: "pi pi-pencil", label: "Editar" },
+  { icon: "pi pi-trash", label: "Eliminar", danger: true },
+];
+
 const messageChat = ref("");
 const messagesContainer = ref<HTMLElement | null>(null);
+const openMenuId = ref<number | null>(null);
+const menuPosition = ref({ x: 0, y: 0 });
+
+const toggleMenu = (messageId: number, event: MouseEvent) => {
+  const rect = (event.target as HTMLElement).getBoundingClientRect();
+  const menuWidth = 140;
+
+  const left =
+    rect.right + menuWidth > window.innerWidth
+      ? rect.left - menuWidth
+      : rect.left;
+
+  menuPosition.value = { x: left, y: rect.bottom + 8 };
+  openMenuId.value = openMenuId.value === messageId ? null : messageId;
+};
+
+const closeMenu = () => {
+  openMenuId.value = null;
+};
 
 const selectedChatUser = computed(() => {
   if (!selectedChat.value || selectedChat.value.type !== "direct") return null;
@@ -112,20 +138,64 @@ watch(messages, async () => {
               class="h-8 w-8 rounded-full object-cover"
             />
           </div>
+
           <div
-            :class="
-              message.sender === 'me'
-                ? 'ml-auto rounded-2xl rounded-br-md bg-blue-600 px-4 py-2 text-sm text-white shadow-sm'
-                : 'rounded-2xl rounded-bl-md bg-slate-100 px-4 py-2 text-sm text-slate-900 shadow-sm ring-1 ring-slate-200 dark:bg-slate-800/90 dark:text-slate-100 dark:ring-white/5'
-            "
+            class="flex flex-col bg-slate-100 px-4 py-2.5 rounded-xl dark:bg-slate-800"
           >
-            <p
-              class="mb-1 text-xs font-medium text-slate-500 dark:text-slate-400"
-              :class="message.sender === 'me' ? 'text-right' : 'text-left'"
-            >
-              {{ message.sender }}
-            </p>
-            {{ message.text }}
+            <div class="flex items-center justify-between relative">
+              <p
+                class="mb-1 text-xs font-medium text-slate-500 dark:text-slate-400"
+                :class="message.sender === 'me' ? 'text-right' : 'text-left'"
+              >
+                {{ message.sender }}
+              </p>
+
+              <div class="relative">
+                <button @click="toggleMenu(message.id, $event)">
+                  <i
+                    class="pi pi-angle-down cursor-pointer text-sm text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+                  />
+                </button>
+
+                <div
+                  v-if="openMenuId === message.id"
+                  :style="{
+                    position: 'fixed',
+                    top: menuPosition.y + 'px',
+                    left: menuPosition.x + 'px',
+                  }"
+                  class="z-50 min-w-35 rounded-xl border border-slate-200 bg-white py-1 shadow-lg dark:border-white/10 dark:bg-slate-900"
+                >
+                  <div class="flex flex-col items-start">
+                    <button
+                      v-for="button in menuButtons"
+                      :key="button.label"
+                      class="w-full text-left space-x-2 px-3 py-2 text-sm hover:bg-slate-100 dark:hover:bg-white/5"
+                      :class="
+                        button.danger
+                          ? 'text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10'
+                          : 'text-slate-700 dark:text-slate-200'
+                      "
+                      @click="closeMenu"
+                    >
+                      <i
+                        class="text-xs"
+                        :class="[
+                          button.icon,
+                          button.danger
+                            ? 'text-red-500'
+                            : 'text-slate-700 dark:text-slate-200',
+                        ]"
+                      />
+                      <span class="text-sm">{{ button.label }}</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <span class="text-sm">
+              {{ message.text }}
+            </span>
           </div>
         </div>
       </div>
