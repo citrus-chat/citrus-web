@@ -19,6 +19,7 @@ const items = [
   { icon: "pi-comments", label: "Chats", to: "/" },
   // { icon: "pi-users", label: "Contactos", to: "/contacts" },
   { icon: "pi-flag", label: "Reportes", to: "/reports" },
+  { icon: "pi-hashtag", label: "Channels", to: "/channels" },
 ];
 
 const current = computed(() => router.currentRoute.value.path);

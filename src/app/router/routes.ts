@@ -4,10 +4,14 @@ import { adminRoutes } from "@/features/admin/router/admin.routes";
 import { chatRoutes } from "@/features/chat/router/chat.routes";
 import { profileRoutes } from "@/features/profile/presentation/router/profile.routes";
 import { authRoutes } from "@/features/auth/router/auth.routes";
+import { reportsRoutes } from "@/features/reports/router/reports.routes";
+import { channelsRoutes } from "@/features/channels/router/channels.routes";
 
 export const routes: RouteRecordRaw[] = [
   ...authRoutes,
   ...profileRoutes,
   ...chatRoutes,
   ...adminRoutes,
+  ...reportsRoutes,
+  ...channelsRoutes,
 ];
