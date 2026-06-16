@@ -202,13 +202,13 @@
 <script setup lang="ts">
 import { reactive, ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import type { ILoginRequest } from "@/features/auth/login/domain/ILoginRequest";
+import type { ILoginForm } from "@/features/auth/login/domain/ILoginForm";
 import { loginUserUseCase } from "@/features/auth/login/application/use-cases/loginUserUseCase";
 import { tokenService } from "@/core/auth/tokenService";
 
 const router = useRouter();
 
-const form = reactive<ILoginRequest>({
+const form = reactive<ILoginForm>({
   email: "admin@citruschat.com",
   password: "Admin123!",
 });

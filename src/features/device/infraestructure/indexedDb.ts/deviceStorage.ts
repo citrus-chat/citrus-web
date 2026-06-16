@@ -1,0 +1,33 @@
+import type { IDevice } from "../../domain/IDevice";
+import type { IDeviceStorage } from "../../domain/IDeviceStorage";
+import { deviceDb } from "../deviceDb";
+
+const DEVICE_KEY = "current-device";
+
+class IndexedDbDeviceStorage implements IDeviceStorage {
+  async save(device: IDevice): Promise<void> {
+    const db = await deviceDb;
+
+    await db.put("device", device, DEVICE_KEY);
+  }
+
+  async get(): Promise<IDevice | null> {
+    const db = await deviceDb;
+
+    return (await db.get("device", DEVICE_KEY)) ?? null;
+  }
+
+  async remove(): Promise<void> {
+    const db = await deviceDb;
+
+    await db.delete("device", DEVICE_KEY);
+  }
+
+  async exists(): Promise<boolean> {
+    const db = await deviceDb;
+
+    return (await db.get("device", DEVICE_KEY)) != null;
+  }
+}
+
+export const deviceStorage = new IndexedDbDeviceStorage();
