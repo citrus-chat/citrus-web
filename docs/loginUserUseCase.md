@@ -22,9 +22,9 @@ Cada dispositivo posee su propio par de claves X25519 utilizado posteriormente p
 
 Utilizada para:
 
-* Generación de identidad criptográfica del dispositivo
-* Intercambio de claves (ECDH)
-* Derivación de secretos compartidos
+- Generación de identidad criptográfica del dispositivo
+- Intercambio de claves (ECDH)
+- Derivación de secretos compartidos
 
 Implementación:
 
@@ -67,9 +67,9 @@ IndexedDB
 
 Almacena:
 
-* Device
-* Identity Key Pair
-* Conversation Keys
+- Device
+- Identity Key Pair
+- Conversation Keys
 
 ### Mobile
 
@@ -138,7 +138,7 @@ password
 Cliente ejecuta:
 
 ```typescript
-getOrCreateDeviceUseCase()
+getOrCreateDeviceUseCase();
 ```
 
 ---
@@ -168,10 +168,10 @@ Generación de identidad criptográfica
 ```typescript
 crypto.subtle.generateKey(
   {
-    name: "X25519"
+    name: "X25519",
   },
   true,
-  ["deriveBits"]
+  ["deriveBits"],
 );
 ```
 

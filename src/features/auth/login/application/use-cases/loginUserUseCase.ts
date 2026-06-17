@@ -6,14 +6,15 @@ import { loginApi } from "@/features/auth/login/infrastructure/api/loginApi";
 import { tokenService } from "@/core/auth/tokenService";
 import type { IDevice } from "@/features/device/domain/IDevice";
 
-export async function loginUserUseCase(request: ILoginForm): Promise<ILoginResponse> {
-
-  const device = <IDevice> await getOrCreateDeviceUseCase(); // Generamos el dispositivo con sus keys
+export async function loginUserUseCase(
+  request: ILoginForm,
+): Promise<ILoginResponse> {
+  const device = <IDevice>await getOrCreateDeviceUseCase(); // Generamos el dispositivo con sus keys
 
   const loginRequest: ILoginRequest = {
     email: request.email,
     password: request.password,
-    device: device
+    device: device,
   };
 
   const data = await loginApi(loginRequest);

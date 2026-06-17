@@ -13,7 +13,7 @@ export default defineConfig({
       "@": fileURLToPath(new URL("./src", import.meta.url)),
     },
   },
-  server: { 
+  server: {
     host: "0.0.0.0",
     port: 5173,
 
@@ -21,11 +21,11 @@ export default defineConfig({
       usePolling: true,
       interval: 100,
     },
-      proxy: {
-        "/api": {
-          target: "http://localhost:8200",
-          changeOrigin: true,
-        },
+    proxy: {
+      "/api": {
+        target: "http://localhost:8200",
+        changeOrigin: true,
       },
     },
+  },
 });

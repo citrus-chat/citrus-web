@@ -10,8 +10,8 @@
 
 Se requiere implementar mensajería **End-to-End Encrypted (E2E)** entre:
 
-* Cliente móvil (Android/iOS) usando `libsignal-native`
-* Cliente web (Vue + Vite)
+- Cliente móvil (Android/iOS) usando `libsignal-native`
+- Cliente web (Vue + Vite)
 
 El objetivo es mantener compatibilidad criptográfica entre ambos clientes.
 
@@ -21,10 +21,10 @@ El objetivo es mantener compatibilidad criptográfica entre ambos clientes.
 
 El paquete `@signalapp/libsignal-client` (v0.96.1):
 
-* No expone un build browser-compatible estable en Vite
-* Depende de `node-gyp-build` (native bindings)
-* No proporciona `exports` resolubles para entornos web modernos
-* No puede ejecutarse directamente en navegador sin fallos de bundling (`PREBUILDS_ONLY`, `process is not defined`)
+- No expone un build browser-compatible estable en Vite
+- Depende de `node-gyp-build` (native bindings)
+- No proporciona `exports` resolubles para entornos web modernos
+- No puede ejecutarse directamente en navegador sin fallos de bundling (`PREBUILDS_ONLY`, `process is not defined`)
 
 Conclusión:
 
@@ -40,10 +40,10 @@ Se implementará un esquema E2E compatible basado en:
 
 El cliente web implementará manualmente el protocolo Signal:
 
-* X3DH (Extended Triple Diffie-Hellman)
-* Double Ratchet Algorithm
-* Curve25519 via WebCrypto
-* Gestión de keys en IndexedDB
+- X3DH (Extended Triple Diffie-Hellman)
+- Double Ratchet Algorithm
+- Curve25519 via WebCrypto
+- Gestión de keys en IndexedDB
 
 ---
 
@@ -51,8 +51,8 @@ El cliente web implementará manualmente el protocolo Signal:
 
 El cliente móvil continuará usando:
 
-* `libsignal-native` oficial
-* implementación completa del protocolo Signal
+- `libsignal-native` oficial
+- implementación completa del protocolo Signal
 
 ---
 
@@ -60,10 +60,10 @@ El cliente móvil continuará usando:
 
 El backend será **no confiable criptográficamente**, y solo actuará como:
 
-* Storage de PreKey Bundles públicos
-* Distribución de claves públicas
-* Relay de mensajes cifrados (WebSocket / HTTP)
-* Gestión de dispositivos
+- Storage de PreKey Bundles públicos
+- Distribución de claves públicas
+- Relay de mensajes cifrados (WebSocket / HTTP)
+- Gestión de dispositivos
 
 ---
 
@@ -71,10 +71,10 @@ El backend será **no confiable criptográficamente**, y solo actuará como:
 
 ### Propiedades garantizadas
 
-* El backend nunca accede a claves privadas
-* El backend nunca descifra mensajes
-* Mensajes siempre viajan cifrados extremo a extremo
-* Compromiso del backend no rompe confidencialidad histórica
+- El backend nunca accede a claves privadas
+- El backend nunca descifra mensajes
+- Mensajes siempre viajan cifrados extremo a extremo
+- Compromiso del backend no rompe confidencialidad histórica
 
 ---
 
@@ -86,9 +86,9 @@ El backend será **no confiable criptográficamente**, y solo actuará como:
 
 1. Generación local de:
 
-   * Identity Key Pair
-   * Signed PreKey
-   * One-Time PreKeys (batch)
+   - Identity Key Pair
+   - Signed PreKey
+   - One-Time PreKeys (batch)
 
 2. Envío al backend SOLO de claves públicas:
 
@@ -101,9 +101,7 @@ El backend será **no confiable criptográficamente**, y solo actuará como:
     "publicKey": "...",
     "signature": "..."
   },
-  "oneTimePreKeys": [
-    { "keyId": 1, "publicKey": "..." }
-  ]
+  "oneTimePreKeys": [{ "keyId": 1, "publicKey": "..." }]
 }
 ```
 
@@ -122,8 +120,8 @@ El backend será **no confiable criptográficamente**, y solo actuará como:
 
 Ambos clientes:
 
-* Derivan sesión criptográfica localmente
-* Inicializan Double Ratchet state
+- Derivan sesión criptográfica localmente
+- Inicializan Double Ratchet state
 
 ---
 
@@ -139,9 +137,9 @@ Ambos clientes:
 
 ## Tecnologías
 
-* WebCrypto API (X25519 / HKDF / HMAC)
-* TypeScript implementation del protocolo Signal
-* IndexedDB para almacenamiento seguro local
+- WebCrypto API (X25519 / HKDF / HMAC)
+- TypeScript implementation del protocolo Signal
+- IndexedDB para almacenamiento seguro local
 
 ---
 
@@ -149,44 +147,44 @@ Ambos clientes:
 
 ### Signal Core (Web)
 
-* `X3DHService`
-* `DoubleRatchetService`
-* `KeyDerivationService`
-* `SessionStore`
+- `X3DHService`
+- `DoubleRatchetService`
+- `KeyDerivationService`
+- `SessionStore`
 
 ---
 
 ### Storage
 
-* Identity keys
-* Signed prekeys
-* Session state
-* Prekey cache
+- Identity keys
+- Signed prekeys
+- Session state
+- Prekey cache
 
 ---
 
 # 7. Limitaciones aceptadas
 
-* Web y Mobile NO comparten librería, pero sí protocolo
-* Implementación web requiere mantenimiento cuidadoso
-* Compatibilidad depende de exactitud del protocolo Signal
+- Web y Mobile NO comparten librería, pero sí protocolo
+- Implementación web requiere mantenimiento cuidadoso
+- Compatibilidad depende de exactitud del protocolo Signal
 
 ---
 
 # 8. Riesgos técnicos
 
-* Error en implementación de Double Ratchet rompe compatibilidad total
-* Diferencias en encoding (base64 / byte arrays) pueden invalidar sesiones
-* Manejo de estados debe ser estrictamente consistente
+- Error en implementación de Double Ratchet rompe compatibilidad total
+- Diferencias en encoding (base64 / byte arrays) pueden invalidar sesiones
+- Manejo de estados debe ser estrictamente consistente
 
 ---
 
 # 9. Justificación de la decisión
 
-* Mantiene E2E real sin depender de libsignal WASM no estable en web
-* Permite avance inmediato sin bloqueo de tooling (Vite)
-* Mantiene compatibilidad con mobile (libsignal-native)
-* Reduce dependencia de bindings nativos no soportados en browser
+- Mantiene E2E real sin depender de libsignal WASM no estable en web
+- Permite avance inmediato sin bloqueo de tooling (Vite)
+- Mantiene compatibilidad con mobile (libsignal-native)
+- Reduce dependencia de bindings nativos no soportados en browser
 
 ---
 
@@ -202,7 +200,7 @@ Ambos clientes:
 
 # 11. Estado final del sistema
 
-* Mobile: libsignal-native ✔
-* Web: Signal protocol compatible (custom implementation) ✔
-* Backend: relay + key distribution ✔
-* E2E: garantizado por diseño del protocolo ✔
+- Mobile: libsignal-native ✔
+- Web: Signal protocol compatible (custom implementation) ✔
+- Backend: relay + key distribution ✔
+- E2E: garantizado por diseño del protocolo ✔

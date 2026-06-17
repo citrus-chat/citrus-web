@@ -7,22 +7,18 @@ import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/crypt
 const cryptoService = new CryptoService();
 
 export async function generateDeviceUseCase(): Promise<IDevice> {
+  const deviceId = crypto.randomUUID();
 
-    const deviceId = crypto.randomUUID();
+  const deviceName = generateDeviceName();
 
-    const deviceName = generateDeviceName();
+  const identityKey = await cryptoService.generateIdentityKey();
 
-    const identityKey =
-        await cryptoService.generateIdentityKey();
+  await cryptoStorage.saveIdentityKey(identityKey);
 
-    await cryptoStorage.saveIdentityKey(
-        identityKey,
-    );
-
-    return {
-        deviceId,
-        deviceName,
-        deviceType: "WEB",
-        publicKey: identityKey.publicKey,
-    };
+  return {
+    deviceId,
+    deviceName,
+    deviceType: "WEB",
+    publicKey: identityKey.publicKey,
+  };
 }
