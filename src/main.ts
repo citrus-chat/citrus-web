@@ -8,3 +8,5 @@ import themeService from "@/core/theme/themeService";
 themeService.apply();
 
 createApp(App).use(router).mount("#app");
+
+// main.ts o App.vue temporalmente
