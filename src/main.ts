@@ -10,4 +10,3 @@ themeService.apply();
 createApp(App).use(router).mount("#app");
 
 // main.ts o App.vue temporalmente
-

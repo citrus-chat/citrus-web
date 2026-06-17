@@ -47,7 +47,7 @@ onMounted(() => {
           :src="channel.avatarUrl || 'https://via.placeholder.com/40'"
           alt="Channel Avatar"
           class="h-10 w-10 rounded-full object-cover"
-        >
+        />
         <div>
           <h3 class="text-lg font-medium text-slate-900 dark:text-slate-50">
             {{ channel.name }}

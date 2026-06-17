@@ -39,15 +39,12 @@ onMounted(async () => {
   >
     <div>
       <div class="flex items-center gap-3 px-4 py-4">
-        <button
-          class="-ml-1"
-          @click="goChats"
-        >
+        <button class="-ml-1" @click="goChats">
           <img
             src="@/shared/assets/citrus-chat.png"
             alt="Citrus Chat logo"
             class="h-14 w-14 rounded-full object-cover"
-          >
+          />
         </button>
 
         <div>
@@ -69,10 +66,7 @@ onMounted(async () => {
                 current === item.to,
             }"
           >
-            <i
-              class="pi"
-              :class="item.icon"
-            />
+            <i class="pi" :class="item.icon" />
 
             <span class="truncate">{{ item.label }}</span>
           </RouterLink>
@@ -101,7 +95,7 @@ onMounted(async () => {
               :src="currentUser.avatar ?? avatarProfile"
               alt="Mi perfil"
               class="h-10 w-10 rounded-full object-cover"
-            >
+            />
             <div class="min-w-0 text-sm">
               <div class="font-semibold text-slate-900 dark:text-slate-100">
                 {{ currentUser.name }}

@@ -14,9 +14,7 @@ const items = [
     class="w-72 bg-white/80 border-r border-slate-200 dark:bg-slate-950/80 dark:border-white/10 flex flex-col"
   >
     <div class="px-4 py-4 border-b border-slate-100 dark:border-white/6">
-      <h5 class="text-lg font-semibold">
-        Citrus Admin
-      </h5>
+      <h5 class="text-lg font-semibold">Citrus Admin</h5>
       <small class="text-slate-500 dark:text-slate-400">Panel de control</small>
     </div>
 

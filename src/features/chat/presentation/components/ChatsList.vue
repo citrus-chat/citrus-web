@@ -67,7 +67,7 @@ const openChatUserProfile = (chatName: string) => {
             @click.stop="
               chat.type === 'direct' && openChatUserProfile(chat.name)
             "
-          >
+          />
 
           <span
             v-if="chat.type === 'direct'"
@@ -100,9 +100,6 @@ const openChatUserProfile = (chatName: string) => {
         </div>
       </div>
     </div>
-    <NewChatModal
-      :show="show"
-      @close="show = false"
-    />
+    <NewChatModal :show="show" @close="show = false" />
   </section>
 </template>

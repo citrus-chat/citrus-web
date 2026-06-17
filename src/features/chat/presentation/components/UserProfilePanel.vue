@@ -101,7 +101,7 @@ const sendMessage = (user: WorkspaceUser) => {
               :src="profile.avatar ?? avatarProfile"
               :alt="profile.name"
               class="h-24 w-24 rounded-full object-cover ring-4 ring-white shadow-sm dark:ring-slate-950"
-            >
+            />
             <span
               class="absolute bottom-1 right-1 h-4 w-4 rounded-full ring-4 ring-white dark:ring-slate-950"
               :class="statusDotClass"
@@ -121,10 +121,7 @@ const sendMessage = (user: WorkspaceUser) => {
             class="mt-4 inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-medium ring-1 ring-inset"
             :class="statusClass"
           >
-            <span
-              class="h-2 w-2 rounded-full"
-              :class="statusDotClass"
-            />
+            <span class="h-2 w-2 rounded-full" :class="statusDotClass" />
             {{ statusLabel }}
           </span>
         </div>
@@ -145,10 +142,7 @@ const sendMessage = (user: WorkspaceUser) => {
             class="inline-flex items-center justify-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-100 hover:text-slate-950 dark:border-white/10 dark:bg-slate-900/70 dark:text-slate-200 dark:hover:bg-white/5 dark:hover:text-white"
             @click="copyEmail"
           >
-            <i
-              class="pi"
-              :class="copiedEmail ? 'pi-check' : 'pi-copy'"
-            />
+            <i class="pi" :class="copiedEmail ? 'pi-check' : 'pi-copy'" />
             {{ copiedEmail ? "Copiado" : "Copiar email" }}
           </button>
         </div>
