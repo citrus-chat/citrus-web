@@ -1,4 +1,4 @@
-import { IDevice } from "@/features/device/domain/IDevice";
+import type { IDevice } from "@/features/device/domain/IDevice";
 
 export interface ILoginRequest {
   email: string;

@@ -1,31 +1,28 @@
 import type { IDevice } from "@/features/device/domain/IDevice";
 import { generateDeviceName } from "@/features/device/application/generateDeviceName";
-import { SignalService } from "@/features/signal/infraestructure/services/SignalService";
-import { signalStorage } from "@/features/signal/infraestructure/indexedDb/signalStorage";
 
-const signalService = new SignalService();
+import { CryptoService } from "@/features/crypto/infraestructure/services/cryptoService";
+import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
+
+const cryptoService = new CryptoService();
 
 export async function generateDeviceUseCase(): Promise<IDevice> {
 
     const deviceId = crypto.randomUUID();
+
     const deviceName = generateDeviceName();
 
-    const identityKey = await signalService.generateIdentityKey();
-    await signalStorage.saveIdentityKey(identityKey);
+    const identityKey =
+        await cryptoService.generateIdentityKey();
 
-    const signedPreKeyId = await signalStorage.nextSignedPreKeyId();
-    const signedPreKey = await signalService.generateSignedPreKey(identityKey, signedPreKeyId);
-    await signalStorage.saveSignedPreKey(signedPreKey);
-
-    const oneTimePreKeyIds = await signalStorage.getNextOneTimePreKeyIds(100);
-    const oneTimePreKeys = await signalService.generateOneTimePreKeys(oneTimePreKeyIds);
-    await signalStorage.saveOneTimePreKeys(oneTimePreKeys);
+    await cryptoStorage.saveIdentityKey(
+        identityKey,
+    );
 
     return {
         deviceId,
         deviceName,
-        publicIdentityKey: identityKey,
-        signedPreKey,
-        oneTimePreKeys,
+        deviceType: "WEB",
+        publicKey: identityKey.publicKey,
     };
 }
