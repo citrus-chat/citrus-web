@@ -87,7 +87,7 @@ const hasResults = computed(
             @focus="isSearchOpen = true"
             @input="isSearchOpen = searchQuery.length > 0"
             @blur="closeSearchLater"
-          />
+          >
 
           <!-- Dropdown Results -->
           <div
@@ -124,7 +124,7 @@ const hasResults = computed(
                     :src="user.avatar ?? avatarProfile"
                     :alt="user.name"
                     class="h-8 w-8 rounded-full object-cover ring-1 ring-slate-200 dark:ring-white/10"
-                  />
+                  >
                   <span
                     class="absolute bottom-0 right-0 h-2 w-2 rounded-full ring-1 ring-white dark:ring-slate-950"
                     :class="{
@@ -193,7 +193,7 @@ const hasResults = computed(
             :src="currentUser.avatar ?? avatarProfile"
             alt="Avatar"
             class="h-8 w-8 rounded-full object-cover"
-          />
+          >
         </button>
       </div>
     </div>

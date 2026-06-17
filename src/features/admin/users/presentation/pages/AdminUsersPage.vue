@@ -14,7 +14,9 @@ const users = [
   <section>
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h2 class="text-2xl font-bold">Usuarios</h2>
+        <h2 class="text-2xl font-bold">
+          Usuarios
+        </h2>
         <p class="text-slate-600 dark:text-slate-400">
           Gestión de usuarios del sistema
         </p>
@@ -64,7 +66,10 @@ const users = [
         <tbody
           class="bg-white divide-y divide-slate-100 dark:bg-slate-900 dark:divide-white/6"
         >
-          <tr v-for="user in users" :key="user.id">
+          <tr
+            v-for="user in users"
+            :key="user.id"
+          >
             <td
               class="px-6 py-4 whitespace-nowrap font-semibold text-slate-900 dark:text-slate-100"
             >
@@ -83,8 +88,7 @@ const users = [
             <td class="px-6 py-4 whitespace-nowrap">
               <span
                 class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-                >{{ user.status }}</span
-              >
+              >{{ user.status }}</span>
             </td>
             <td
               class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"

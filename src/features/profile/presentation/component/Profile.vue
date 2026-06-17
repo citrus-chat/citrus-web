@@ -8,8 +8,10 @@ import "primeicons/primeicons.css";
       src="@/shared/assets/avatar-profile.svg"
       alt="Profile Picture"
       class="mx-auto h-32 w-32 rounded-full object-cover"
-    />
-    <h2 class="text-xl font-semibold mt-3 mb-1">John Doe</h2>
+    >
+    <h2 class="text-xl font-semibold mt-3 mb-1">
+      John Doe
+    </h2>
     <p class="text-slate-600 dark:text-slate-400 mb-3">
       Software Engineer at Tech Company
     </p>
@@ -64,7 +66,9 @@ import "primeicons/primeicons.css";
           class="flex justify-center items-center space-x-2 text-red-500 hover:text-red-600"
         >
           <i class="pi pi-ban" />
-          <button class="text-sm">Block User</button>
+          <button class="text-sm">
+            Block User
+          </button>
         </div>
       </div>
     </div>

@@ -48,14 +48,19 @@ const showHeader = computed(() => route.name !== "login");
     </button>
 
     <section class="w-full max-w-md">
-      <div v-if="showHeader" class="text-center mb-6">
+      <div
+        v-if="showHeader"
+        class="text-center mb-6"
+      >
         <img
           src="@/shared/assets/citrus-chat.png"
           alt="Citrus Chat"
           class="mx-auto mb-4 auth-logo rounded-full shadow-sm"
-        />
+        >
 
-        <h1 class="mb-1 text-2xl font-bold">Citrus Chat</h1>
+        <h1 class="mb-1 text-2xl font-bold">
+          Citrus Chat
+        </h1>
         <p class="text-slate-600 dark:text-slate-300">
           Acceso seguro al sistema interno
         </p>

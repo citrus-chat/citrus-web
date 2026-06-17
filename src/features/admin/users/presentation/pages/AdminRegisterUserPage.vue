@@ -67,7 +67,9 @@ async function submit() {
     <div class="lg:col-span-7">
       <div class="mb-6 flex items-start justify-between">
         <div>
-          <h2 class="text-2xl font-bold">Crear usuario</h2>
+          <h2 class="text-2xl font-bold">
+            Crear usuario
+          </h2>
           <p class="text-slate-600 dark:text-slate-400">
             Alta de usuario creada por un administrador.
           </p>
@@ -85,12 +87,17 @@ async function submit() {
         class="rounded-2xl border border-slate-200 bg-white shadow-sm dark:border-white/10 dark:bg-slate-900/70"
       >
         <div class="p-6">
-          <h5 class="font-semibold mb-2">Datos del usuario</h5>
+          <h5 class="font-semibold mb-2">
+            Datos del usuario
+          </h5>
           <p class="text-sm text-slate-500 mb-4">
             El username será generado automáticamente desde nombre y apellido.
           </p>
 
-          <form class="space-y-4" @submit.prevent="submit">
+          <form
+            class="space-y-4"
+            @submit.prevent="submit"
+          >
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
                 <label class="block text-sm font-semibold mb-1">Nombre</label>
@@ -101,7 +108,7 @@ async function submit() {
                   required
                   :class="getFieldError('firstName') ? 'border-red-500' : ''"
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
-                />
+                >
                 <p
                   v-if="getFieldError('firstName')"
                   class="mt-1 text-sm text-red-600 dark:text-red-400"
@@ -118,7 +125,7 @@ async function submit() {
                   placeholder="Pérez"
                   required
                   class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
-                />
+                >
                 <p
                   v-if="getFieldError('lastName')"
                   class="mt-1 text-sm text-red-600 dark:text-red-400"
@@ -136,7 +143,7 @@ async function submit() {
                 placeholder="usuario@citrus.com"
                 required
                 class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
-              />
+              >
               <p
                 v-if="getFieldError('email')"
                 class="mt-1 text-sm text-red-600 dark:text-red-400"
@@ -153,7 +160,7 @@ async function submit() {
                 placeholder="+59899123456"
                 required
                 class="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
-              />
+              >
               <p
                 v-if="getFieldError('phoneNumber')"
                 class="mt-1 text-sm text-red-600 dark:text-red-400"
@@ -203,7 +210,9 @@ async function submit() {
       <div
         class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
       >
-        <h5 class="font-semibold mb-3">Resultado</h5>
+        <h5 class="font-semibold mb-3">
+          Resultado
+        </h5>
         <p class="text-slate-600 dark:text-slate-400 mb-4">
           Al crear el usuario, el sistema generará una contraseña temporal y
           guardará su hash de forma segura.
@@ -213,8 +222,13 @@ async function submit() {
           v-if="temporaryPassword"
           class="rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-emerald-700 dark:border-emerald-900/60 dark:bg-emerald-950/30 dark:text-emerald-300"
         >
-          <div class="font-semibold mb-2">Usuario creado correctamente</div>
-          <div v-if="createdUsername" class="mb-2">
+          <div class="font-semibold mb-2">
+            Usuario creado correctamente
+          </div>
+          <div
+            v-if="createdUsername"
+            class="mb-2"
+          >
             Username: <code class="ml-2">{{ createdUsername }}</code>
           </div>
           <div>

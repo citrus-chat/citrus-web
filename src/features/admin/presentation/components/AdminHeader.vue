@@ -12,9 +12,7 @@ import ThemeToggle from "@/shared/ui/ThemeToggle.vue";
         <h6 class="text-lg font-semibold mb-0">
           {{ title || "Dashboard" }}
         </h6>
-        <small class="text-slate-500 dark:text-slate-400"
-          >Administración del sistema</small
-        >
+        <small class="text-slate-500 dark:text-slate-400">Administración del sistema</small>
       </div>
 
       <div class="flex items-center gap-4">
@@ -44,9 +42,11 @@ import ThemeToggle from "@/shared/ui/ThemeToggle.vue";
             src="@/shared/assets/avatar-profile.svg"
             alt="Admin"
             class="h-9 w-9 rounded-full object-cover"
-          />
+          >
           <div class="hidden md:block">
-            <div class="font-semibold text-sm">Admin</div>
+            <div class="font-semibold text-sm">
+              Admin
+            </div>
             <div class="text-slate-500 text-xs dark:text-slate-400">
               Superuser
             </div>

@@ -13,25 +13,30 @@
           src="@/shared/assets/citrus-chat.png"
           alt="Citrus Chat"
           class="w-18 h-18 rounded-full shadow-lg"
-        />
+        >
         <div class="text-center">
           <h1 class="text-2xl font-semibold text-gray-50 dark:text-gray-50">
             Citrus Chat
           </h1>
-          <p class="text-xs text-slate-300">Acceso seguro al sistema interno</p>
+          <p class="text-xs text-slate-300">
+            Acceso seguro al sistema interno
+          </p>
         </div>
 
         <h2 class="mt-4 text-lg font-medium text-gray-100">
           Bienvenido de vuelta
         </h2>
-        <p class="text-sm text-slate-400">Inicia sesión para continuar</p>
+        <p class="text-sm text-slate-400">
+          Inicia sesión para continuar
+        </p>
       </div>
 
-      <form class="space-y-4" @submit.prevent="onSubmit">
+      <form
+        class="space-y-4"
+        @submit.prevent="onSubmit"
+      >
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1"
-            >Email</label
-          >
+          <label class="block text-sm font-medium text-slate-300 mb-1">Email</label>
           <div class="relative">
             <span
               class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"
@@ -57,14 +62,12 @@
               class="w-full rounded-lg border dark:text-white border-slate-700/40 bg-slate-800/60 text-sm pl-10 pr-3 py-2 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
               placeholder="tu@correo.com"
               autocomplete="email"
-            />
+            >
           </div>
         </div>
 
         <div>
-          <label class="block text-sm font-medium text-slate-300 mb-1"
-            >Contraseña</label
-          >
+          <label class="block text-sm font-medium text-slate-300 mb-1">Contraseña</label>
           <div class="relative">
             <span
               class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400"
@@ -90,7 +93,7 @@
               class="w-full rounded-lg border dark:text-white border-slate-700/40 bg-slate-800/60 text-sm pl-10 pr-10 py-2 placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-orange-400"
               placeholder="••••••••"
               autocomplete="current-password"
-            />
+            >
 
             <button
               type="button"
@@ -137,7 +140,10 @@
           </div>
         </div>
 
-        <div v-if="error" class="text-sm text-red-600">
+        <div
+          v-if="error"
+          class="text-sm text-red-600"
+        >
           {{ error }}
         </div>
 
@@ -190,7 +196,10 @@
         </div>
         <div class="mt-2 text-center text-xs text-slate-400">
           ¿No tienes cuenta?
-          <router-link to="#" class="text-orange-300">
+          <router-link
+            to="#"
+            class="text-orange-300"
+          >
             Contacta al administrador
           </router-link>
         </div>

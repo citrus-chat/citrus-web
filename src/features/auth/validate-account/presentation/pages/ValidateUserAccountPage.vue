@@ -79,7 +79,10 @@ async function submit() {
         </p>
       </div>
 
-      <form class="space-y-4" @submit.prevent="submit">
+      <form
+        class="space-y-4"
+        @submit.prevent="submit"
+      >
         <div>
           <label
             :class="
@@ -102,7 +105,7 @@ async function submit() {
                 'w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20',
               )
             "
-          />
+          >
           <p
             v-if="getFieldError('username')"
             class="mt-1 text-sm text-red-600 dark:text-red-400"
@@ -133,7 +136,7 @@ async function submit() {
                 'w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20',
               )
             "
-          />
+          >
           <p
             v-if="getFieldError('temporaryPassword')"
             class="mt-1 text-sm text-red-600 dark:text-red-400"
@@ -164,7 +167,7 @@ async function submit() {
                 'w-full rounded-xl border border-white/10 bg-slate-950 px-3 py-2 text-sm text-slate-100 outline-none placeholder:text-slate-500 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20',
               )
             "
-          />
+          >
           <p
             v-if="getFieldError('newPassword')"
             class="mt-1 text-sm text-red-600 dark:text-red-400"

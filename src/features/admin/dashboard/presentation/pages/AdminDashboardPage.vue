@@ -10,7 +10,9 @@ const stats = [
 <template>
   <section>
     <div class="mb-6">
-      <h2 class="text-2xl font-bold">Dashboard</h2>
+      <h2 class="text-2xl font-bold">
+        Dashboard
+      </h2>
       <p class="text-slate-600 dark:text-slate-400">
         Resumen general del sistema
       </p>
@@ -57,7 +59,9 @@ const stats = [
     <div
       class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
     >
-      <h5 class="font-semibold mb-3">Actividad reciente</h5>
+      <h5 class="font-semibold mb-3">
+        Actividad reciente
+      </h5>
       <ul class="space-y-3">
         <li
           class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-300"

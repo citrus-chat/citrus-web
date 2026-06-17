@@ -186,7 +186,7 @@ onBeforeUnmount(() => {
               type="text"
               placeholder="Buscar contacto..."
               class="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 dark:text-slate-200 dark:placeholder:text-slate-500"
-            />
+            >
           </div>
 
           <p
@@ -213,7 +213,7 @@ onBeforeUnmount(() => {
                   src="@/shared/assets/avatar-profile.svg"
                   alt="Avatar"
                   class="h-10 w-10 rounded-full object-cover ring-1 ring-slate-200/80 dark:ring-white/10"
-                />
+                >
 
                 <div>
                   <p

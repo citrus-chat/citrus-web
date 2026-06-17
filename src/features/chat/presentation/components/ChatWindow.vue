@@ -84,12 +84,14 @@ watch(messages, async () => {
             :src="selectedChatUser.avatar ?? avatarProfile"
             :alt="selectedChatUser.name"
             class="h-9 w-9 rounded-full object-cover"
-          />
+          >
           <div>
             <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
               {{ selectedChat?.name }}
             </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Ver perfil</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              Ver perfil
+            </p>
           </div>
         </button>
 
@@ -98,7 +100,7 @@ watch(messages, async () => {
             :src="avatarProfile"
             alt="Group Avatar"
             class="h-9 w-9 rounded-full object-cover"
-          />
+          >
         </div>
 
         <div v-if="!selectedChatUser">
@@ -145,9 +147,9 @@ watch(messages, async () => {
               {{
                 message.deliveredAt
                   ? new Date(message.deliveredAt).toLocaleTimeString([], {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })
+                    hour: "2-digit",
+                    minute: "2-digit",
+                  })
                   : ""
               }}
             </p>
@@ -155,7 +157,7 @@ watch(messages, async () => {
               src="@/shared/assets/avatar-profile.svg"
               alt="User Avatar"
               class="h-8 w-8 rounded-full object-cover"
-            />
+            >
           </div>
 
           <div
@@ -229,10 +231,14 @@ watch(messages, async () => {
           type="text"
           placeholder="Escribe un mensaje..."
           class="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-500/60 focus:ring-2 focus:ring-sky-500/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500"
-        />
+        >
         <div>
           <i class="pi pi-paperclip cursor-pointer text-2xl" />
-          <input id="file-upload" type="file" class="hidden" />
+          <input
+            id="file-upload"
+            type="file"
+            class="hidden"
+          >
         </div>
 
         <button
