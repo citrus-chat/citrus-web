@@ -14,7 +14,7 @@ export async function loginUserUseCase(
   const loginRequest: ILoginRequest = {
     email: request.email,
     password: request.password,
-    device: device,
+    deviceRequest: device,
   };
 
   const data = await loginApi(loginRequest);
