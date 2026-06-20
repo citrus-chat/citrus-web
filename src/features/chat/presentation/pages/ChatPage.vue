@@ -4,7 +4,8 @@ import ChatsList from "../components/ChatsList.vue";
 import ChatWindow from "../components/ChatWindow.vue";
 import { useChatStore } from "../../store/ChatStore";
 
-const { selectedChat, chatsIsEmpty, loadChats, restoreSelectedChat } = useChatStore();
+const { selectedChat, chatsIsEmpty, loadChats, restoreSelectedChat } =
+  useChatStore();
 
 onMounted(async () => {
   await loadChats();
@@ -33,8 +34,8 @@ onMounted(async () => {
         />
         <h2 class="text-2xl font-semibold">Bandeja de Entrada vacía</h2>
         <p class="text-center text-slate-500">
-          Buscá una persona en el buscador superior para iniciar una conversación.
-          ¡CitrusChat hace que la comunicación sea fácil y segura!
+          Buscá una persona en el buscador superior para iniciar una
+          conversación. ¡CitrusChat hace que la comunicación sea fácil y segura!
         </p>
       </template>
       <template v-else>

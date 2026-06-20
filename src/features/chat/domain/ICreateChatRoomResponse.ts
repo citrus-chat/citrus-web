@@ -1,4 +1,4 @@
-import type { ChatRoomType } from "./ChatRoomType"
+import type { ChatRoomType } from "./ChatRoomType";
 
 export interface ICreateChatRoomResponse {
   id: string;

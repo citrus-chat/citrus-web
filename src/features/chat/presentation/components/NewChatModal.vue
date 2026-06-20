@@ -9,12 +9,7 @@ const emit = defineEmits<{
   close: [];
 }>();
 
-const {
-  chats,
-  chatExists,
-  loadChats,
-  selectChat,
-} = useChatStore();
+const { chats, chatExists, loadChats, selectChat } = useChatStore();
 
 const visible = ref(props.show);
 const searchTerm = ref("");
@@ -31,8 +26,16 @@ type Contact = {
 };
 
 const contacts: Contact[] = [
-  { id: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb", name: "User", status: "Disponible" },
-  { id: "cccccccc-cccc-cccc-cccc-cccccccccccc", name: "User 2", status: "Disponible" },
+  {
+    id: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+    name: "User",
+    status: "Disponible",
+  },
+  {
+    id: "cccccccc-cccc-cccc-cccc-cccccccccccc",
+    name: "User 2",
+    status: "Disponible",
+  },
   { id: "3", name: "Bob Lee", status: "Disponible" },
   { id: "4", name: "Ana García", status: "Ocupada" },
   { id: "5", name: "Carlos Ruiz", status: "Disponible" },
@@ -78,7 +81,9 @@ const toggleContact = (contactId: string) => {
 
   if (isGroupTab.value) {
     if (selectedContactIds.value.includes(contactId)) {
-      selectedContactIds.value = selectedContactIds.value.filter((id) => id !== contactId);
+      selectedContactIds.value = selectedContactIds.value.filter(
+        (id) => id !== contactId,
+      );
     } else {
       selectedContactIds.value = [...selectedContactIds.value, contactId];
     }
@@ -86,7 +91,9 @@ const toggleContact = (contactId: string) => {
   }
 
   // Direct: single selection
-  selectedContactIds.value = selectedContactIds.value.includes(contactId) ? [] : [contactId];
+  selectedContactIds.value = selectedContactIds.value.includes(contactId)
+    ? []
+    : [contactId];
 };
 
 const onSubmit = async () => {
@@ -112,18 +119,14 @@ const onSubmit = async () => {
 
     selectChat(createdChat.id);
   } else {
-    const contact = contacts.find(
-      (c) => c.id === selectedContactIds.value[0],
-    );
+    const contact = contacts.find((c) => c.id === selectedContactIds.value[0]);
 
     if (!contact) {
       return;
     }
 
     const existingChat = chats.value.find(
-      (chat) =>
-        chat.type === ChatRoomType.DIRECT &&
-        chat.name === contact.name,
+      (chat) => chat.type === ChatRoomType.DIRECT && chat.name === contact.name,
     );
 
     if (existingChat) {
@@ -188,15 +191,24 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
             <div
               class="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-500/15 text-orange-600 ring-1 ring-orange-300/40 dark:bg-orange-400/15 dark:text-orange-300 dark:ring-orange-300/20"
             >
-              <i :class="isGroupTab ? 'pi pi-users' : 'pi pi-comments'" class="text-lg" />
+              <i
+                :class="isGroupTab ? 'pi pi-users' : 'pi pi-comments'"
+                class="text-lg"
+              />
             </div>
 
             <div>
-              <h3 class="text-xl font-semibold text-slate-900 dark:text-slate-50">
+              <h3
+                class="text-xl font-semibold text-slate-900 dark:text-slate-50"
+              >
                 Nuevo chat
               </h3>
               <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                {{ isGroupTab ? "Creá un grupo con varios contactos" : "Iniciá una conversación directa" }}
+                {{
+                  isGroupTab
+                    ? "Creá un grupo con varios contactos"
+                    : "Iniciá una conversación directa"
+                }}
               </p>
             </div>
           </div>
@@ -212,7 +224,9 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
         </div>
 
         <!-- Tabs -->
-        <div class="mb-5 flex gap-1 rounded-2xl border border-slate-200/80 bg-slate-100/70 p-1 dark:border-white/10 dark:bg-slate-900/60">
+        <div
+          class="mb-5 flex gap-1 rounded-2xl border border-slate-200/80 bg-slate-100/70 p-1 dark:border-white/10 dark:bg-slate-900/60"
+        >
           <button
             type="button"
             class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition"
@@ -263,7 +277,9 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
           <div
             class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3 focus-within:border-orange-300 focus-within:ring-2 focus-within:ring-orange-300/40 dark:border-white/10 dark:bg-slate-900/70 dark:focus-within:border-orange-300/50"
           >
-            <i class="pi pi-search text-sm text-slate-400 dark:text-slate-500" />
+            <i
+              class="pi pi-search text-sm text-slate-400 dark:text-slate-500"
+            />
             <input
               v-model="searchTerm"
               type="text"
@@ -274,7 +290,9 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
 
           <!-- Section label -->
           <div class="flex items-center justify-between">
-            <p class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400">
+            <p
+              class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400"
+            >
               Contactos Disponibles
             </p>
             <transition name="fade">
@@ -282,7 +300,9 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
                 v-if="isGroupTab && selectedContactIds.length > 0"
                 class="rounded-full bg-orange-500/15 px-2 py-0.5 text-[11px] font-semibold text-orange-600 dark:bg-orange-400/15 dark:text-orange-400"
               >
-                {{ selectedContactIds.length }} seleccionado{{ selectedContactIds.length !== 1 ? "s" : "" }}
+                {{ selectedContactIds.length }} seleccionado{{
+                  selectedContactIds.length !== 1 ? "s" : ""
+                }}
               </span>
             </transition>
           </div>
@@ -308,7 +328,9 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
                   class="h-10 w-10 rounded-full object-cover ring-1 ring-slate-200/80 dark:ring-white/10"
                 />
                 <div>
-                  <p class="text-sm font-medium text-slate-800 dark:text-slate-100">
+                  <p
+                    class="text-sm font-medium text-slate-800 dark:text-slate-100"
+                  >
                     {{ contact.name }}
                   </p>
                   <p class="text-xs text-slate-500 dark:text-slate-400">

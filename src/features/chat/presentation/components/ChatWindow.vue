@@ -44,7 +44,8 @@ const closeMenu = () => {
 };
 
 const selectedChatUser = computed(() => {
-  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT) return null;
+  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
+    return null;
 
   return findWorkspaceUserByName(selectedChat.value.name);
 });

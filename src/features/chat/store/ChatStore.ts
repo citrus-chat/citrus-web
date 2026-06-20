@@ -2,7 +2,10 @@ import { ref, computed } from "vue";
 
 import type { IChatRoom } from "../domain/IChatRoom";
 import type { WorkspaceUser } from "../domain/WorkspaceUser";
-import { mockWorkspaceUsers, currentWorkspaceUser } from "../infrastructure/mock/workspaceUsers";
+import {
+  mockWorkspaceUsers,
+  currentWorkspaceUser,
+} from "../infrastructure/mock/workspaceUsers";
 
 import { ChatRoomType } from "../domain/ChatRoomType";
 import { chatStorage } from "../infrastructure/indexedDb/chatStorage";
@@ -49,8 +52,7 @@ export const useChatStore = () => {
       return;
     }
 
-    const chat =
-      chats.value.find((chat) => chat.id === chatId) ?? null;
+    const chat = chats.value.find((chat) => chat.id === chatId) ?? null;
 
     selectedChat.value = chat;
 
@@ -59,9 +61,7 @@ export const useChatStore = () => {
 
   const openDirectMessage = (user: WorkspaceUser) => {
     const existingChat = chats.value.find(
-      (chat) =>
-        chat.type === ChatRoomType.DIRECT &&
-        chat.name === user.name,
+      (chat) => chat.type === ChatRoomType.DIRECT && chat.name === user.name,
     );
 
     if (!existingChat) {
@@ -82,8 +82,7 @@ export const useChatStore = () => {
   const findWorkspaceUserByName = (name: string) => {
     return (
       mockWorkspaceUsers.find(
-        (user) =>
-          user.name.toLowerCase() === name.toLowerCase(),
+        (user) => user.name.toLowerCase() === name.toLowerCase(),
       ) ?? null
     );
   };

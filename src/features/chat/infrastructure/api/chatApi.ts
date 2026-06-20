@@ -10,7 +10,7 @@ export async function createChatRoomApi(
   request: ICreateChatRoomRequest,
 ): Promise<ICreateChatRoomResponse> {
   const data = await apiClient.post<ICreateChatRoomResponse>(
-    "/chatroom/create", 
+    "/chatroom/create",
     request,
   );
 

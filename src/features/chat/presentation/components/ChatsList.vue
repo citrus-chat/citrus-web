@@ -67,7 +67,8 @@ const openChatUserProfile = (chatName: string) => {
                 : ''
             "
             @click.stop="
-              chat.type === ChatRoomType.DIRECT && openChatUserProfile(chat.name)
+              chat.type === ChatRoomType.DIRECT &&
+              openChatUserProfile(chat.name)
             "
           />
 
@@ -87,7 +88,8 @@ const openChatUserProfile = (chatName: string) => {
                   : ''
               "
               @click.stop="
-                chat.type === ChatRoomType.DIRECT && openChatUserProfile(chat.name)
+                chat.type === ChatRoomType.DIRECT &&
+                openChatUserProfile(chat.name)
               "
             >
               {{ chat.name }}
