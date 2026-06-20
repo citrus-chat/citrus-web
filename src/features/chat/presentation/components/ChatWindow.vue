@@ -4,13 +4,14 @@ import "primeicons/primeicons.css";
 import { useChatStore } from "../../store/ChatStore";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import { ref } from "vue";
+import { ChatRoomType } from "../../domain/ChatRoomType";
 
 const {
-  messages,
+  // messages,
   selectedChat,
   findWorkspaceUserByName,
   openUserProfile,
-  sendMessage,
+  // sendMessage,
 } = useChatStore();
 
 const menuButtons = [
@@ -43,7 +44,7 @@ const closeMenu = () => {
 };
 
 const selectedChatUser = computed(() => {
-  if (!selectedChat.value || selectedChat.value.type !== "direct") return null;
+  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT) return null;
 
   return findWorkspaceUserByName(selectedChat.value.name);
 });
@@ -54,16 +55,16 @@ const handleMessage = () => {
     return;
   }
 
-  sendMessage(selectedChat.value.id, messageChat.value);
+  // sendMessage(selectedChat.value.id, messageChat.value);
 };
 
-watch(messages, async () => {
-  await nextTick();
-  messagesContainer.value?.scrollTo({
-    top: messagesContainer.value.scrollHeight,
-    behavior: "smooth",
-  });
-});
+// watch(messages, async () => {
+//   await nextTick();
+//   messagesContainer.value?.scrollTo({
+//     top: messagesContainer.value.scrollHeight,
+//     behavior: "smooth",
+//   });
+// });
 </script>
 
 <template>
@@ -130,7 +131,7 @@ watch(messages, async () => {
       ref="messagesContainer"
       class="flex-1 overflow-auto px-4 py-4 space-y-4"
     >
-      <div
+      <!-- <div
         v-for="message in messages"
         :key="message.id"
         class="flex"
@@ -217,7 +218,7 @@ watch(messages, async () => {
             </span>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div
