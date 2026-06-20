@@ -1,3 +1,4 @@
+import type { ChatRoomType } from "./ChatRoomType";
 import type { Message } from "./Message";
 
 export interface ChatRoles {
@@ -27,7 +28,7 @@ export interface ChatParticipant {
 
 export interface ChatRoom {
   id: number;
-  type: "group" | "direct";
+  type: ChatRoomType;
   name: string;
   createdBy: number; // CHANGE TO UUID
   createdAt: Date; // CHANGE TO TIMESTAMP

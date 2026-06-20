@@ -1,11 +1,27 @@
 import type { ChatRoom } from "../../domain/Chat";
 import type { Message } from "../../domain/Message";
 
+import { apiClient } from "@/core/api/apiClient";
+import type { ICreateChatRoomRequest } from "../../domain/ICreateChatRoomRequest";
+import type { ICreateChatRoomResponse } from "../../domain/ICreateChatRoomResponse";
+import { ChatRoomType } from "../../domain/ChatRoomType";
+
+export async function createChatRoomApi(
+  request: ICreateChatRoomRequest,
+): Promise<ICreateChatRoomResponse> {
+  const data = await apiClient.post<ICreateChatRoomResponse>(
+    "/chatroom/create",
+    request,
+  );
+
+  return data;
+}
+
 export const getChats = (): ChatRoom[] => {
   return [
     {
       id: 1,
-      type: "group",
+      type: ChatRoomType.GROUP,
       name: "Javalinas Empresariales",
       createdBy: 1,
       createdAt: new Date(),
@@ -14,7 +30,7 @@ export const getChats = (): ChatRoom[] => {
 
     {
       id: 2,
-      type: "direct",
+      type: ChatRoomType.DIRECT,
       name: "Carlos",
       createdBy: 1,
       createdAt: new Date(),
@@ -79,7 +95,7 @@ export const getCountChats = (): number => {
 
 export const createChat = (
   name: string,
-  type: "group" | "direct",
+  type: ChatRoomType.DIRECT | ChatRoomType.GROUP,
 ): ChatRoom => {
   const newChat: ChatRoom = {
     id: getCountChats() + 1,

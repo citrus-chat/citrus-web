@@ -1,46 +1,67 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useChatStore } from "../../store/ChatStore";
+import { createChatRoomUseCase } from "../../application/use-cases/createChatroomUseCase";
+import { ChatRoomType } from "../../domain/ChatRoomType";
 
 const props = defineProps<{ show: boolean }>();
 const emit = defineEmits<{
   close: [];
 }>();
 
-const { addChat, selectChat, chatExists } = useChatStore();
+const { chats, chatExists, loadChats, selectChat } = useChatStore();
 
 const visible = ref(props.show);
 const searchTerm = ref("");
 const errorMessage = ref("");
-const selectedContactIds = ref<number[]>([]);
+const selectedContactIds = ref<string[]>([]);
+const activeTab = ref<ChatRoomType>(ChatRoomType.DIRECT);
+const groupName = ref("");
+const isLoading = ref(false);
 
 type Contact = {
-  id: number;
+  id: string;
   name: string;
   status: string;
 };
 
 const contacts: Contact[] = [
-  { id: 1, name: "John Doe", status: "Disponible" },
-  { id: 2, name: "Jane Smith", status: "Disponible" },
-  { id: 3, name: "Bob Lee", status: "Disponible" },
+  {
+    id: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
+    name: "User",
+    status: "Disponible",
+  },
+  {
+    id: "cccccccc-cccc-cccc-cccc-cccccccccccc",
+    name: "User 2",
+    status: "Disponible",
+  },
+  { id: "3", name: "Bob Lee", status: "Disponible" },
+  { id: "4", name: "Ana García", status: "Ocupada" },
+  { id: "5", name: "Carlos Ruiz", status: "Disponible" },
 ];
 
 const filteredContacts = computed(() => {
   const term = searchTerm.value.trim().toLowerCase();
-  if (!term) {
-    return contacts;
-  }
+  if (!term) return contacts;
+  return contacts.filter((c) => c.name.toLowerCase().includes(term));
+});
 
-  return contacts.filter((contact) =>
-    contact.name.toLowerCase().includes(term),
-  );
+const isGroupTab = computed(() => activeTab.value === ChatRoomType.GROUP);
+
+const canSubmit = computed(() => {
+  if (isGroupTab.value) {
+    return groupName.value.trim().length > 0;
+  }
+  return selectedContactIds.value.length === 1;
 });
 
 const clearModalState = () => {
   searchTerm.value = "";
   errorMessage.value = "";
   selectedContactIds.value = [];
+  groupName.value = "";
+  isLoading.value = false;
 };
 
 const closeModal = () => {
@@ -48,84 +69,104 @@ const closeModal = () => {
   visible.value = false;
 };
 
-const toggleContact = (contactId: number) => {
+const switchTab = (tab: ChatRoomType) => {
+  activeTab.value = tab;
+  selectedContactIds.value = [];
   errorMessage.value = "";
-
-  if (selectedContactIds.value.includes(contactId)) {
-    selectedContactIds.value = selectedContactIds.value.filter(
-      (id) => id !== contactId,
-    );
-    return;
-  }
-
-  // Keep array contract but enforce a single selection for now.
-  selectedContactIds.value = [contactId];
+  searchTerm.value = "";
 };
 
-const onSubmit = () => {
+const toggleContact = (contactId: string) => {
   errorMessage.value = "";
 
-  if (selectedContactIds.value.length === 0) {
-    errorMessage.value =
-      "Seleccioná al menos un contacto para iniciar el chat.";
+  if (isGroupTab.value) {
+    if (selectedContactIds.value.includes(contactId)) {
+      selectedContactIds.value = selectedContactIds.value.filter(
+        (id) => id !== contactId,
+      );
+    } else {
+      selectedContactIds.value = [...selectedContactIds.value, contactId];
+    }
     return;
   }
 
-  if (selectedContactIds.value.length > 1) {
-    errorMessage.value =
-      "El chat grupal todavía no está disponible. Seleccioná solo un contacto.";
-    return;
+  // Direct: single selection
+  selectedContactIds.value = selectedContactIds.value.includes(contactId)
+    ? []
+    : [contactId];
+};
+
+const onSubmit = async () => {
+  if (isGroupTab.value) {
+    const chatName = groupName.value.trim();
+
+    if (!chatName) {
+      return;
+    }
+
+    if (chatExists(chatName)) {
+      alert("A chat with this name already exists.");
+      return;
+    }
+
+    const createdChat = await createChatRoomUseCase({
+      name: chatName,
+      chatRoomType: ChatRoomType.GROUP,
+      participantIds: selectedContactIds.value,
+    });
+
+    await loadChats();
+
+    selectChat(createdChat.id);
+  } else {
+    const contact = contacts.find((c) => c.id === selectedContactIds.value[0]);
+
+    if (!contact) {
+      return;
+    }
+
+    const existingChat = chats.value.find(
+      (chat) => chat.type === ChatRoomType.DIRECT && chat.name === contact.name,
+    );
+
+    if (existingChat) {
+      selectChat(existingChat.id);
+      closeModal();
+      return;
+    }
+
+    const createdChat = await createChatRoomUseCase({
+      name: contact.name,
+      chatRoomType: ChatRoomType.DIRECT,
+      participantIds: [contact.id],
+    });
+
+    await loadChats();
+
+    selectChat(createdChat.id);
   }
 
-  const selectedContactId = selectedContactIds.value[0];
-  const selectedContact = contacts.find(
-    (contact) => contact.id === selectedContactId,
-  );
-
-  if (!selectedContact) {
-    errorMessage.value = "No se pudo identificar el contacto seleccionado.";
-    return;
-  }
-
-  if (chatExists(selectedContact.name)) {
-    errorMessage.value = "Ya existe un chat con este contacto.";
-    return;
-  }
-
-  addChat(selectedContact.name, "direct");
-  selectChat(selectedContact.name);
   closeModal();
 };
 
 const onEscape = (event: KeyboardEvent) => {
-  if (event.key === "Escape" && visible.value) {
-    closeModal();
-  }
+  if (event.key === "Escape" && visible.value) closeModal();
 };
 
 watch(
   () => props.show,
   (newValue) => {
     visible.value = newValue;
-    if (!newValue) {
-      clearModalState();
-    }
+    if (!newValue) clearModalState();
   },
 );
 
 watch(visible, (newValue) => {
-  if (!newValue) {
-    emit("close");
-  }
+  if (!newValue) emit("close");
 });
 
-onMounted(() => {
-  window.addEventListener("keydown", onEscape);
-});
-
-onBeforeUnmount(() => {
-  window.removeEventListener("keydown", onEscape);
-});
+onMounted(() => window.addEventListener("keydown", onEscape));
+onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
 </script>
 
 <template>
@@ -144,12 +185,16 @@ onBeforeUnmount(() => {
         @click.stop
         @submit.prevent="onSubmit"
       >
-        <div class="mb-6 flex items-start justify-between gap-4">
+        <!-- Header -->
+        <div class="mb-5 flex items-start justify-between gap-4">
           <div class="flex items-start gap-3">
             <div
               class="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-500/15 text-orange-600 ring-1 ring-orange-300/40 dark:bg-orange-400/15 dark:text-orange-300 dark:ring-orange-300/20"
             >
-              <i class="pi pi-comments text-lg" />
+              <i
+                :class="isGroupTab ? 'pi pi-users' : 'pi pi-comments'"
+                class="text-lg"
+              />
             </div>
 
             <div>
@@ -159,7 +204,11 @@ onBeforeUnmount(() => {
                 Nuevo chat
               </h3>
               <p class="mt-1 text-sm text-slate-500 dark:text-slate-400">
-                Selecciona un contacto para iniciar una conversacion
+                {{
+                  isGroupTab
+                    ? "Creá un grupo con varios contactos"
+                    : "Iniciá una conversación directa"
+                }}
               </p>
             </div>
           </div>
@@ -174,7 +223,57 @@ onBeforeUnmount(() => {
           </button>
         </div>
 
+        <!-- Tabs -->
+        <div
+          class="mb-5 flex gap-1 rounded-2xl border border-slate-200/80 bg-slate-100/70 p-1 dark:border-white/10 dark:bg-slate-900/60"
+        >
+          <button
+            type="button"
+            class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition"
+            :class="
+              !isGroupTab
+                ? 'bg-white text-orange-600 shadow-sm ring-1 ring-slate-200/80 dark:bg-slate-800 dark:text-orange-400 dark:ring-white/10'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+            "
+            @click="switchTab(ChatRoomType.DIRECT)"
+          >
+            <i class="pi pi-comment text-[13px]" />
+            Individual
+          </button>
+
+          <button
+            type="button"
+            class="flex flex-1 items-center justify-center gap-2 rounded-xl py-2 text-sm font-medium transition"
+            :class="
+              isGroupTab
+                ? 'bg-white text-orange-600 shadow-sm ring-1 ring-slate-200/80 dark:bg-slate-800 dark:text-orange-400 dark:ring-white/10'
+                : 'text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200'
+            "
+            @click="switchTab(ChatRoomType.GROUP)"
+          >
+            <i class="pi pi-users text-[13px]" />
+            Grupal
+          </button>
+        </div>
+
         <div class="space-y-4">
+          <!-- Group name field (only for group tab) -->
+          <transition name="slide-down">
+            <div
+              v-if="isGroupTab"
+              class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3 focus-within:border-orange-300 focus-within:ring-2 focus-within:ring-orange-300/40 dark:border-white/10 dark:bg-slate-900/70 dark:focus-within:border-orange-300/50"
+            >
+              <i class="pi pi-tag text-sm text-slate-400 dark:text-slate-500" />
+              <input
+                v-model="groupName"
+                type="text"
+                placeholder="Nombre del grupo..."
+                class="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 dark:text-slate-200 dark:placeholder:text-slate-500"
+              />
+            </div>
+          </transition>
+
+          <!-- Search -->
           <div
             class="flex items-center gap-3 rounded-2xl border border-slate-200/80 bg-slate-50/80 px-4 py-3 focus-within:border-orange-300 focus-within:ring-2 focus-within:ring-orange-300/40 dark:border-white/10 dark:bg-slate-900/70 dark:focus-within:border-orange-300/50"
           >
@@ -189,13 +288,27 @@ onBeforeUnmount(() => {
             />
           </div>
 
-          <p
-            class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400"
-          >
-            Contactos frecuentes
-          </p>
+          <!-- Section label -->
+          <div class="flex items-center justify-between">
+            <p
+              class="text-[11px] font-semibold uppercase tracking-[0.12em] text-slate-500 dark:text-slate-400"
+            >
+              Contactos Disponibles
+            </p>
+            <transition name="fade">
+              <span
+                v-if="isGroupTab && selectedContactIds.length > 0"
+                class="rounded-full bg-orange-500/15 px-2 py-0.5 text-[11px] font-semibold text-orange-600 dark:bg-orange-400/15 dark:text-orange-400"
+              >
+                {{ selectedContactIds.length }} seleccionado{{
+                  selectedContactIds.length !== 1 ? "s" : ""
+                }}
+              </span>
+            </transition>
+          </div>
 
-          <div class="max-h-64 space-y-2 overflow-auto pr-1">
+          <!-- Contact list -->
+          <div class="max-h-56 space-y-2 overflow-auto pr-1">
             <button
               v-for="contact in filteredContacts"
               :key="contact.id"
@@ -214,7 +327,6 @@ onBeforeUnmount(() => {
                   alt="Avatar"
                   class="h-10 w-10 rounded-full object-cover ring-1 ring-slate-200/80 dark:ring-white/10"
                 />
-
                 <div>
                   <p
                     class="text-sm font-medium text-slate-800 dark:text-slate-100"
@@ -227,13 +339,15 @@ onBeforeUnmount(() => {
                 </div>
               </div>
 
+              <!-- Checkbox (group) or radio (direct) indicator -->
               <span
-                class="inline-flex h-5 w-5 items-center justify-center rounded-full border text-[11px] transition"
-                :class="
+                class="inline-flex h-5 w-5 items-center justify-center border text-[11px] transition"
+                :class="[
+                  isGroupTab ? 'rounded-md' : 'rounded-full',
                   selectedContactIds.includes(contact.id)
                     ? 'border-orange-500 bg-orange-500 text-white dark:border-orange-400 dark:bg-orange-400'
-                    : 'border-slate-300 text-transparent dark:border-white/20'
-                "
+                    : 'border-slate-300 text-transparent dark:border-white/20',
+                ]"
               >
                 <i class="pi pi-check" />
               </span>
@@ -247,6 +361,17 @@ onBeforeUnmount(() => {
             </div>
           </div>
 
+          <!-- Helper hint for group -->
+          <transition name="fade">
+            <p
+              v-if="isGroupTab && groupName.trim().length === 0"
+              class="text-center text-xs text-slate-400 dark:text-slate-500"
+            >
+              Ingresa un nombre para el grupo
+            </p>
+          </transition>
+
+          <!-- Error message -->
           <div
             v-if="errorMessage"
             class="flex items-start gap-2 rounded-2xl border border-red-200 bg-red-50 px-3 py-2.5 text-sm text-red-700 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300"
@@ -256,6 +381,7 @@ onBeforeUnmount(() => {
           </div>
         </div>
 
+        <!-- Footer -->
         <div class="mt-6 flex justify-end gap-3">
           <button
             type="button"
@@ -267,13 +393,35 @@ onBeforeUnmount(() => {
 
           <button
             type="submit"
-            class="rounded-xl bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300/70 disabled:cursor-not-allowed disabled:bg-orange-300 dark:bg-orange-500 dark:hover:bg-orange-400 dark:disabled:bg-orange-900/70"
-            :disabled="selectedContactIds.length === 0"
+            class="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300/70 disabled:cursor-not-allowed disabled:bg-orange-300 dark:bg-orange-500 dark:hover:bg-orange-400 dark:disabled:bg-orange-900/70"
+            :disabled="!canSubmit || isLoading"
           >
-            Iniciar chat
+            <i v-if="isLoading" class="pi pi-spin pi-spinner text-sm" />
+            {{ isGroupTab ? "Crear grupo" : "Iniciar chat" }}
           </button>
         </div>
       </form>
     </div>
   </transition>
 </template>
+
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.15s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.2s ease;
+}
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+</style>

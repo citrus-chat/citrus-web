@@ -23,5 +23,25 @@ export const citrusDb = openDB("citrus-chat", 2, {
     if (!db.objectStoreNames.contains("metadata")) {
       db.createObjectStore("metadata");
     }
+
+    if (!db.objectStoreNames.contains("chatRooms")) {
+      db.createObjectStore("chatRooms", {
+        keyPath: "id",
+      });
+    }
+
+    if (!db.objectStoreNames.contains("messages")) {
+      const store = db.createObjectStore("messages", {
+        keyPath: "id",
+      });
+
+      store.createIndex("chatRoomId", "chatRoomId", {
+        unique: false,
+      });
+
+      store.createIndex("deliveredAt", "deliveredAt", {
+        unique: false,
+      });
+    }
   },
 });

@@ -4,6 +4,7 @@ import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import "primeicons/primeicons.css";
 import { ref } from "vue";
 import NewChatModal from "./NewChatModal.vue";
+import { ChatRoomType } from "../../domain/ChatRoomType";
 
 const show = ref(false);
 
@@ -11,8 +12,6 @@ const {
   chats,
   selectedChat,
   selectChat,
-  lastMessageChatText,
-  lastMessageChatTime,
   findWorkspaceUserByName,
   openUserProfile,
 } = useChatStore();
@@ -35,10 +34,13 @@ const openChatUserProfile = (chatName: string) => {
       <h2 class="mb-0 text-2xl font-bold text-slate-900 dark:text-slate-50">
         Chats
       </h2>
-      <button @click="show = true">
-        <i
-          class="pi pi-plus cursor-pointer text-xl text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-        />
+      <button
+        type="button"
+        aria-label="Nuevo chat"
+        class="inline-flex h-8 w-8 items-center justify-center rounded-xl border border-slate-200/80 text-slate-500 transition hover:border-orange-300 hover:bg-orange-50 hover:text-orange-600 dark:border-white/10 dark:text-slate-400 dark:hover:border-orange-300/30 dark:hover:bg-orange-400/10 dark:hover:text-orange-400"
+        @click="show = true"
+      >
+        <i class="pi pi-plus text-sm" />
       </button>
     </div>
 
@@ -52,7 +54,7 @@ const openChatUserProfile = (chatName: string) => {
             ? 'border border-sky-300/70 bg-sky-50 shadow-[inset_0_0_0_1px_rgba(14,165,233,0.15)] dark:border-sky-400/20 dark:bg-sky-500/10 dark:shadow-[inset_0_0_0_1px_rgba(56,189,248,0.08)]'
             : 'bg-transparent hover:bg-slate-100 dark:hover:bg-white/5'
         "
-        @click="selectChat(chat.name)"
+        @click="selectChat(chat.id)"
       >
         <div class="relative mr-3">
           <img
@@ -60,17 +62,18 @@ const openChatUserProfile = (chatName: string) => {
             alt="Avatar"
             class="h-10 w-10 rounded-full object-cover"
             :class="
-              chat.type === 'direct'
+              chat.type === ChatRoomType.DIRECT
                 ? 'cursor-pointer ring-1 ring-transparent transition hover:ring-orange-400/40'
                 : ''
             "
             @click.stop="
-              chat.type === 'direct' && openChatUserProfile(chat.name)
+              chat.type === ChatRoomType.DIRECT &&
+              openChatUserProfile(chat.name)
             "
           />
 
           <span
-            v-if="chat.type === 'direct'"
+            v-if="chat.type === ChatRoomType.DIRECT"
             class="absolute bottom-0 right-0 h-3 w-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-900"
           />
         </div>
@@ -80,26 +83,28 @@ const openChatUserProfile = (chatName: string) => {
             <h3
               class="mb-0 truncate text-sm font-semibold text-slate-900 dark:text-slate-100"
               :class="
-                chat.type === 'direct'
+                chat.type === ChatRoomType.DIRECT
                   ? 'cursor-pointer hover:text-orange-500 dark:hover:text-orange-300'
                   : ''
               "
               @click.stop="
-                chat.type === 'direct' && openChatUserProfile(chat.name)
+                chat.type === ChatRoomType.DIRECT &&
+                openChatUserProfile(chat.name)
               "
             >
               {{ chat.name }}
             </h3>
           </div>
           <p class="text-sm text-slate-600 dark:text-slate-400">
-            {{ lastMessageChatText(chat.id) }}
+            <!-- {{ lastMessageChatText(chat.id) }} -->
           </p>
           <p class="text-xs text-slate-500 dark:text-slate-400">
-            {{ lastMessageChatTime(chat.id) }}
+            <!-- {{ lastMessageChatTime(chat.id) }} -->
           </p>
         </div>
       </div>
     </div>
+
     <NewChatModal :show="show" @close="show = false" />
   </section>
 </template>

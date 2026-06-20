@@ -1,49 +1,51 @@
 <script setup lang="ts">
-import { computed, nextTick, watch } from "vue";
+import { computed } from "vue";
 import "primeicons/primeicons.css";
 import { useChatStore } from "../../store/ChatStore";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import { ref } from "vue";
+import { ChatRoomType } from "../../domain/ChatRoomType";
 
 const {
-  messages,
+  // messages,
   selectedChat,
   findWorkspaceUserByName,
   openUserProfile,
-  sendMessage,
+  // sendMessage,
 } = useChatStore();
 
-const menuButtons = [
-  { icon: "pi pi-thumbtack", label: "Fijar" },
-  { icon: "pi pi-reply", label: "Reenviar" },
-  { icon: "pi pi-pencil", label: "Editar" },
-  { icon: "pi pi-trash", label: "Eliminar", danger: true },
-];
+// const menuButtons = [
+//   { icon: "pi pi-thumbtack", label: "Fijar" },
+//   { icon: "pi pi-reply", label: "Reenviar" },
+//   { icon: "pi pi-pencil", label: "Editar" },
+//   { icon: "pi pi-trash", label: "Eliminar", danger: true },
+// ];
 
 const messageChat = ref("");
-const messagesContainer = ref<HTMLElement | null>(null);
-const openMenuId = ref<number | null>(null);
-const menuPosition = ref({ x: 0, y: 0 });
+// const messagesContainer = ref<HTMLElement | null>(null);
+// const openMenuId = ref<number | null>(null);
+// const menuPosition = ref({ x: 0, y: 0 });
 
-const toggleMenu = (messageId: number, event: MouseEvent) => {
-  const rect = (event.target as HTMLElement).getBoundingClientRect();
-  const menuWidth = 140;
+// const toggleMenu = (messageId: number, event: MouseEvent) => {
+//   const rect = (event.target as HTMLElement).getBoundingClientRect();
+//   const menuWidth = 140;
 
-  const left =
-    rect.right + menuWidth > window.innerWidth
-      ? rect.left - menuWidth
-      : rect.left;
+//   const left =
+//     rect.right + menuWidth > window.innerWidth
+//       ? rect.left - menuWidth
+//       : rect.left;
 
-  menuPosition.value = { x: left, y: rect.bottom + 8 };
-  openMenuId.value = openMenuId.value === messageId ? null : messageId;
-};
+//   menuPosition.value = { x: left, y: rect.bottom + 8 };
+//   openMenuId.value = openMenuId.value === messageId ? null : messageId;
+// };
 
-const closeMenu = () => {
-  openMenuId.value = null;
-};
+// const closeMenu = () => {
+//   openMenuId.value = null;
+// };
 
 const selectedChatUser = computed(() => {
-  if (!selectedChat.value || selectedChat.value.type !== "direct") return null;
+  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
+    return null;
 
   return findWorkspaceUserByName(selectedChat.value.name);
 });
@@ -54,16 +56,16 @@ const handleMessage = () => {
     return;
   }
 
-  sendMessage(selectedChat.value.id, messageChat.value);
+  // sendMessage(selectedChat.value.id, messageChat.value);
 };
 
-watch(messages, async () => {
-  await nextTick();
-  messagesContainer.value?.scrollTo({
-    top: messagesContainer.value.scrollHeight,
-    behavior: "smooth",
-  });
-});
+// watch(messages, async () => {
+//   await nextTick();
+//   messagesContainer.value?.scrollTo({
+//     top: messagesContainer.value.scrollHeight,
+//     behavior: "smooth",
+//   });
+// });
 </script>
 
 <template>
@@ -130,7 +132,7 @@ watch(messages, async () => {
       ref="messagesContainer"
       class="flex-1 overflow-auto px-4 py-4 space-y-4"
     >
-      <div
+      <!-- <div
         v-for="message in messages"
         :key="message.id"
         class="flex"
@@ -217,7 +219,7 @@ watch(messages, async () => {
             </span>
           </div>
         </div>
-      </div>
+      </div> -->
     </div>
 
     <div
