@@ -2,7 +2,7 @@ export function clearClientSession(): void {
   try {
     localStorage.removeItem("selectedChat");
   } catch {
-    // ignore 
+    // ignore
   }
 
   // sessionStorage: por si en algún punto se guarda algo acá.

@@ -6,7 +6,7 @@ import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import "primeicons/primeicons.css";
 import { tokenService } from "@/core/auth/tokenService";
 import { checkAdminAccess } from "@/features/admin/application/use-cases/checkAdminAccess";
-import { useLogout } from "@/shared/composables/useLogout"
+import { useLogout } from "@/shared/composables/useLogout";
 
 const ThemeToggle = defineAsyncComponent(
   () => import("@/shared/ui/ThemeToggle.vue"),
@@ -34,7 +34,6 @@ onMounted(async () => {
 });
 
 const { isLoggingOut, logout } = useLogout();
-
 </script>
 
 <template>
@@ -118,14 +117,16 @@ const { isLoggingOut, logout } = useLogout();
 
           <ThemeToggle />
         </div>
-         <button
+        <button
           type="button"
           :disabled="isLoggingOut"
           class="mt-2 flex w-full items-center gap-2 rounded-lg px-3 py-1.5 text-xs font-medium text-slate-500 transition hover:bg-red-50 hover:text-red-600 disabled:opacity-50 dark:text-slate-400 dark:hover:bg-red-500/10 dark:hover:text-red-400"
           @click="logout"
         >
           <i class="pi pi-sign-out text-sm" />
-          <span>{{ isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión" }}</span>
+          <span>{{
+            isLoggingOut ? "Cerrando sesión..." : "Cerrar sesión"
+          }}</span>
         </button>
       </div>
     </div>
