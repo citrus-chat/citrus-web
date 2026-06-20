@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, nextTick, watch } from "vue";
+import { computed } from "vue";
 import "primeicons/primeicons.css";
 import { useChatStore } from "../../store/ChatStore";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
@@ -14,34 +14,34 @@ const {
   // sendMessage,
 } = useChatStore();
 
-const menuButtons = [
-  { icon: "pi pi-thumbtack", label: "Fijar" },
-  { icon: "pi pi-reply", label: "Reenviar" },
-  { icon: "pi pi-pencil", label: "Editar" },
-  { icon: "pi pi-trash", label: "Eliminar", danger: true },
-];
+// const menuButtons = [
+//   { icon: "pi pi-thumbtack", label: "Fijar" },
+//   { icon: "pi pi-reply", label: "Reenviar" },
+//   { icon: "pi pi-pencil", label: "Editar" },
+//   { icon: "pi pi-trash", label: "Eliminar", danger: true },
+// ];
 
 const messageChat = ref("");
-const messagesContainer = ref<HTMLElement | null>(null);
-const openMenuId = ref<number | null>(null);
-const menuPosition = ref({ x: 0, y: 0 });
+// const messagesContainer = ref<HTMLElement | null>(null);
+// const openMenuId = ref<number | null>(null);
+// const menuPosition = ref({ x: 0, y: 0 });
 
-const toggleMenu = (messageId: number, event: MouseEvent) => {
-  const rect = (event.target as HTMLElement).getBoundingClientRect();
-  const menuWidth = 140;
+// const toggleMenu = (messageId: number, event: MouseEvent) => {
+//   const rect = (event.target as HTMLElement).getBoundingClientRect();
+//   const menuWidth = 140;
 
-  const left =
-    rect.right + menuWidth > window.innerWidth
-      ? rect.left - menuWidth
-      : rect.left;
+//   const left =
+//     rect.right + menuWidth > window.innerWidth
+//       ? rect.left - menuWidth
+//       : rect.left;
 
-  menuPosition.value = { x: left, y: rect.bottom + 8 };
-  openMenuId.value = openMenuId.value === messageId ? null : messageId;
-};
+//   menuPosition.value = { x: left, y: rect.bottom + 8 };
+//   openMenuId.value = openMenuId.value === messageId ? null : messageId;
+// };
 
-const closeMenu = () => {
-  openMenuId.value = null;
-};
+// const closeMenu = () => {
+//   openMenuId.value = null;
+// };
 
 const selectedChatUser = computed(() => {
   if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
