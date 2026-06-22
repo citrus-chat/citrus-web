@@ -7,7 +7,7 @@ export interface ICreateChatRoomResponse {
   createdBy: string;
   // Not implemented yet.
   // participants: IChatParticipant[];
-  // roles: IChatRole[];
+  // roles: Record<string, IChatRole>;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
