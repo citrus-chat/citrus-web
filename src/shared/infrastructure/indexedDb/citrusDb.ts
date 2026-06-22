@@ -37,5 +37,19 @@ export const citrusDb = openDB("citrus-chat", 2, {
 
       messageStore.createIndex("conversationId", "conversationId");
     }
+
+    if (!db.objectStoreNames.contains("encryptedMessages")) {
+      const store = db.createObjectStore("encryptedMessages", {
+        keyPath: "id",
+      });
+
+      store.createIndex("conversationId", "conversationId", {
+        unique: false,
+      });
+
+      store.createIndex("messageId", "messageId", {
+        unique: false,
+      });
+    }
   },
 });
