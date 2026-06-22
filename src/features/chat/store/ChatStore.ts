@@ -9,6 +9,9 @@ import {
 
 import { ChatRoomType } from "../domain/ChatRoomType";
 import { chatStorage } from "../infrastructure/indexedDb/chatStorage";
+import { syncChatsUseCase } from "../application/use-cases/syncChatsUseCase";
+import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
+import type { IDevice } from "@/features/device/domain/IDevice";
 
 const selectedChat = ref<IChatRoom | null>(null);
 const selectedProfileUser = ref<WorkspaceUser | null>(null);
@@ -25,6 +28,14 @@ export const useChatStore = () => {
   );
 
   const loadChats = async () => {
+    const device: IDevice | null = await deviceStorage.get();
+    if (device) {
+      try {
+        await syncChatsUseCase(device);
+      } catch (error) {
+        console.error("Failed to sync chats", error);
+      }
+    }
     chats.value = await chatStorage.getAll();
   };
 
