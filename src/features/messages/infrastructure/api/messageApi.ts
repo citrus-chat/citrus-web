@@ -4,5 +4,6 @@ import type { ISendMessageApiRequest } from "../../domain/ISendMessageApiRequest
 export async function sendMessageApi(
   request: ISendMessageApiRequest,
 ): Promise<void> {
-  await apiClient.post("/message/send", request);
+  console.log("Sending message via API:", request);
+  await apiClient.post("/messages/send", request);
 }
