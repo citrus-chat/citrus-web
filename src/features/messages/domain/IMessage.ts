@@ -5,9 +5,15 @@ export interface IMessage {
 
   senderDeviceId: string;
 
+  replyToMessageId: string | null;
+
   content: string;
 
   createdAt: string;
 
-  status: "pending" | "sent" | "failed";
+  editedAt: string | undefined;
+
+  deletedAt: string | undefined;
+
+  status: "pending" | "sent" | "failed" | "recieved" | "read";
 }

@@ -30,12 +30,6 @@ export class IndexedDbMessageStorage implements IMessageStorage {
 
     const messages = await index.getAll(conversationId);
 
-    console.log(
-      "Retrieved messages from IndexedDB for conversationId: ",
-      conversationId,
-      messages,
-    );
-
     return messages.sort(
       (a, b) =>
         new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),

@@ -54,6 +54,26 @@ export class IndexedDbEncryptedMessageStorage implements IEncryptedMessageStorag
 
     await tx.done;
   }
+
+  async getLastMessage(
+    conversationId: string,
+  ): Promise<IEncryptedMessage | undefined> {
+    const db = await citrusDb;
+
+    const tx = db.transaction("encryptedMessages", "readonly");
+    const store = tx.objectStore("encryptedMessages");
+
+    const index = store.index("by_conversation_createdAt");
+
+    const range = IDBKeyRange.bound(
+      [conversationId, -Infinity],
+      [conversationId, Infinity],
+    );
+
+    const cursor = await index.openCursor(range, "prev");
+
+    return cursor?.value;
+  }
 }
 
 export const encryptedMessageStorage = new IndexedDbEncryptedMessageStorage();

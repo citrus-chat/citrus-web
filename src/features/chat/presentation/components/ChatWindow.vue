@@ -9,7 +9,7 @@ import { ChatRoomType } from "../../domain/ChatRoomType";
 const { selectedChat, findWorkspaceUserByName, openUserProfile } =
   useChatStore();
 
-const { messages, loadMessages, sendMessage } = useMessageStore();
+const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
 
 const messageChat = ref("");
 
@@ -23,7 +23,10 @@ const selectedChatUser = computed(() => {
 watch(
   () => selectedChat.value?.id,
   async (id) => {
-    if (id) await loadMessages(id);
+    if (id) {
+      await loadMessages(id);
+      await syncMessages(id);
+    }
   },
   { immediate: true },
 );

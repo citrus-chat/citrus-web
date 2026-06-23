@@ -34,8 +34,6 @@ export class SendMessageUseCase {
       status: "pending",
     };
 
-    await this.messageStorage.save(message);
-
     const conversationKey = await this.cryptoStorage.getActiveConversationKey(
       request.conversationId,
     );
@@ -57,6 +55,8 @@ export class SendMessageUseCase {
       iv,
       ciphertext,
     };
+
+    await this.messageStorage.save(message);
 
     await encryptedMessageStorage.save(encryptedMessage);
 

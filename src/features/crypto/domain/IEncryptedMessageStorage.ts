@@ -10,4 +10,8 @@ export interface IEncryptedMessageStorage {
   getByConversationId(conversationId: string): Promise<IEncryptedMessage[]>;
 
   deleteByConversationId(conversationId: string): Promise<void>;
+
+  getLastMessage(
+    conversationId: string,
+  ): Promise<IEncryptedMessage | undefined>;
 }
