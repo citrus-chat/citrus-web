@@ -55,6 +55,14 @@ class IndexedDbCryptoStorage implements ICryptoStorage {
     return keys[0];
   }
 
+  async getActiveConversationKey(
+    conversationId: string,
+  ): Promise<IConversationKey | null> {
+    const latest = await this.getLatestConversationKey(conversationId);
+
+    return latest;
+  }
+
   async removeConversationKeys(conversationId: string): Promise<void> {
     const db = await citrusDb;
 
@@ -78,9 +86,7 @@ class IndexedDbCryptoStorage implements ICryptoStorage {
     );
 
     await tx.objectStore("identityKeys").clear();
-
     await tx.objectStore("conversationKeys").clear();
-
     await tx.objectStore("metadata").clear();
 
     await tx.done;
