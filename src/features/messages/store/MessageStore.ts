@@ -5,6 +5,7 @@ import { SendMessageUseCase } from "../application/use-cases/SendMessageUseCase"
 import type { IMessage } from "../domain/IMessage";
 import { cryptoService } from "@/features/crypto/infraestructure/services/cryptoService";
 import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
+import { syncMessagesUseCase } from "../application/use-cases/SyncMessagesUseCase";
 
 const messages = ref<IMessage[]>([]);
 
@@ -17,6 +18,11 @@ const sendMessageUseCase = new SendMessageUseCase(
 
 export const useMessageStore = () => {
   const loadMessages = async (conversationId: string) => {
+    messages.value = await messageStorage.getByConversationId(conversationId);
+  };
+
+  const syncMessages = async (conversationId: string) => {
+    await syncMessagesUseCase(conversationId);
     messages.value = await messageStorage.getByConversationId(conversationId);
   };
 
@@ -33,5 +39,6 @@ export const useMessageStore = () => {
     messages,
     loadMessages,
     sendMessage,
+    syncMessages,
   };
 };

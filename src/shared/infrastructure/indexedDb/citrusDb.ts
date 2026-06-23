@@ -50,6 +50,11 @@ export const citrusDb = openDB("citrus-chat", 2, {
       store.createIndex("messageId", "messageId", {
         unique: false,
       });
+
+      store.createIndex("by_conversation_createdAt", [
+        "conversationId",
+        "createdAt",
+      ]);
     }
 
     if (!db.objectStoreNames.contains("outgoingQueue")) {
