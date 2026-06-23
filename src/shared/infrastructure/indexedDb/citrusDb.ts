@@ -51,5 +51,13 @@ export const citrusDb = openDB("citrus-chat", 2, {
         unique: false,
       });
     }
+
+    if (!db.objectStoreNames.contains("outgoingQueue")) {
+      const store = db.createObjectStore("outgoingQueue", {
+        keyPath: "id",
+      });
+
+      store.createIndex("createdAt", "createdAt");
+    }
   },
 });

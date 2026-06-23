@@ -5,6 +5,8 @@ export interface IEncryptedMessageStorage {
 
   saveMany(messages: IEncryptedMessage[]): Promise<void>;
 
+  getById(id: string): Promise<IEncryptedMessage | null>;
+
   getByConversationId(conversationId: string): Promise<IEncryptedMessage[]>;
 
   deleteByConversationId(conversationId: string): Promise<void>;

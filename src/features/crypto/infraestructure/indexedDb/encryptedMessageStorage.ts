@@ -21,6 +21,12 @@ export class IndexedDbEncryptedMessageStorage implements IEncryptedMessageStorag
     await tx.done;
   }
 
+  async getById(id: string): Promise<IEncryptedMessage | null> {
+    const db = await citrusDb;
+
+    return (await db.get("encryptedMessages", id)) ?? null;
+  }
+
   async getByConversationId(
     conversationId: string,
   ): Promise<IEncryptedMessage[]> {

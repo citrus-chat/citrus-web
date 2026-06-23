@@ -1,11 +1,14 @@
 import type { IMessage } from "../../domain/IMessage";
-import type { ISendMessageRequest } from "../../domain/ISendMessageRequest";
+import type { ISendMessageLocallyRequest } from "../../domain/ISendMessageLocallyRequest";
 import type { IDeviceStorage } from "@/features/device/domain/IDeviceStorage";
 import type { IMessageStorage } from "../../domain/IMessageStorage";
 import type { ICryptoService } from "@/features/crypto/domain/ICryptoService";
 import type { ICryptoStorage } from "@/features/crypto/domain/ICryptoStorage";
 import type { IEncryptedMessage } from "@/features/crypto/domain/IEncryptedMessage";
 import { encryptedMessageStorage } from "@/features/crypto/infraestructure/indexedDb/encryptedMessageStorage";
+import { outgoingQueueStorage } from "../../infrastructure/indexedDb/outgoingQueueStorage";
+import { OutgoingQueueItemType } from "../../domain/OutgoingQueueItemType";
+import { outgoingQueueProcessor } from "../../handlers/OutgoingQueueProcessor";
 
 export class SendMessageUseCase {
   constructor(
@@ -15,7 +18,7 @@ export class SendMessageUseCase {
     private readonly cryptoStorage: ICryptoStorage,
   ) {}
 
-  async execute(request: ISendMessageRequest): Promise<IMessage> {
+  async execute(request: ISendMessageLocallyRequest): Promise<IMessage> {
     const currentDevice = await this.deviceStorage.get();
 
     if (!currentDevice) {
@@ -56,6 +59,17 @@ export class SendMessageUseCase {
     };
 
     await encryptedMessageStorage.save(encryptedMessage);
+
+    await outgoingQueueStorage.save({
+      id: crypto.randomUUID(),
+      type: OutgoingQueueItemType.SEND_MESSAGE,
+      payload: {
+        encryptedMessageId: encryptedMessage.id,
+      },
+      createdAt: new Date().toISOString(),
+    });
+
+    await outgoingQueueProcessor.process();
 
     return message;
   }
