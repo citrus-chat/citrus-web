@@ -13,4 +13,16 @@ export const profileRoutes: RouteRecordRaw[] = [
       },
     ],
   },
+  {
+    path: "/organigrama",
+    component: () => import("@/app/layouts/AppLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "organigrama",
+        component: () =>
+          import("@/features/profile/presentation/pages/OrgChartPage.vue"),
+      },
+    ],
+  },
 ];

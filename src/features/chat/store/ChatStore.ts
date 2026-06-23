@@ -9,6 +9,7 @@ import {
 
 import { ChatRoomType } from "../domain/ChatRoomType";
 import { chatStorage } from "../infrastructure/indexedDb/chatStorage";
+import { useProfileStore } from "@/features/profile/Store/ProfileStore";
 
 const selectedChat = ref<IChatRoom | null>(null);
 const selectedProfileUser = ref<WorkspaceUser | null>(null);
@@ -18,7 +19,12 @@ const chats = ref<IChatRoom[]>([]);
 export const useChatStore = () => {
   const chatsIsEmpty = computed(() => chats.value.length === 0);
 
-  const currentUser = computed(() => currentWorkspaceUser);
+  const { profile } = useProfileStore();
+  const currentUser = computed<WorkspaceUser>(() => ({
+    ...currentWorkspaceUser,
+    name: profile.value?.username ?? currentWorkspaceUser.name,
+    avatar: profile.value?.avatarUrl ?? currentWorkspaceUser.avatar ?? undefined,
+  }));
 
   const isUserProfilePanelOpen = computed(
     () => selectedProfileUser.value !== null,

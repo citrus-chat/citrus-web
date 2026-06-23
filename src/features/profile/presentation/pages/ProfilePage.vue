@@ -3,7 +3,7 @@ import Profile from "../component/Profile.vue";
 </script>
 
 <template>
-  <section class="p-3" style="flex: 0 0 30%">
+  <div class="flex flex-1 min-h-0 overflow-y-auto">
     <Profile />
-  </section>
+  </div>
 </template>

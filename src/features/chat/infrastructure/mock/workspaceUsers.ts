@@ -1,72 +1,55 @@
-import type { WorkspaceUser } from "../../domain/WorkspaceUser";
+import type { WorkspaceUser } from "@/features/chat/domain/WorkspaceUser";
+
+const statuses = ["online", "away", "offline"] as const;
 
 export const mockWorkspaceUsers: WorkspaceUser[] = [
   {
     id: "user-1",
-    name: "John Doe",
-    username: "john.doe",
-    email: "john@example.com",
-    status: "online",
-    role: "Product Engineer",
-    timezone: "America/New_York",
-    phoneNumber: "+1 (555) 010-1201",
-    bio: "Construyendo la capa de producto y experiencia en CitrusChat.",
-  },
-  {
-    id: "user-2",
-    name: "Jane Smith",
-    username: "jane.smith",
-    email: "jane@example.com",
-    status: "online",
-    role: "Customer Success",
-    timezone: "Europe/London",
-    phoneNumber: "+44 20 5555 0102",
-    bio: "Acompaño cuentas y procesos de adopción en workspace.",
-  },
-  {
-    id: "user-3",
-    name: "Bob Johnson",
-    username: "bob.johnson",
-    email: "bob@example.com",
-    status: "away",
-    role: "Backend Developer",
-    timezone: "America/Chicago",
-    phoneNumber: "+1 (555) 010-1203",
-    bio: "Integraciones, APIs y sistemas internos.",
-  },
-  {
-    id: "user-4",
-    name: "Alice Williams",
-    username: "alice.williams",
-    email: "alice@example.com",
-    status: "offline",
-    role: "Product Designer",
-    timezone: "America/Mexico_City",
-    phoneNumber: "+52 55 5555 0104",
-    bio: "Diseño flujos claros y consistentes para colaboración.",
-  },
-  {
-    id: "user-5",
     name: "Carlos Martinez",
     username: "carlos.martinez",
     email: "carlos@example.com",
     status: "online",
-    role: "Engineering Manager",
+    role: "CEO",
+    department: "Management",
     timezone: "America/Argentina/Buenos_Aires",
-    phoneNumber: "+54 11 5555 0105",
-    bio: "Coordino ejecución técnica y visión de plataforma.",
+    phoneNumber: "+54 11 5555 0001",
+    bio: "Director general.",
   },
 ];
 
-export const currentWorkspaceUser: WorkspaceUser = {
-  id: "user-me",
-  name: "Usuario",
-  username: "usuario.citrus",
-  email: "usuario@citruschat.dev",
-  role: "Workspace Lead",
-  status: "online",
-  timezone: "America/Argentina/Buenos_Aires",
-  phoneNumber: "+54 11 5555 0000",
-  bio: "Perfil personal de CitrusChat para pruebas de UX tipo Slack.",
-  isCurrentUser: true,
-};
+for (let i = 2; i <= 100; i++) {
+  mockWorkspaceUsers.push({
+    id: `user-${i}`,
+    name: `Empleado ${i}`,
+    username: `empleado${i}`,
+    email: `empleado${i}@citrus.com`,
+      status: statuses[i % 3] as "online" | "away" | "offline",    
+      role:
+      i <= 5
+        ? "Director"
+        : i <= 20
+        ? "Manager"
+        : i <= 50
+        ? "Senior Developer"
+        : "Developer",
+    department:
+      i <= 20
+        ? "Management"
+        : i <= 60
+        ? "Engineering"
+        : "Operations",
+    managerId:
+      i <= 5
+        ? "user-1"
+        : i <= 20
+        ? `user-${2 + ((i - 6) % 4)}`
+        : `user-${6 + ((i - 21) % 15)}`,
+    timezone: "America/Argentina/Buenos_Aires",
+    phoneNumber: `+54 11 5555 ${String(i).padStart(4, "0")}`,
+    bio: `Empleado de prueba ${i}.`,
+  });
+}
+
+// Usuario actual: un Manager con jefe y subordinados para ver las tres capas
+export const currentWorkspaceUser: WorkspaceUser =
+  mockWorkspaceUsers.find((u) => u.id === "user-35")!;
