@@ -10,7 +10,7 @@ export type ApiErrorResponse = {
   message: string;
   statusCode: number;
   errorCode?: string;
-  errors?: Record<string, string[]>;
+  errors?: Record<string, string[]> | null;
   path?: string;
   timestamp?: string;
 };

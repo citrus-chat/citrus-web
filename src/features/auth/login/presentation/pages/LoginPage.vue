@@ -205,6 +205,7 @@ import { useRouter } from "vue-router";
 import type { ILoginForm } from "@/features/auth/login/domain/ILoginForm";
 import { loginUserUseCase } from "@/features/auth/login/application/use-cases/loginUserUseCase";
 import { tokenService } from "@/core/auth/tokenService";
+import { getUserFriendlyErrorMessage } from "@/core/api/apiErrorMapper";
 
 const router = useRouter();
 
@@ -241,9 +242,12 @@ async function onSubmit() {
     await loginUserUseCase({ ...form });
     // redirect to chat (main route)
     await router.push({ name: "chat" });
-  } catch (err) {
-    // Prefer ApiError message if available
-    error.value = err?.message || "Error al iniciar sesión";
+  } catch (err: unknown) {
+    if (import.meta.env.DEV) {
+      console.error("Login failed", err);
+    }
+
+    error.value = getUserFriendlyErrorMessage(err, "login");
   } finally {
     loading.value = false;
   }

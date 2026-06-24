@@ -55,11 +55,9 @@ async function request<T>(
       errorData = undefined;
     }
 
-    throw new ApiError(
-      errorData?.message || "API Error",
-      response.status,
-      errorData,
-    );
+    // Keep the response payload for diagnostics, but never promote its raw
+    // message to Error.message. UI layers must use apiErrorMapper instead.
+    throw new ApiError("API request failed", response.status, errorData);
   }
 
   // manejar éxito
@@ -67,9 +65,9 @@ async function request<T>(
 
   // opcional: validar contrato
   if (!json.success) {
-    throw new ApiError(json.message || "API Error", response.status, {
+    throw new ApiError("API request failed", response.status, {
       success: false,
-      message: json.message || "API Error",
+      message: json.message || "API request failed",
       statusCode: response.status,
       errorCode: "UNKNOWN_ERROR",
     });
