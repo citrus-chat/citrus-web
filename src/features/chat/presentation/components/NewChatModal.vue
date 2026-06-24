@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useChatStore } from "../../store/ChatStore";
+import { useUserStore } from "../../store/UserStore";
 import { createChatRoomUseCase } from "../../application/use-cases/createChatroomUseCase";
 import { ChatRoomType } from "../../domain/ChatRoomType";
 
@@ -11,6 +12,8 @@ const emit = defineEmits<{
 
 const { chats, chatExists, loadChats, selectChat } = useChatStore();
 
+const { users, loadUsers } = useUserStore();
+
 const visible = ref(props.show);
 const searchTerm = ref("");
 const errorMessage = ref("");
@@ -19,32 +22,10 @@ const activeTab = ref<ChatRoomType>(ChatRoomType.DIRECT);
 const groupName = ref("");
 const isLoading = ref(false);
 
-type Contact = {
-  id: string;
-  name: string;
-  status: string;
-};
-
-const contacts: Contact[] = [
-  {
-    id: "bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb",
-    name: "User",
-    status: "Disponible",
-  },
-  {
-    id: "cccccccc-cccc-cccc-cccc-cccccccccccc",
-    name: "User 2",
-    status: "Disponible",
-  },
-  { id: "3", name: "Bob Lee", status: "Disponible" },
-  { id: "4", name: "Ana García", status: "Ocupada" },
-  { id: "5", name: "Carlos Ruiz", status: "Disponible" },
-];
-
 const filteredContacts = computed(() => {
   const term = searchTerm.value.trim().toLowerCase();
-  if (!term) return contacts;
-  return contacts.filter((c) => c.name.toLowerCase().includes(term));
+  if (!term) return users.value;
+  return users.value.filter((c) => c.name.toLowerCase().includes(term));
 });
 
 const isGroupTab = computed(() => activeTab.value === ChatRoomType.GROUP);
@@ -119,7 +100,9 @@ const onSubmit = async () => {
 
     selectChat(createdChat.id);
   } else {
-    const contact = contacts.find((c) => c.id === selectedContactIds.value[0]);
+    const contact = users.value.find(
+      (c) => c.id === selectedContactIds.value[0],
+    );
 
     if (!contact) {
       return;
@@ -165,7 +148,10 @@ watch(visible, (newValue) => {
   if (!newValue) emit("close");
 });
 
-onMounted(() => window.addEventListener("keydown", onEscape));
+onMounted(() => {
+  window.addEventListener("keydown", onEscape);
+  loadUsers();
+});
 onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
 </script>
 
