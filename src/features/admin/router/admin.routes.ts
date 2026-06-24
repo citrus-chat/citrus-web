@@ -23,10 +23,20 @@ export const adminRoutes: RouteRecordRaw[] = [
           import("@/features/admin/users/presentation/pages/AdminUsersPage.vue"),
       },
       {
-        path: "users/register",
+        path: "users/new",
         name: "admin-users-register",
         component: () =>
           import("@/features/admin/users/presentation/pages/AdminRegisterUserPage.vue"),
+      },
+      {
+        path: "users/register",
+        redirect: { name: "admin-users-register" },
+      },
+      {
+        path: "reports",
+        name: "admin-reports",
+        component: () =>
+          import("@/features/admin/reports/presentation/pages/AdminReportsPage.vue"),
       },
     ],
   },
