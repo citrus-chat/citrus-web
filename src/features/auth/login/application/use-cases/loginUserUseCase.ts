@@ -4,6 +4,7 @@ import type { ILoginRequest } from "@/features/auth/login/domain/ILoginRequest";
 import { getOrCreateDeviceUseCase } from "@/features/device/application/getOrCreateDeviceUseCase";
 import { loginApi } from "@/features/auth/login/infrastructure/api/loginApi";
 import { tokenService } from "@/core/auth/tokenService";
+import { ApiError } from "@/core/api/apiError";
 import type { IDevice } from "@/features/device/domain/IDevice";
 
 export async function loginUserUseCase(
@@ -20,7 +21,12 @@ export async function loginUserUseCase(
   const data = await loginApi(loginRequest);
 
   if (!data || !data.accessToken) {
-    throw new Error("Invalid login response: missing access token");
+    throw new ApiError("Invalid login response", 500, {
+      success: false,
+      message: "Login response did not include an access token",
+      statusCode: 500,
+      errorCode: "UNEXPECTED_ERROR",
+    });
   }
 
   tokenService.saveAccessToken(data.accessToken);
