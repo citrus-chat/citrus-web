@@ -9,6 +9,7 @@ import { createChatRoomApi } from "../../infrastructure/api/chatApi";
 import { loadUsersDeviceKeysUseCase } from "./loadUsersDeviceKeysUseCase";
 import { uploadConversationKeyUseCase } from "./uploadConversationKeyUseCase";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
+import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
 
 export async function createChatRoomUseCase(
   request: ICreateChatRoomRequest,
@@ -64,10 +65,17 @@ export async function createChatRoomUseCase(
       identityKey.privateKey,
     );
 
+    const senderDevice = await deviceStorage.get();
+
+    if (!senderDevice) {
+      throw new Error("Sender device not found");
+    }
+
     await uploadConversationKeyUseCase({
       conversationId: conversationKey.conversationId,
       targetUserId: device.userId,
       targetDeviceId: device.deviceId,
+      senderDeviceId: senderDevice.deviceId,
       keyVersion: conversationKey.keyVersion,
       ciphertext: encryptedKey.ciphertext,
       iv: encryptedKey.iv,
