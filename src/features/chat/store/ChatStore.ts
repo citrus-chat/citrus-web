@@ -9,6 +9,7 @@ import {
 
 import { ChatRoomType } from "../domain/ChatRoomType";
 import { chatStorage } from "../infrastructure/indexedDb/chatStorage";
+import { useProfileStore } from "@/features/profile/Store/ProfileStore";
 import { syncChatsUseCase } from "../application/use-cases/syncChatsUseCase";
 import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
 import type { IDevice } from "@/features/device/domain/IDevice";
@@ -21,7 +22,13 @@ const chats = ref<IChatRoom[]>([]);
 export const useChatStore = () => {
   const chatsIsEmpty = computed(() => chats.value.length === 0);
 
-  const currentUser = computed(() => currentWorkspaceUser);
+  const { profile } = useProfileStore();
+  const currentUser = computed<WorkspaceUser>(() => ({
+    ...currentWorkspaceUser,
+    name: profile.value?.username ?? currentWorkspaceUser.name,
+    avatar:
+      profile.value?.avatarUrl ?? currentWorkspaceUser.avatar ?? undefined,
+  }));
 
   const isUserProfilePanelOpen = computed(
     () => selectedProfileUser.value !== null,

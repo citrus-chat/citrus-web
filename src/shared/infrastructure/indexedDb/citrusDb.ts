@@ -1,6 +1,6 @@
 import { openDB } from "idb";
 
-export const citrusDb = openDB("citrus-chat", 2, {
+export const citrusDb = openDB("citrus-chat", 6, {
   upgrade(db) {
     if (!db.objectStoreNames.contains("device")) {
       db.createObjectStore("device");
@@ -71,6 +71,10 @@ export const citrusDb = openDB("citrus-chat", 2, {
       });
 
       store.createIndex("name", "name", { unique: false });
+    if (!db.objectStoreNames.contains("profile")) {
+      db.createObjectStore("profile", {
+        keyPath: "userId",
+      });
     }
   },
 });

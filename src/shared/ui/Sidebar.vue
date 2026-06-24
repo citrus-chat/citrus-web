@@ -13,14 +13,16 @@ const ThemeToggle = defineAsyncComponent(
 );
 
 const router = useRouter();
-const { openUserProfile, currentUser } = useChatStore();
+const { currentUser } = useChatStore();
 const goChats = () => router.push("/");
+const goProfile = () => router.push("/profile");
 
 const items = [
   { icon: "pi-comments", label: "Chats", to: "/" },
   // { icon: "pi-users", label: "Contactos", to: "/contacts" },
   { icon: "pi-flag", label: "Reportes", to: "/reports" },
   { icon: "pi-hashtag", label: "Channels", to: "/channels" },
+  { icon: "pi-sitemap", label: "Ver Organigrama", to: "/organigrama" },
 ];
 
 const current = computed(() => router.currentRoute.value.path);
@@ -92,7 +94,7 @@ const { isLoggingOut, logout } = useLogout();
           <button
             type="button"
             class="flex min-w-0 items-center gap-3 rounded-2xl px-2 py-2 text-left transition hover:bg-slate-100 dark:hover:bg-white/5"
-            @click="openUserProfile(currentUser)"
+            @click="goProfile"
           >
             <img
               :src="currentUser.avatar ?? avatarProfile"
