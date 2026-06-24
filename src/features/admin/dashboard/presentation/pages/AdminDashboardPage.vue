@@ -1,85 +1,207 @@
 <script setup lang="ts">
-const stats = [
-  { label: "Usuarios", value: 1240 },
-  { label: "Chats activos", value: 342 },
-  { label: "Reportes", value: 18 },
-  { label: "Sanciones", value: 7 },
-];
+import { computed, onMounted, ref } from "vue";
+
+import { getUserFriendlyErrorMessage } from "@/core/api/apiErrorMapper";
+import { checkAdminAccess } from "@/features/admin/application/use-cases/checkAdminAccess";
+import AdminBadge from "@/features/admin/presentation/components/AdminBadge.vue";
+import AdminEmptyState from "@/features/admin/presentation/components/AdminEmptyState.vue";
+import AdminErrorState from "@/features/admin/presentation/components/AdminErrorState.vue";
+import AdminLoadingState from "@/features/admin/presentation/components/AdminLoadingState.vue";
+import AdminPageHeader from "@/features/admin/presentation/components/AdminPageHeader.vue";
+import AdminStatCard from "@/features/admin/presentation/components/AdminStatCard.vue";
+import { getAdminUsers } from "@/features/admin/users/application/use-cases/getAdminUsers";
+import type { IAdminUser } from "@/features/admin/users/domain/IAdminUser";
+
+const users = ref<IAdminUser[]>([]);
+const loading = ref(true);
+const error = ref<string | null>(null);
+const hasAdminAccess = ref(false);
+const usersLoaded = ref(false);
+const totalUsers = ref<number | null>(null);
+
+const hasKnownUserStatus = computed(() =>
+  users.value.some((user) => user.status !== "unknown"),
+);
+const hasKnownValidationStatus = computed(() =>
+  users.value.some((user) => user.validationStatus !== "unknown"),
+);
+const activeUsers = computed(
+  () => users.value.filter((user) => user.status === "active").length,
+);
+const pendingUsers = computed(
+  () =>
+    users.value.filter((user) => user.validationStatus === "pending").length,
+);
+
+async function loadDashboard() {
+  loading.value = true;
+  error.value = null;
+
+  try {
+    const [adminAccess, adminUsersResponse] = await Promise.all([
+      checkAdminAccess(),
+      getAdminUsers({ page: 0, size: 20 }),
+    ]);
+    hasAdminAccess.value = adminAccess;
+    users.value = adminUsersResponse.items;
+    totalUsers.value = adminUsersResponse.meta.total;
+    usersLoaded.value = true;
+  } catch (exception: unknown) {
+    if (import.meta.env.DEV) {
+      console.error("Unable to load administrative dashboard", exception);
+    }
+    error.value = getUserFriendlyErrorMessage(exception, "admin");
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(loadDashboard);
 </script>
 
 <template>
-  <section>
-    <div class="mb-6">
-      <h2 class="text-2xl font-bold">Dashboard</h2>
-      <p class="text-slate-600 dark:text-slate-400">
-        Resumen general del sistema
-      </p>
-    </div>
+  <section class="space-y-6">
+    <AdminPageHeader
+      title="Dashboard"
+      subtitle="Estado del área administrativa y resumen del directorio de Citrus Chat."
+      action-label="Ver usuarios"
+      action-to="/admin/users"
+    />
 
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-      <div
-        v-for="stat in stats"
-        :key="stat.label"
-        class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
-      >
-        <div class="flex items-center gap-4">
-          <div
-            class="h-12 w-12 rounded-lg bg-blue-600 text-white flex items-center justify-center"
-          >
-            <svg
-              class="h-6 w-6"
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M3 7h4v4H3zM10 7h4v4h-4zM17 7h4v4h-4zM3 14h4v4H3zM10 14h4v4h-4zM17 14h4v4h-4z"
-              />
-            </svg>
-          </div>
+    <AdminLoadingState
+      v-if="loading"
+      label="Cargando el resumen administrativo…"
+    />
+    <AdminErrorState
+      v-else-if="error"
+      :message="error"
+      @retry="loadDashboard"
+    />
 
-          <div>
-            <div class="text-lg font-semibold">
-              {{ stat.value }}
-            </div>
-            <div class="text-sm text-slate-500 dark:text-slate-400">
-              {{ stat.label }}
-            </div>
-          </div>
-        </div>
+    <template v-else>
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <AdminStatCard
+          label="Usuarios"
+          :value="totalUsers ?? 'No disponible'"
+          hint="Total informado por el paginador del directorio administrativo."
+          tone="orange"
+        />
+        <AdminStatCard
+          label="Usuarios activos"
+          :value="hasKnownUserStatus ? activeUsers : 'No disponible'"
+          :hint="
+            hasKnownUserStatus
+              ? 'Calculado solo sobre la primera página cargada.'
+              : 'La API no informa el estado de las cuentas.'
+          "
+          tone="emerald"
+        />
+        <AdminStatCard
+          label="Pendientes de validación"
+          :value="hasKnownValidationStatus ? pendingUsers : 'No disponible'"
+          :hint="
+            hasKnownValidationStatus
+              ? 'Calculado solo sobre la primera página cargada.'
+              : 'La API no informa la validación de las cuentas.'
+          "
+          tone="sky"
+        />
+        <AdminStatCard
+          label="Acceso administrativo"
+          :value="hasAdminAccess ? 'Validado' : 'Sin validar'"
+          hint="Verificado con el endpoint de acceso administrativo."
+          tone="slate"
+        />
       </div>
-    </div>
 
-    <div
-      class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900/70"
-    >
-      <h5 class="font-semibold mb-3">Actividad reciente</h5>
-      <ul class="space-y-3">
-        <li
-          class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-300"
+      <div class="grid grid-cols-1 gap-5 xl:grid-cols-5">
+        <section
+          class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-900/70 xl:col-span-3"
         >
-          <span>Nuevo usuario registrado</span>
-          <small class="text-slate-500 dark:text-slate-400">hace 5 min</small>
-        </li>
+          <div class="flex items-center justify-between gap-3">
+            <div>
+              <h2 class="font-semibold text-slate-900 dark:text-white">
+                Accesos rápidos
+              </h2>
+              <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                Acciones disponibles para este panel.
+              </p>
+            </div>
+          </div>
+          <div class="mt-5 grid gap-3 sm:grid-cols-3">
+            <RouterLink
+              to="/admin/users"
+              class="rounded-xl border border-slate-200 p-4 transition hover:border-orange-300 hover:bg-orange-50/50 dark:border-white/10 dark:hover:border-orange-400/40 dark:hover:bg-orange-500/5"
+            >
+              <h3 class="font-semibold text-slate-900 dark:text-white">
+                Gestionar usuarios
+              </h3>
+              <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                Consultar y filtrar el directorio.
+              </p>
+            </RouterLink>
+            <RouterLink
+              to="/admin/users/new"
+              class="rounded-xl border border-slate-200 p-4 transition hover:border-orange-300 hover:bg-orange-50/50 dark:border-white/10 dark:hover:border-orange-400/40 dark:hover:bg-orange-500/5"
+            >
+              <h3 class="font-semibold text-slate-900 dark:text-white">
+                Registrar usuario
+              </h3>
+              <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                Crear una nueva cuenta interna.
+              </p>
+            </RouterLink>
+            <RouterLink
+              to="/admin/reports"
+              class="rounded-xl border border-slate-200 p-4 transition hover:border-orange-300 hover:bg-orange-50/50 dark:border-white/10 dark:hover:border-orange-400/40 dark:hover:bg-orange-500/5"
+            >
+              <h3 class="font-semibold text-slate-900 dark:text-white">
+                Ver reportes
+              </h3>
+              <p class="mt-1 text-sm text-slate-600 dark:text-slate-400">
+                Revisar el estado del módulo.
+              </p>
+            </RouterLink>
+          </div>
+        </section>
 
-        <li
-          class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-300"
+        <section
+          class="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-slate-900/70 xl:col-span-2"
         >
-          <span>Reporte enviado</span>
-          <small class="text-slate-500 dark:text-slate-400">hace 20 min</small>
-        </li>
+          <h2 class="font-semibold text-slate-900 dark:text-white">
+            Estado del sistema
+          </h2>
+          <ul class="mt-4 space-y-4">
+            <li class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-600 dark:text-slate-400"
+                >API administrativa</span
+              ><AdminBadge
+                :label="usersLoaded ? 'Conectada' : 'Sin datos'"
+                :tone="usersLoaded ? 'success' : 'neutral'"
+              />
+            </li>
+            <li class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-600 dark:text-slate-400"
+                >Acceso admin</span
+              ><AdminBadge
+                :label="hasAdminAccess ? 'Validado' : 'No validado'"
+                :tone="hasAdminAccess ? 'success' : 'warning'"
+              />
+            </li>
+            <li class="flex items-center justify-between gap-3">
+              <span class="text-sm text-slate-600 dark:text-slate-400"
+                >Sesión</span
+              ><AdminBadge label="Activa" tone="info" />
+            </li>
+          </ul>
+        </section>
+      </div>
 
-        <li
-          class="flex items-center justify-between text-sm text-slate-700 dark:text-slate-300"
-        >
-          <span>Usuario bloqueado</span>
-          <small class="text-slate-500 dark:text-slate-400">hace 1 hora</small>
-        </li>
-      </ul>
-    </div>
+      <AdminEmptyState
+        v-if="totalUsers === 0"
+        title="El directorio todavía no tiene usuarios"
+        description="No se recibieron usuarios desde el endpoint administrativo. Puedes registrar la primera cuenta cuando corresponda."
+      />
+    </template>
   </section>
 </template>

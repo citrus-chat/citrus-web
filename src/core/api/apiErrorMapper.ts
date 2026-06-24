@@ -13,7 +13,7 @@ export type NormalizedApiError = {
   rawMessage?: string;
 };
 
-export type ApiErrorMessageContext = "login" | "default";
+export type ApiErrorMessageContext = "login" | "admin" | "default";
 
 const INVALID_CREDENTIALS_CODES = new Set([
   "INVALID_CREDENTIALS",
@@ -124,7 +124,27 @@ export function getUserFriendlyErrorMessage(
   error: unknown,
   context: ApiErrorMessageContext = "default",
 ): string {
-  switch (normalizeApiError(error).category) {
+  const normalizedError = normalizeApiError(error);
+
+  if (context === "admin") {
+    switch (normalizedError.statusCode) {
+      case 401:
+        return "Tu sesión expiró. Inicia sesión nuevamente.";
+      case 403:
+        return "No tienes permisos para acceder al panel de administración.";
+      case 404:
+        return "No encontramos el recurso solicitado.";
+      default:
+        if (
+          normalizedError.statusCode !== undefined &&
+          normalizedError.statusCode >= 500
+        ) {
+          return "Ocurrió un problema en el servidor. Intenta nuevamente más tarde.";
+        }
+    }
+  }
+
+  switch (normalizedError.category) {
     case "network":
       return "No se pudo conectar con el servidor. Revisa tu conexión e intenta nuevamente.";
     case "invalid_credentials":
@@ -136,7 +156,7 @@ export function getUserFriendlyErrorMessage(
     case "technical":
       return context === "login"
         ? "No pudimos procesar el inicio de sesión. Verifica tus datos o intenta nuevamente más tarde."
-        : "No pudimos iniciar sesión en este momento. Intenta nuevamente más tarde.";
+        : "No pudimos completar la operación. Intenta nuevamente más tarde.";
     case "unknown":
       return "No pudimos completar la operación. Intenta nuevamente más tarde.";
   }

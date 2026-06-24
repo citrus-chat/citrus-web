@@ -30,7 +30,7 @@ router.beforeEach(async (to) => {
     const isAdmin = await checkAdminAccess();
 
     if (!isAdmin) {
-      return { path: "/" };
+      return { name: "chat" };
     }
   }
 

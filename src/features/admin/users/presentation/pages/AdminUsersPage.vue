@@ -1,108 +1,175 @@
 <script setup lang="ts">
-const users = [
-  {
-    id: "1",
-    username: "nacho",
-    email: "nacho@citrus.com",
-    phoneNumber: "+59899123456",
-    status: "Activo",
-  },
-];
+import { onMounted, ref } from "vue";
+
+import { getUserFriendlyErrorMessage } from "@/core/api/apiErrorMapper";
+import AdminErrorState from "@/features/admin/presentation/components/AdminErrorState.vue";
+import AdminPageHeader from "@/features/admin/presentation/components/AdminPageHeader.vue";
+import AdminPagination from "@/features/admin/presentation/components/AdminPagination.vue";
+import { getAdminUsers } from "@/features/admin/users/application/use-cases/getAdminUsers";
+import type { IAdminUser } from "@/features/admin/users/domain/IAdminUser";
+import type { IPaginationMeta } from "@/features/admin/users/domain/IPaginationMeta";
+import AdminUserTable from "@/features/admin/users/presentation/components/AdminUserTable.vue";
+
+const users = ref<IAdminUser[]>([]);
+const pagination = ref<IPaginationMeta | null>(null);
+const currentPage = ref(0);
+const pageSize = ref(20);
+const search = ref("");
+const status = ref("");
+const loading = ref(true);
+const error = ref<string | null>(null);
+
+async function loadUsers() {
+  loading.value = true;
+  error.value = null;
+
+  try {
+    const response = await getAdminUsers({
+      page: currentPage.value,
+      size: pageSize.value,
+      search: search.value.trim() || undefined,
+      status: status.value || undefined,
+    });
+
+    users.value = response.items;
+    pagination.value = response.meta;
+    currentPage.value = response.meta.currentPage;
+    pageSize.value = response.meta.perPage || pageSize.value;
+  } catch (exception: unknown) {
+    if (import.meta.env.DEV) {
+      console.error("Unable to load administrative users", exception);
+    }
+    error.value = getUserFriendlyErrorMessage(exception, "admin");
+  } finally {
+    loading.value = false;
+  }
+}
+
+function applyFilters() {
+  currentPage.value = 0;
+  loadUsers();
+}
+
+function clearFilters() {
+  search.value = "";
+  status.value = "";
+  currentPage.value = 0;
+  loadUsers();
+}
+
+function handleChangePage(page: number) {
+  currentPage.value = Math.max(page, 0);
+  loadUsers();
+}
+
+function handleChangePageSize(size: number) {
+  pageSize.value = size;
+  currentPage.value = 0;
+  loadUsers();
+}
+
+onMounted(loadUsers);
 </script>
 
 <template>
-  <section>
-    <div class="flex items-center justify-between mb-6">
-      <div>
-        <h2 class="text-2xl font-bold">Usuarios</h2>
-        <p class="text-slate-600 dark:text-slate-400">
-          Gestión de usuarios del sistema
-        </p>
-      </div>
+  <section class="space-y-6">
+    <AdminPageHeader
+      title="Usuarios"
+      subtitle="Consulta el directorio interno y revisa el estado de las cuentas registradas."
+      action-label="Registrar usuario"
+      action-to="/admin/users/new"
+    />
 
-      <RouterLink
-        to="/admin/users/register"
-        class="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-700"
-      >
-        Crear usuario
-      </RouterLink>
-    </div>
-
-    <div
-      class="rounded-2xl border border-slate-200 bg-white overflow-auto shadow-sm dark:border-white/10 dark:bg-slate-900/70"
+    <form
+      class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-slate-900/70 sm:p-5"
+      @submit.prevent="applyFilters"
     >
-      <table class="min-w-full divide-y divide-slate-100 dark:divide-white/6">
-        <thead class="bg-slate-50 dark:bg-slate-900/60">
-          <tr>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-            >
-              Username
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-            >
-              Email
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-            >
-              Teléfono
-            </th>
-            <th
-              class="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider"
-            >
-              Estado
-            </th>
-            <th
-              class="px-6 py-3 text-right text-xs font-medium text-slate-500 uppercase tracking-wider"
-            >
-              Acciones
-            </th>
-          </tr>
-        </thead>
-        <tbody
-          class="bg-white divide-y divide-slate-100 dark:bg-slate-900 dark:divide-white/6"
+      <div
+        class="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_12rem_auto]"
+      >
+        <div>
+          <label for="admin-user-search" class="sr-only">Buscar usuarios</label>
+          <input
+            id="admin-user-search"
+            v-model="search"
+            type="search"
+            placeholder="Buscar por nombre, email o usuario"
+            class="min-h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-100"
+          />
+        </div>
+        <div>
+          <label for="admin-user-status" class="sr-only"
+            >Filtrar por estado</label
+          >
+          <select
+            id="admin-user-status"
+            v-model="status"
+            class="min-h-10 w-full rounded-xl border border-slate-300 bg-white px-3 text-sm text-slate-700 outline-none focus:border-orange-500 focus:ring-2 focus:ring-orange-500/20 dark:border-white/10 dark:bg-slate-950 dark:text-slate-200"
+          >
+            <option value="">Todos los estados</option>
+            <option value="ACTIVE">Activos</option>
+            <option value="INACTIVE">Inactivos</option>
+          </select>
+        </div>
+        <button
+          type="submit"
+          :disabled="loading"
+          class="min-h-10 rounded-xl bg-slate-900 px-4 py-2 text-sm font-semibold text-white transition hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-60 dark:bg-white dark:text-slate-900 dark:hover:bg-slate-200"
         >
-          <tr v-for="user in users" :key="user.id">
-            <td
-              class="px-6 py-4 whitespace-nowrap font-semibold text-slate-900 dark:text-slate-100"
-            >
-              {{ user.username }}
-            </td>
-            <td
-              class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-slate-300"
-            >
-              {{ user.email }}
-            </td>
-            <td
-              class="px-6 py-4 whitespace-nowrap text-slate-700 dark:text-slate-300"
-            >
-              {{ user.phoneNumber }}
-            </td>
-            <td class="px-6 py-4 whitespace-nowrap">
-              <span
-                class="inline-flex items-center rounded-full bg-emerald-100 px-2 py-1 text-xs font-medium text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300"
-                >{{ user.status }}</span
-              >
-            </td>
-            <td
-              class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium"
-            >
-              <button
-                class="inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-3 py-1 text-sm text-slate-700 hover:bg-slate-50 dark:border-white/10 dark:bg-slate-900 dark:text-slate-200"
-              >
-                Ver
-              </button>
-              <button
-                class="ml-2 inline-flex items-center gap-2 rounded-xl border border-red-300 bg-red-50 px-3 py-1 text-sm text-red-700 hover:bg-red-100 dark:border-red-900/40 dark:bg-red-950/20 dark:text-red-300"
-              >
-                Desactivar
-              </button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
+          Buscar
+        </button>
+      </div>
+      <div
+        class="mt-3 flex flex-wrap items-center justify-between gap-2 text-sm"
+      >
+        <p class="text-slate-500 dark:text-slate-400">
+          {{
+            pagination
+              ? `${pagination.total} usuarios en total`
+              : "Cargando usuarios…"
+          }}
+        </p>
+        <button
+          v-if="search || status"
+          type="button"
+          class="font-semibold text-orange-600 hover:text-orange-700 dark:text-orange-300 dark:hover:text-orange-200"
+          @click="clearFilters"
+        >
+          Limpiar filtros
+        </button>
+      </div>
+    </form>
+
+    <AdminErrorState v-if="error" :message="error" @retry="loadUsers" />
+    <template v-else>
+      <AdminUserTable
+        :users="users"
+        :loading="loading"
+        :empty-title="
+          search || status
+            ? 'No encontramos usuarios con esos filtros'
+            : 'No hay usuarios registrados'
+        "
+        :empty-description="
+          search || status
+            ? 'Prueba con otros términos o restablece los filtros.'
+            : 'Cuando el backend devuelva usuarios, aparecerán en este directorio.'
+        "
+      />
+      <AdminPagination
+        v-if="pagination && !loading"
+        :current-page="pagination.currentPage"
+        :last-page="pagination.lastPage"
+        :per-page="pagination.perPage"
+        :total="pagination.total"
+        :from="pagination.from"
+        :to="pagination.to"
+        :has-next-page="pagination.hasNextPage"
+        :has-previous-page="pagination.hasPreviousPage"
+        :loading="loading"
+        @change-page="handleChangePage"
+        @change-page-size="handleChangePageSize"
+      />
+    </template>
   </section>
 </template>

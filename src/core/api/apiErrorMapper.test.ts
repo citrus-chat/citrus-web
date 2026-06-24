@@ -51,4 +51,16 @@ describe("apiErrorMapper", () => {
       "No se pudo conectar con el servidor. Revisa tu conexión e intenta nuevamente.",
     );
   });
+
+  it("maps HTTP errors in the administrative context", () => {
+    const error = new ApiError("API request failed", 403, {
+      success: false,
+      message: "Forbidden",
+      statusCode: 403,
+    });
+
+    expect(getUserFriendlyErrorMessage(error, "admin")).toBe(
+      "No tienes permisos para acceder al panel de administración.",
+    );
+  });
 });
