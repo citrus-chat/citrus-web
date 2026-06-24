@@ -72,7 +72,7 @@ export const citrusDb = openDB("citrus-chat", 6, {
 
       store.createIndex("name", "name", { unique: false });
     }
-    
+
     if (!db.objectStoreNames.contains("profile")) {
       db.createObjectStore("profile", {
         keyPath: "userId",
