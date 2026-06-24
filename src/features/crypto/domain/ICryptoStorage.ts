@@ -17,6 +17,10 @@ export interface ICryptoStorage {
     conversationId: string,
   ): Promise<IConversationKey | null>;
 
+  getActiveConversationKey(
+    conversationId: string,
+  ): Promise<IConversationKey | null>;
+
   removeConversationKeys(conversationId: string): Promise<void>;
 
   clear(): Promise<void>;

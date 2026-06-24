@@ -1,9 +1,9 @@
 export interface IEncryptedMessage {
+  id: string;
+
   messageId: string;
 
   conversationId: string;
-
-  senderDeviceId: string;
 
   keyVersion: number;
 

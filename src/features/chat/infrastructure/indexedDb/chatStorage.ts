@@ -3,6 +3,16 @@ import type { IChatStorage } from "../../domain/IChatStorage";
 import { citrusDb } from "@/shared/infrastructure/indexedDb/citrusDb";
 
 class IndexedDbChatStorage implements IChatStorage {
+  async saveMany(chatRooms: IChatRoom[]): Promise<void> {
+    const db = await citrusDb;
+
+    const tx = db.transaction("chatRooms", "readwrite");
+
+    await Promise.all(chatRooms.map((chatRoom) => tx.store.put(chatRoom)));
+
+    await tx.done;
+  }
+
   async save(chatRoom: IChatRoom): Promise<void> {
     const db = await citrusDb;
 

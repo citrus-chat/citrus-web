@@ -1,5 +1,5 @@
 import type { IDeviceKeyPair } from "./IDeviceKeyPair";
-// import type { IEncryptedPayload } from "./IEncryptedPayload";
+import type { IEncryptedMessage } from "./IEncryptedMessage";
 
 export interface ICryptoService {
   generateIdentityKey(): Promise<IDeviceKeyPair>;
@@ -9,11 +9,14 @@ export interface ICryptoService {
     publicKey: string,
   ): Promise<Uint8Array>;
 
-  // deriveConversationKey(sharedSecret: string, conversationSalt: string, info?: string): Promise<Uint8Array>;
+  generateConversationKey(): Promise<string>;
 
-  // encrypt(plaintext: string, conversationKey: string): Promise<IEncryptedPayload>;
+  encrypt(
+    plaintext: string,
+    key: string,
+  ): Promise<{ iv: string; ciphertext: string }>;
 
-  // decrypt(payload: IEncryptedPayload, conversationKey: string): Promise<string>;
+  decrypt(payload: IEncryptedMessage, key: string): Promise<string>;
 
   // rotateKey(oldKey: string,rotationSeed: string, info?: string):Promise<Uint8Array>;
 }

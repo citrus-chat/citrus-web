@@ -8,6 +8,8 @@ class IndexedDbDeviceStorage implements IDeviceStorage {
   async save(device: IDevice): Promise<void> {
     const db = await citrusDb;
 
+    console.log("Saving device to IndexedDB:", device);
+
     await db.put("device", device, DEVICE_KEY);
   }
 
