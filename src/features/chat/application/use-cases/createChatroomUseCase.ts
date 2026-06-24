@@ -7,14 +7,39 @@ import { cryptoStorage } from "../../../crypto/infraestructure/indexedDb/cryptoS
 
 import { createChatRoomApi } from "../../infrastructure/api/chatApi";
 import { loadUsersDeviceKeysUseCase } from "./loadUsersDeviceKeysUseCase";
+import { uploadConversationKeyUseCase } from "./uploadConversationKeyUseCase";
+import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
 
 export async function createChatRoomUseCase(
   request: ICreateChatRoomRequest,
 ): Promise<ICreateChatRoomResponse> {
-  const devices = await loadUsersDeviceKeysUseCase(request.participantIds);
+  const currentUser = await getCurrentUserUseCase();
+
+  if (!currentUser || !currentUser.userId) {
+    throw new Error("Current user not found");
+  }
+
+  const participantIds = [currentUser.userId, ...request.participantIds];
+
+  const identityKey = await cryptoStorage.getIdentityKey();
+
+  if (!identityKey) {
+    throw new Error("Identity key not found");
+  }
+
+  const devices = await loadUsersDeviceKeysUseCase(participantIds);
 
   if (!devices || devices.length === 0) {
-    throw new Error("No device keys found for participants");
+    throw new Error("No devices found for participants");
+  }
+
+  for (const participantId of participantIds) {
+    const participantDevices = devices.filter(
+      (device) => device.userId === participantId,
+    );
+    if (!participantDevices || participantDevices.length === 0) {
+      throw new Error(`No devices found for participant: ${participantId}`);
+    }
   }
 
   const data = await createChatRoomApi(request);
@@ -32,6 +57,22 @@ export async function createChatRoomUseCase(
     createdAt: new Date().toISOString(),
   };
 
+  for (const device of devices) {
+    const encryptedKey = await cryptoService.encryptConversationKeyForUser(
+      conversationKey.key,
+      device.publicKey,
+      identityKey.privateKey,
+    );
+
+    await uploadConversationKeyUseCase({
+      conversationId: conversationKey.conversationId,
+      targetUserId: device.userId,
+      targetDeviceId: device.deviceId,
+      keyVersion: conversationKey.keyVersion,
+      ciphertext: encryptedKey.ciphertext,
+      iv: encryptedKey.iv,
+    });
+  }
   await cryptoStorage.saveConversationKey(conversationKey);
 
   await chatStorage.save(data);

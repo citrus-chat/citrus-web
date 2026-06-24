@@ -3,6 +3,8 @@ import type { ICreateChatRoomRequest } from "../../domain/ICreateChatRoomRequest
 import type { ICreateChatRoomResponse } from "../../domain/ICreateChatRoomResponse";
 import type { IDevice } from "@/features/device/domain/IDevice";
 import type { ISyncChatRoomsResponse } from "../../domain/ISyncChatRoomsResponse";
+import type { IUploadConversationKeyRequest } from "../../domain/IUploadConversationKeyRequest";
+import type { IUploadConversationKeyResponse } from "../../domain/IUploadConversationKeyResponse";
 
 export async function createChatRoomApi(
   request: ICreateChatRoomRequest,
@@ -23,6 +25,17 @@ export async function syncChatRoomApi(
       deviceId: request.deviceId,
     },
   });
+
+  return data;
+}
+
+export async function uploadConversationKeyApi(
+  request: IUploadConversationKeyRequest,
+): Promise<IUploadConversationKeyResponse> {
+  const data = await apiClient.post<IUploadConversationKeyResponse>(
+    "/chatroom/conversation-keys",
+    request,
+  );
 
   return data;
 }
