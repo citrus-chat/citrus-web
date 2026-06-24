@@ -9,5 +9,7 @@ export interface WorkspaceUser {
   timezone?: string;
   phoneNumber?: string;
   bio?: string;
+  managerId?: string;
+  department?: string;
   isCurrentUser?: boolean;
 }
