@@ -320,7 +320,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
                     {{ contact.name }}
                   </p>
                   <p class="text-xs text-slate-500 dark:text-slate-400">
-                    {{ contact.status }}
+                    {{ "Disponible" }}
                   </p>
                 </div>
               </div>

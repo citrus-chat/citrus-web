@@ -6,10 +6,17 @@ import { cryptoService } from "../../../crypto/infraestructure/services/cryptoSe
 import { cryptoStorage } from "../../../crypto/infraestructure/indexedDb/cryptoStorage";
 
 import { createChatRoomApi } from "../../infrastructure/api/chatApi";
+import { loadUsersDeviceKeysUseCase } from "./loadUsersDeviceKeysUseCase";
 
 export async function createChatRoomUseCase(
   request: ICreateChatRoomRequest,
 ): Promise<ICreateChatRoomResponse> {
+  const devices = await loadUsersDeviceKeysUseCase(request.participantIds);
+
+  if (!devices || devices.length === 0) {
+    throw new Error("No device keys found for participants");
+  }
+
   const data = await createChatRoomApi(request);
 
   if (!data || !data.id) {
