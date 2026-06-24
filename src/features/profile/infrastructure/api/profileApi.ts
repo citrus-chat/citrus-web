@@ -44,6 +44,11 @@ export function getMyProfileApi(): Promise<IRemoteProfile> {
 }
 
 // ── PUT /api/v1/users/me/profile ─────────────────────────────────────────────
-export function updateMyProfileApi(payload: IUpdateProfilePayload): Promise<IRemoteProfile> {
-  return apiClient.put<IRemoteProfile, IUpdateProfilePayload>("/users/me/profile", payload);
+export function updateMyProfileApi(
+  payload: IUpdateProfilePayload,
+): Promise<IRemoteProfile> {
+  return apiClient.put<IRemoteProfile, IUpdateProfilePayload>(
+    "/users/me/profile",
+    payload,
+  );
 }

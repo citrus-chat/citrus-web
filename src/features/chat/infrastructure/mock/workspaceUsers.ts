@@ -23,27 +23,22 @@ for (let i = 2; i <= 100; i++) {
     name: `Empleado ${i}`,
     username: `empleado${i}`,
     email: `empleado${i}@citrus.com`,
-      status: statuses[i % 3] as "online" | "away" | "offline",    
-      role:
+    status: statuses[i % 3] as "online" | "away" | "offline",
+    role:
       i <= 5
         ? "Director"
         : i <= 20
-        ? "Manager"
-        : i <= 50
-        ? "Senior Developer"
-        : "Developer",
-    department:
-      i <= 20
-        ? "Management"
-        : i <= 60
-        ? "Engineering"
-        : "Operations",
+          ? "Manager"
+          : i <= 50
+            ? "Senior Developer"
+            : "Developer",
+    department: i <= 20 ? "Management" : i <= 60 ? "Engineering" : "Operations",
     managerId:
       i <= 5
         ? "user-1"
         : i <= 20
-        ? `user-${2 + ((i - 6) % 4)}`
-        : `user-${6 + ((i - 21) % 15)}`,
+          ? `user-${2 + ((i - 6) % 4)}`
+          : `user-${6 + ((i - 21) % 15)}`,
     timezone: "America/Argentina/Buenos_Aires",
     phoneNumber: `+54 11 5555 ${String(i).padStart(4, "0")}`,
     bio: `Empleado de prueba ${i}.`,
@@ -51,5 +46,6 @@ for (let i = 2; i <= 100; i++) {
 }
 
 // Usuario actual: un Manager con jefe y subordinados para ver las tres capas
-export const currentWorkspaceUser: WorkspaceUser =
-  mockWorkspaceUsers.find((u) => u.id === "user-35")!;
+export const currentWorkspaceUser: WorkspaceUser = mockWorkspaceUsers.find(
+  (u) => u.id === "user-35",
+)!;

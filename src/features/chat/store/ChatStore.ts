@@ -26,7 +26,8 @@ export const useChatStore = () => {
   const currentUser = computed<WorkspaceUser>(() => ({
     ...currentWorkspaceUser,
     name: profile.value?.username ?? currentWorkspaceUser.name,
-    avatar: profile.value?.avatarUrl ?? currentWorkspaceUser.avatar ?? undefined,
+    avatar:
+      profile.value?.avatarUrl ?? currentWorkspaceUser.avatar ?? undefined,
   }));
 
   const isUserProfilePanelOpen = computed(

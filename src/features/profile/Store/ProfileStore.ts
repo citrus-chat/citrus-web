@@ -1,14 +1,17 @@
 import { computed, ref } from "vue";
 import type { IProfileData } from "../domain/IProfileData";
 import { profileStorage } from "../infrastructure/indexedDb/profileStorage";
-import { getMyProfileApi, updateMyProfileApi } from "../infrastructure/api/profileApi";
+import {
+  getMyProfileApi,
+  updateMyProfileApi,
+} from "../infrastructure/api/profileApi";
 import { env } from "@/core/config/env";
 
 /**
-* Convierte una ruta de avatar relativa al servidor (por ejemplo, "/api/v1/users/avatars/abc.jpg")
-* en una URL absoluta utilizando el origen del servidor derivado de VITE_API_URL.
-* Devuelve null cuando la entrada es nula/vacía.
-*/
+ * Convierte una ruta de avatar relativa al servidor (por ejemplo, "/api/v1/users/avatars/abc.jpg")
+ * en una URL absoluta utilizando el origen del servidor derivado de VITE_API_URL.
+ * Devuelve null cuando la entrada es nula/vacía.
+ */
 function toAbsoluteAvatarUrl(relativeUrl: string | null): string | null {
   if (!relativeUrl) return null;
   // Already absolute (e.g. already processed or external)
@@ -24,7 +27,6 @@ const isSaving = ref(false);
 const saveError = ref<string | null>(null);
 
 export const useProfileStore = () => {
-
   const setProfile = (data: IProfileData) => {
     profile.value = data;
   };
@@ -88,7 +90,7 @@ export const useProfileStore = () => {
     isSaving.value = true;
     saveError.value = null;
 
-    // 1. Actualización optimista en memoria + IndexedDB    
+    // 1. Actualización optimista en memoria + IndexedDB
     profile.value = updated;
     await profileStorage.save(updated);
 
