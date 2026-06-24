@@ -3,8 +3,15 @@ import { ref, onMounted, reactive, computed } from "vue";
 import "primeicons/primeicons.css";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
-import type { ICurrentUserResponse, IPersonalData, ICorporateData } from "@/features/profile/domain/ICurrentUserResponse";
-import { mockWorkspaceUsers, currentWorkspaceUser } from "@/features/chat/infrastructure/mock/workspaceUsers";
+import type {
+  ICurrentUserResponse,
+  IPersonalData,
+  ICorporateData,
+} from "@/features/profile/domain/ICurrentUserResponse";
+import {
+  mockWorkspaceUsers,
+  currentWorkspaceUser,
+} from "@/features/chat/infrastructure/mock/workspaceUsers";
 import OrgChart from "./OrgChart.vue";
 import EditProfileModal from "./EditProfileModal.vue";
 import type { ProfileFormData } from "./EditProfileModal.vue";
@@ -20,14 +27,19 @@ const error = ref<string | null>(null);
 //Persistir datos
 const profileStore = useProfileStore();
 
-const personal = reactive<IPersonalData>({ description: "", privacy: "public" });
+const personal = reactive<IPersonalData>({
+  description: "",
+  privacy: "public",
+});
 const corporate = reactive<ICorporateData>({
   role: currentWorkspaceUser.role ?? "Sin cargo",
   department: currentWorkspaceUser.department ?? "Sin departamento",
   area: "Desarrollo de Producto",
   hierarchyLevel: "Senior",
   supervisor: (() => {
-    const mgr = mockWorkspaceUsers.find(u => u.id === currentWorkspaceUser.managerId);
+    const mgr = mockWorkspaceUsers.find(
+      (u) => u.id === currentWorkspaceUser.managerId,
+    );
     return mgr ? mgr.name : "Sin asignar";
   })(),
 });
@@ -134,8 +146,11 @@ onMounted(async () => {
         description: "",
         privacy: "public",
         privacySettings: {
-          showPhone: true, showEmail: true, showStatus: true,
-          showDescription: true, allowGroupInvites: true,
+          showPhone: true,
+          showEmail: true,
+          showStatus: true,
+          showDescription: true,
+          allowGroupInvites: true,
         },
       });
     }
@@ -153,7 +168,6 @@ onMounted(async () => {
 
     personal.description = p.description;
     personal.privacy = p.privacy;
-
   } catch (err) {
     console.error("PROFILE ERROR:", err);
     error.value = "No se pudo cargar el perfil.";
@@ -206,15 +220,21 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
 </script>
 
 <template>
-  <div class="flex flex-1 min-h-0 overflow-y-auto items-start justify-center px-6 py-10">
-    <div v-if="isLoading" class="flex flex-col items-center gap-3 text-slate-400 dark:text-slate-500">
+  <div
+    class="flex flex-1 min-h-0 overflow-y-auto items-start justify-center px-6 py-10"
+  >
+    <div
+      v-if="isLoading"
+      class="flex flex-col items-center gap-3 text-slate-400 dark:text-slate-500"
+    >
       <i class="pi pi-spin pi-spinner text-3xl" />
-      <p class="text-sm">
-        Cargando perfil...
-      </p>
+      <p class="text-sm">Cargando perfil...</p>
     </div>
 
-    <div v-else-if="error" class="flex flex-col items-center gap-3 text-red-500">
+    <div
+      v-else-if="error"
+      class="flex flex-col items-center gap-3 text-red-500"
+    >
       <i class="pi pi-exclamation-circle text-3xl" />
       <p class="text-sm">
         {{ error }}
@@ -224,13 +244,18 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
     <div v-else-if="user" class="w-full max-w-3xl space-y-5">
       <!-- Header -->
       <div
-        class="rounded-3xl border border-slate-200/80 bg-white/70 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-slate-900/40">
+        class="rounded-3xl border border-slate-200/80 bg-white/70 p-6 shadow-[0_12px_40px_rgba(15,23,42,0.08)] dark:border-white/10 dark:bg-slate-900/40"
+      >
         <div class="flex flex-col sm:flex-row items-center gap-5">
           <div class="relative shrink-0">
-            <img :src="avatarSrc" alt="Avatar"
-              class="h-20 w-20 rounded-full object-cover ring-4 ring-white shadow-sm dark:ring-slate-950">
+            <img
+              :src="avatarSrc"
+              alt="Avatar"
+              class="h-20 w-20 rounded-full object-cover ring-4 ring-white shadow-sm dark:ring-slate-950"
+            />
             <span
-              class="absolute bottom-1 right-1 h-4 w-4 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-950" />
+              class="absolute bottom-1 right-1 h-4 w-4 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-slate-950"
+            />
           </div>
           <div class="flex-1 text-center sm:text-left">
             <h1 class="text-xl font-semibold text-slate-900 dark:text-slate-50">
@@ -240,13 +265,16 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
               @{{ user.username }}
             </p>
             <span
-              class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-600 ring-1 ring-inset ring-emerald-500/20 dark:text-emerald-300">
+              class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-medium text-emerald-600 ring-1 ring-inset ring-emerald-500/20 dark:text-emerald-300"
+            >
               <span class="h-1.5 w-1.5 rounded-full bg-emerald-500" />En línea
             </span>
           </div>
-          <button type="button"
+          <button
+            type="button"
             class="shrink-0 inline-flex items-center gap-2 rounded-2xl bg-orange-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-orange-400"
-            @click="openEdit">
+            @click="openEdit"
+          >
             <i class="pi pi-pencil" />Editar perfil
           </button>
         </div>
@@ -256,9 +284,12 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
       <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
         <!-- Datos personales -->
         <div
-          class="rounded-3xl border border-slate-200/80 bg-white/70 p-5 shadow-[0_8px_30px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-slate-900/40">
+          class="rounded-3xl border border-slate-200/80 bg-white/70 p-5 shadow-[0_8px_30px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-slate-900/40"
+        >
           <div class="flex items-center gap-2 mb-4">
-            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-500/10 dark:bg-orange-500/20">
+            <div
+              class="flex h-7 w-7 items-center justify-center rounded-lg bg-orange-500/10 dark:bg-orange-500/20"
+            >
               <i class="pi pi-user text-orange-500 text-sm" />
             </div>
             <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
@@ -270,24 +301,50 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
               <i class="pi pi-phone mt-0.5 text-slate-400 shrink-0" />
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2">
-                  <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                  <p
+                    class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400"
+                  >
                     Teléfono
                   </p>
-                  <span class="inline-flex items-center gap-1 text-[10px]"
-                    :class="form.privacySettings.showPhone ? 'text-emerald-500' : 'text-slate-400'">
-                    <i class="pi text-[9px]" :class="form.privacySettings.showPhone ? 'pi-eye' : 'pi-eye-slash'" />
-                    {{ form.privacySettings.showPhone ? 'Visible' : 'Oculto' }}
+                  <span
+                    class="inline-flex items-center gap-1 text-[10px]"
+                    :class="
+                      form.privacySettings.showPhone
+                        ? 'text-emerald-500'
+                        : 'text-slate-400'
+                    "
+                  >
+                    <i
+                      class="pi text-[9px]"
+                      :class="
+                        form.privacySettings.showPhone
+                          ? 'pi-eye'
+                          : 'pi-eye-slash'
+                      "
+                    />
+                    {{ form.privacySettings.showPhone ? "Visible" : "Oculto" }}
                   </span>
                 </div>
                 <div class="flex items-center gap-2 mt-0.5">
                   <p class="font-medium text-slate-900 dark:text-slate-100">
                     {{ phone || "No configurado" }}
                   </p>
-                  <button v-if="phone" type="button"
+                  <button
+                    v-if="phone"
+                    type="button"
                     class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition"
-                    :class="copiedPhone ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'"
-                    :title="copiedPhone ? 'Copiado' : 'Copiar teléfono'" @click="copyPhone">
-                    <i class="pi text-xs" :class="copiedPhone ? 'pi-check' : 'pi-copy'" />
+                    :class="
+                      copiedPhone
+                        ? 'text-emerald-500'
+                        : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+                    "
+                    :title="copiedPhone ? 'Copiado' : 'Copiar teléfono'"
+                    @click="copyPhone"
+                  >
+                    <i
+                      class="pi text-xs"
+                      :class="copiedPhone ? 'pi-check' : 'pi-copy'"
+                    />
                   </button>
                 </div>
               </div>
@@ -296,18 +353,33 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
               <i class="pi pi-envelope mt-0.5 text-slate-400 shrink-0" />
               <div class="flex-1 min-w-0">
                 <div class="flex items-center gap-2">
-                  <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
+                  <p
+                    class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400"
+                  >
                     Email corporativo
                   </p>
                 </div>
                 <div class="flex items-center gap-2 mt-0.5">
-                  <p class="font-medium text-slate-900 dark:text-slate-100 truncate">
+                  <p
+                    class="font-medium text-slate-900 dark:text-slate-100 truncate"
+                  >
                     {{ user.email }}
                   </p>
-                  <button type="button" class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition"
-                    :class="copiedEmail ? 'text-emerald-500' : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'"
-                    :title="copiedEmail ? 'Copiado' : 'Copiar email'" @click="copyEmail">
-                    <i class="pi text-xs" :class="copiedEmail ? 'pi-check' : 'pi-copy'" />
+                  <button
+                    type="button"
+                    class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg transition"
+                    :class="
+                      copiedEmail
+                        ? 'text-emerald-500'
+                        : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-200'
+                    "
+                    :title="copiedEmail ? 'Copiado' : 'Copiar email'"
+                    @click="copyEmail"
+                  >
+                    <i
+                      class="pi text-xs"
+                      :class="copiedEmail ? 'pi-check' : 'pi-copy'"
+                    />
                   </button>
                 </div>
               </div>
@@ -315,7 +387,9 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
             <div class="flex items-start gap-3">
               <i class="pi pi-at mt-0.5 text-slate-400 shrink-0" />
               <div>
-                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5">
+                <p
+                  class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5"
+                >
                   Username
                 </p>
                 <p class="font-medium text-slate-900 dark:text-slate-100">
@@ -326,19 +400,31 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
             <div class="flex items-start gap-3">
               <i class="pi pi-align-left mt-0.5 text-slate-400 shrink-0" />
               <div>
-                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5">
+                <p
+                  class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5"
+                >
                   Descripción
                 </p>
-                <p class="font-medium text-slate-900 dark:text-slate-100 italic"
-                  :class="{ 'text-slate-400 dark:text-slate-500 not-italic': !personal.description }">
-                  {{ personal.description || "Sin descripción. Editá tu perfil para agregar una." }}
+                <p
+                  class="font-medium text-slate-900 dark:text-slate-100 italic"
+                  :class="{
+                    'text-slate-400 dark:text-slate-500 not-italic':
+                      !personal.description,
+                  }"
+                >
+                  {{
+                    personal.description ||
+                    "Sin descripción. Editá tu perfil para agregar una."
+                  }}
                 </p>
               </div>
             </div>
             <div class="flex items-start gap-3">
               <i class="pi pi-lock mt-0.5 text-slate-400 shrink-0" />
               <div>
-                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5">
+                <p
+                  class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5"
+                >
                   Privacidad
                 </p>
                 <p class="font-medium text-slate-900 dark:text-slate-100">
@@ -348,16 +434,32 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
             </div>
             <!-- Badges de visibilidad -->
             <div class="flex flex-wrap gap-2">
-              <div v-for="badge in [
-                { key: 'showEmail', label: 'Correo' },
-                { key: 'showStatus', label: 'Estado' },
-                { key: 'showDescription', label: 'Descripción' },
-              ]" :key="badge.key" class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
-                :class="form.privacySettings[badge.key as keyof typeof form.privacySettings]
-                  ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
-                  : 'bg-slate-500/10 text-slate-500'">
-                <i class="pi"
-                  :class="form.privacySettings[badge.key as keyof typeof form.privacySettings] ? 'pi-eye' : 'pi-eye-slash'" />
+              <div
+                v-for="badge in [
+                  { key: 'showEmail', label: 'Correo' },
+                  { key: 'showStatus', label: 'Estado' },
+                  { key: 'showDescription', label: 'Descripción' },
+                ]"
+                :key="badge.key"
+                class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium"
+                :class="
+                  form.privacySettings[
+                    badge.key as keyof typeof form.privacySettings
+                  ]
+                    ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400'
+                    : 'bg-slate-500/10 text-slate-500'
+                "
+              >
+                <i
+                  class="pi"
+                  :class="
+                    form.privacySettings[
+                      badge.key as keyof typeof form.privacySettings
+                    ]
+                      ? 'pi-eye'
+                      : 'pi-eye-slash'
+                  "
+                />
                 {{ badge.label }}
               </div>
             </div>
@@ -366,9 +468,12 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
 
         <!-- Datos corporativos -->
         <div
-          class="rounded-3xl border border-slate-200/80 bg-white/70 p-5 shadow-[0_8px_30px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-slate-900/40">
+          class="rounded-3xl border border-slate-200/80 bg-white/70 p-5 shadow-[0_8px_30px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-slate-900/40"
+        >
           <div class="flex items-center gap-2 mb-4">
-            <div class="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/10 dark:bg-sky-500/20">
+            <div
+              class="flex h-7 w-7 items-center justify-center rounded-lg bg-sky-500/10 dark:bg-sky-500/20"
+            >
               <i class="pi pi-building text-sky-500 text-sm" />
             </div>
             <h2 class="text-sm font-semibold text-slate-900 dark:text-slate-50">
@@ -379,16 +484,22 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
             <div class="flex items-start gap-3">
               <i class="pi pi-briefcase mt-0.5 text-slate-400 shrink-0" />
               <div class="flex-1 min-w-0">
-                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5">
+                <p
+                  class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5"
+                >
                   Cargo / Posición
                 </p>
                 <div class="flex items-center justify-between gap-3 mt-0.5">
-                  <p class="font-medium text-slate-900 dark:text-slate-100 truncate">
+                  <p
+                    class="font-medium text-slate-900 dark:text-slate-100 truncate"
+                  >
                     {{ corporate.role }}
                   </p>
-                  <button type="button"
+                  <button
+                    type="button"
                     class="shrink-0 inline-flex items-center gap-1.5 rounded-xl bg-sky-500/10 px-2.5 py-1 text-xs font-semibold text-sky-600 transition hover:bg-sky-500/20 active:scale-95 dark:bg-sky-500/15 dark:text-sky-400 dark:hover:bg-sky-500/25"
-                    @click="isOrgOpen = true">
+                    @click="isOrgOpen = true"
+                  >
                     <i class="pi pi-sitemap text-[10px]" />Ver organigrama
                   </button>
                 </div>
@@ -397,7 +508,9 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
             <div class="flex items-start gap-3">
               <i class="pi pi-sitemap mt-0.5 text-slate-400 shrink-0" />
               <div>
-                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5">
+                <p
+                  class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5"
+                >
                   Departamento
                 </p>
                 <p class="font-medium text-slate-900 dark:text-slate-100">
@@ -408,7 +521,9 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
             <div class="flex items-start gap-3">
               <i class="pi pi-objects-column mt-0.5 text-slate-400 shrink-0" />
               <div>
-                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5">
+                <p
+                  class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5"
+                >
                   Área
                 </p>
                 <p class="font-medium text-slate-900 dark:text-slate-100">
@@ -419,7 +534,9 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
             <div class="flex items-start gap-3">
               <i class="pi pi-chart-bar mt-0.5 text-slate-400 shrink-0" />
               <div>
-                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5">
+                <p
+                  class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5"
+                >
                   Nivel jerárquico
                 </p>
                 <p class="font-medium text-slate-900 dark:text-slate-100">
@@ -430,7 +547,9 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
             <div class="flex items-start gap-3">
               <i class="pi pi-user-plus mt-0.5 text-slate-400 shrink-0" />
               <div>
-                <p class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5">
+                <p
+                  class="text-[10px] uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400 mb-0.5"
+                >
                   Jefe encargado
                 </p>
                 <p class="font-medium text-slate-900 dark:text-slate-100">
@@ -442,12 +561,20 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
         </div>
       </div>
 
-      <EditProfileModal v-model:visible="isEditOpen" :form="form" @save="handleSave" />
+      <EditProfileModal
+        v-model:visible="isEditOpen"
+        :form="form"
+        @save="handleSave"
+      />
     </div>
   </div>
 
-  <OrgChart :users="mockWorkspaceUsers" :focus-id="currentWorkspaceUser.id" :is-open="isOrgOpen"
-    @close="isOrgOpen = false" />
+  <OrgChart
+    :users="mockWorkspaceUsers"
+    :focus-id="currentWorkspaceUser.id"
+    :is-open="isOrgOpen"
+    @close="isOrgOpen = false"
+  />
 </template>
 
 <style scoped>
