@@ -206,6 +206,7 @@ import type { ILoginForm } from "@/features/auth/login/domain/ILoginForm";
 import { loginUserUseCase } from "@/features/auth/login/application/use-cases/loginUserUseCase";
 import { tokenService } from "@/core/auth/tokenService";
 import { getUserFriendlyErrorMessage } from "@/core/api/apiErrorMapper";
+import { chatRealtimeService } from "@/features/chat/infrastructure/services/ChatRealtimeService";
 
 const router = useRouter();
 
@@ -224,6 +225,10 @@ function toggleShowPassword() {
 
 onMounted(() => {
   if (tokenService.hasAccessToken()) {
+    const token = tokenService.getAccessToken();
+    if (token) {
+      chatRealtimeService.connect(token);
+    }
     router.push({ name: "chat" }).catch(() => {});
   }
 });
@@ -240,7 +245,10 @@ async function onSubmit() {
 
   try {
     await loginUserUseCase({ ...form });
-    // redirect to chat (main route)
+    const token = tokenService.getAccessToken();
+    if (token) {
+      chatRealtimeService.connect(token);
+    }
     await router.push({ name: "chat" });
   } catch (err: unknown) {
     if (import.meta.env.DEV) {

@@ -5,6 +5,8 @@ import { useChatStore } from "../../store/ChatStore";
 import { useMessageStore } from "../../../messages/store/MessageStore";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import { ChatRoomType } from "../../domain/ChatRoomType";
+import type { StompSubscription } from "@stomp/stompjs";
+import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeService";
 
 const {
   selectedChat,
@@ -33,10 +35,16 @@ const scrollToBottom = async () => {
   }
 };
 
+let subscription: StompSubscription | undefined;
+
 watch(
   () => selectedChat.value?.id,
   async (id) => {
+    subscription?.unsubscribe();
     if (id) {
+      subscription = chatRealtimeService.subscribeToChatRoom(id, async () => {
+        await syncMessages(id);
+      });
       firstNewMessageIndex.value = null;
       await loadMessages(id);
       firstNewMessageIndex.value = await syncMessages(id);
