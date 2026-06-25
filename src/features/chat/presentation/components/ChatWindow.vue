@@ -44,6 +44,7 @@ watch(
     if (id) {
       subscription = chatRealtimeService.subscribeToChatRoom(id, async () => {
         await syncMessages(id);
+        await scrollToBottom();
       });
       firstNewMessageIndex.value = null;
       await loadMessages(id);

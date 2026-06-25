@@ -22,13 +22,11 @@ export const useMessageStore = () => {
   };
 
   const syncMessages = async (conversationId: string) => {
-    console.log("SYNC", conversationId);
     const previousCount =
       await messageStorage.countByConversationId(conversationId);
     await syncMessagesUseCase(conversationId);
     messages.value = await messageStorage.getByConversationId(conversationId);
 
-    console.log("CURRENT STORE CONVERSATION", conversationId);
     const newCount = messages.value.length;
     return newCount > previousCount ? previousCount : null;
   };
