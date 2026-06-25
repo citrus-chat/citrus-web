@@ -5,6 +5,7 @@ import type { IDevice } from "@/features/device/domain/IDevice";
 import type { ISyncChatRoomsResponse } from "../../domain/ISyncChatRoomsResponse";
 import type { IUploadConversationKeyRequest } from "../../domain/IUploadConversationKeyRequest";
 import type { IUploadConversationKeyResponse } from "../../domain/IUploadConversationKeyResponse";
+import type { IUserPermissionResponse } from "../../domain/IUserPermissionResponse";
 
 export async function createChatRoomApi(
   request: ICreateChatRoomRequest,
@@ -37,5 +38,15 @@ export async function uploadConversationKeyApi(
     request,
   );
 
+  return data;
+}
+
+export async function getUserPermissionsApi(
+  participantId: string,
+  chatId: string,
+): Promise<IUserPermissionResponse> {
+  const data = await apiClient.get<IUserPermissionResponse>(
+    `/chatroom/${chatId}/participant/${participantId}/permission`,
+  );
   return data;
 }
