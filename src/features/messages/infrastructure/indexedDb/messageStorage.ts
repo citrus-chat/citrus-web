@@ -21,9 +21,6 @@ export class IndexedDbMessageStorage implements IMessageStorage {
       return;
     }
 
-    console.log(`Saving ${messages.length} messages to IndexedDB`);
-    console.log(messages);
-
     const db = await citrusDb;
 
     const tx = db.transaction("messages", "readwrite");
@@ -41,6 +38,12 @@ export class IndexedDbMessageStorage implements IMessageStorage {
     const messages = await index.getAll(conversationId);
 
     return messages.sort((a, b) => toTime(a.createdAt) - toTime(b.createdAt));
+  }
+
+  async countByConversationId(conversationId: string): Promise<number> {
+    const db = await citrusDb;
+    const index = db.transaction("messages").store.index("conversationId");
+    return await index.count(conversationId);
   }
 }
 

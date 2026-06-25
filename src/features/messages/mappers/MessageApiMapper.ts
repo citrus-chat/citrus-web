@@ -16,6 +16,7 @@ export function decryptedMessageMapper(
     id: dto.id,
     conversationId: dto.chatRoomId,
     senderDeviceId: dto.senderDeviceId,
+    senderUserId: dto.senderUserId,
     replyToMessageId: dto.replyToMessageId ?? null,
     content,
     createdAt: parseIsoDate(dto.createdAt),
