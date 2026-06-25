@@ -14,6 +14,7 @@ const {
   findWorkspaceUserById,
   openUserProfile,
   currentUser,
+  canUserWriteInChat,
 } = useChatStore();
 
 const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
@@ -36,6 +37,16 @@ const scrollToBottom = async () => {
 };
 
 let subscription: StompSubscription | undefined;
+
+const canWrite = ref(false);
+
+watch(
+  () => selectedChat.value?.id,
+  async (chatId) => {
+    canWrite.value = await canUserWriteInChat(chatId);
+  },
+  { immediate: true },
+);
 
 watch(
   () => selectedChat.value?.id,
@@ -227,7 +238,8 @@ const handleMessage = async () => {
           v-model="messageChat"
           type="text"
           placeholder="Escribe un mensaje..."
-          class="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-500/60 focus:ring-2 focus:ring-sky-500/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500"
+          class="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-500/60 focus:ring-2 focus:ring-sky-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 disabled:placeholder:text-slate-400 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500 dark:disabled:bg-slate-800/50 dark:disabled:text-slate-500"
+          :disabled="canWrite"
           @keypress.enter="handleMessage"
         />
         <label for="file-upload">
@@ -235,7 +247,8 @@ const handleMessage = async () => {
           <input id="file-upload" type="file" class="hidden" />
         </label>
         <button
-          class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+          class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:hover:bg-slate-300 dark:disabled:bg-slate-700 dark:disabled:text-slate-400"
+          :disabled="canWrite"
           @click="handleMessage"
         >
           Enviar

@@ -14,6 +14,7 @@ import { syncChatsUseCase } from "../application/use-cases/syncChatsUseCase";
 import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
 import type { IDevice } from "@/features/device/domain/IDevice";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
+import { getUserPermissionsApi } from "../infrastructure/api/chatApi";
 
 const selectedChat = ref<IChatRoom | null>(null);
 const selectedProfileUser = ref<WorkspaceUser | null>(null);
@@ -119,6 +120,36 @@ export const useChatStore = () => {
     );
   };
 
+  const canUserWriteInChat = async (chatId: string | undefined) => {
+    const chat = chats.value.find((chat) => chat.id === chatId);
+
+    if (!chat || !currentUser.value) return false;
+
+    const userFoundParticipant = chat?.participants?.find(
+      (participant) => participant.userId === currentUser.value.id,
+    );
+
+    if (!userFoundParticipant) {
+      console.error("User not found in chat participants");
+      return false;
+    }
+
+    const userPermissions = await getUserPermissionsApi(
+      userFoundParticipant.id,
+      chat.id,
+    );
+
+    const hasSendMessagePermission = userPermissions.permissions?.some(
+      (permission) => permission.code === "CAN_SEND_MESSAGE",
+    );
+
+    if (hasSendMessagePermission) {
+      return false;
+    }
+
+    return true;
+  };
+
   return {
     chats,
     selectedChat,
@@ -143,5 +174,7 @@ export const useChatStore = () => {
 
     chatsIsEmpty,
     isUserProfilePanelOpen,
+
+    canUserWriteInChat,
   };
 };

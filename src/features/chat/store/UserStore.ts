@@ -34,6 +34,7 @@ export const useUserStore = () => {
   };
 
   const getUserByName = (name: string) => {
+    console.log(JSON.parse(JSON.stringify(users.value)));
     return (
       users.value.find((u) => u.name.toLowerCase() === name.toLowerCase()) ??
       null

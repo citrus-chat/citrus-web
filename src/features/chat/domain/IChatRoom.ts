@@ -13,3 +13,13 @@ export interface IChatRoom {
   updatedAt: string;
   deletedAt: string | null;
 }
+
+export interface IChatPermission {
+  userId: string;
+  chatRoomId: string;
+  canWrite: boolean;
+  canRead: boolean;
+  canDeleteMessages: boolean;
+  canAddParticipants: boolean;
+  canRemoveParticipants: boolean;
+}
