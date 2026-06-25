@@ -2,14 +2,23 @@ import type { IMessageApiResponse } from "../domain/IMessageApiResponse";
 import type { IMessage } from "../domain/IMessage";
 import type { IEncryptedMessage } from "@/features/crypto/domain/IEncryptedMessage";
 
-export function messageApiMapper(dto: IMessageApiResponse): IMessage {
+function parseIsoDate(date: string): string {
+  const normalized = date.replace(/\.(\d{3})\d*Z$/, ".$1Z");
+
+  return new Date(normalized).getTime().toString();
+}
+
+export function decryptedMessageMapper(
+  dto: IMessageApiResponse,
+  content: string,
+): IMessage {
   return {
-    id: dto.messageId,
+    id: dto.id,
     conversationId: dto.chatRoomId,
     senderDeviceId: dto.senderDeviceId,
     replyToMessageId: dto.replyToMessageId ?? null,
-    content: dto.ciphertext,
-    createdAt: new Date(dto.createdAt).getTime().toString(),
+    content,
+    createdAt: parseIsoDate(dto.createdAt),
     editedAt: dto.editedAt
       ? new Date(dto.editedAt).getTime().toString()
       : undefined,
@@ -24,8 +33,8 @@ export function encryptedMessageApiMapper(
   dto: IMessageApiResponse,
 ): IEncryptedMessage {
   return {
-    id: dto.messageId,
-    messageId: dto.messageId,
+    id: dto.id,
+    messageId: dto.id,
     conversationId: dto.chatRoomId,
     keyVersion: dto.keyVersion,
     iv: dto.iv,

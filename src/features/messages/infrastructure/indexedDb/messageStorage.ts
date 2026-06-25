@@ -2,6 +2,13 @@ import type { IMessage } from "../../domain/IMessage";
 import type { IMessageStorage } from "../../domain/IMessageStorage";
 import { citrusDb } from "@/shared/infrastructure/indexedDb/citrusDb";
 
+function toTime(value: string): number {
+  const n = Number(value);
+  if (!Number.isNaN(n)) return n;
+
+  return new Date(value).getTime();
+}
+
 export class IndexedDbMessageStorage implements IMessageStorage {
   async save(message: IMessage): Promise<void> {
     const db = await citrusDb;
@@ -13,6 +20,9 @@ export class IndexedDbMessageStorage implements IMessageStorage {
     if (messages.length === 0) {
       return;
     }
+
+    console.log(`Saving ${messages.length} messages to IndexedDB`);
+    console.log(messages);
 
     const db = await citrusDb;
 
@@ -30,10 +40,7 @@ export class IndexedDbMessageStorage implements IMessageStorage {
 
     const messages = await index.getAll(conversationId);
 
-    return messages.sort(
-      (a, b) =>
-        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime(),
-    );
+    return messages.sort((a, b) => toTime(a.createdAt) - toTime(b.createdAt));
   }
 }
 
