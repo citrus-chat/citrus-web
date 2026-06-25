@@ -20,7 +20,6 @@ export async function syncChatsUseCase(request: IDevice) {
     const senderDevice = await getDeviceKeysApi(encryptedKey.senderDeviceId);
 
     if (!senderDevice) {
-      console.warn(`Sender device ${encryptedKey.senderDeviceId} not found`);
       continue;
     }
 

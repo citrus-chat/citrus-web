@@ -12,14 +12,13 @@ export async function sendMessageApi(
 export async function syncMessagesApi(
   request: ISyncMessagesRequest,
 ): Promise<ISyncMessagesResponse> {
-  const response = await apiClient.get(
+  const response = await apiClient.get<ISyncMessagesResponse>(
     `/chatroom/${request.chatroomId}/sync/messages`,
     {
       params: {
-        lastMessageId: request.lastMessageId,
+        lastCreatedAt: request.lastCreatedAt,
       },
     },
   );
-
-  return response.data;
+  return response;
 }

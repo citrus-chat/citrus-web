@@ -107,7 +107,7 @@ const handleMessage = async () => {
             <span class="text-sm text-white">{{ message.content }}</span>
             <p class="mt-1 text-right text-[10px] text-blue-200">
               {{
-                new Date(message.createdAt).toLocaleTimeString([], {
+                new Date(Number(message.createdAt)).toLocaleTimeString([], {
                   hour: "2-digit",
                   minute: "2-digit",
                 })

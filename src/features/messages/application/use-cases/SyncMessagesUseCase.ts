@@ -3,31 +3,48 @@ import { encryptedMessageStorage } from "@/features/crypto/infraestructure/index
 import { messageStorage } from "../../infrastructure/indexedDb/messageStorage";
 import {
   encryptedMessageApiMapper,
-  messageApiMapper,
+  decryptedMessageMapper,
 } from "../../mappers/MessageApiMapper";
+import { decryptMessageUseCase } from "./decryptMessageUseCase";
+import {
+  getLastSync,
+  setLastSync,
+} from "../../infrastructure/indexedDb/syncStorage";
 
 export async function syncMessagesUseCase(chatroomId: string): Promise<void> {
-  const lastMessage = await encryptedMessageStorage.getLastMessage(chatroomId);
-
-  console.log("Syncing messages for chatroom:", chatroomId);
+  const lastSync = await getLastSync();
 
   const data = await syncMessagesApi({
     chatroomId,
-    lastMessageId: lastMessage?.id,
+    lastCreatedAt: lastSync,
   });
 
-  if (!data || !data.messages) {
+  if (!data?.messages?.length) {
     return;
   }
 
   const encryptedMessages = data.messages.map(encryptedMessageApiMapper);
 
-  console.log("Encrypted Messages:", encryptedMessages);
-
-  const messages = data.messages.map(messageApiMapper);
-
-  console.log("Messages:", messages);
-
   await encryptedMessageStorage.saveMany(encryptedMessages);
+
+  const messages = await Promise.all(
+    data.messages.map(async (dto) => {
+      const encrypted = encryptedMessageApiMapper(dto);
+
+      const decryptedContent = await decryptMessageUseCase(encrypted);
+
+      return decryptedMessageMapper(dto, decryptedContent);
+    }),
+  );
+
   await messageStorage.saveMany(messages);
+
+  const maxCreatedAt = messages.reduce((max, msg) => {
+    const createdAt = Number(msg.createdAt);
+    return createdAt > max ? createdAt : max;
+  }, 0);
+
+  if (maxCreatedAt > 0) {
+    await setLastSync(new Date(maxCreatedAt).toISOString());
+  }
 }

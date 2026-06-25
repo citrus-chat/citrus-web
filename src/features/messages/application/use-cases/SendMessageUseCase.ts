@@ -29,8 +29,11 @@ export class SendMessageUseCase {
       id: crypto.randomUUID(),
       conversationId: request.conversationId,
       senderDeviceId: currentDevice.deviceId,
+      replyToMessageId: null,
       content: request.content,
-      createdAt: new Date().toISOString(),
+      createdAt: Date.now().toString(),
+      editedAt: undefined,
+      deletedAt: undefined,
       status: "pending",
     };
 
