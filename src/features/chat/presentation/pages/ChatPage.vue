@@ -3,11 +3,17 @@ import { onMounted } from "vue";
 import ChatsList from "../components/ChatsList.vue";
 import ChatWindow from "../components/ChatWindow.vue";
 import { useChatStore } from "../../store/ChatStore";
+import { tokenService } from "@/core/auth/tokenService.ts";
+import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeService.ts";
 
 const { selectedChat, chatsIsEmpty, loadChats, restoreSelectedChat } =
   useChatStore();
 
 onMounted(async () => {
+  const token = tokenService.getAccessToken();
+  if (token) {
+    chatRealtimeService.connect(token);
+  }
   await loadChats();
   restoreSelectedChat();
 });
