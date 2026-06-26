@@ -1,4 +1,4 @@
-import { ref, computed } from "vue";
+import { ref, computed, toRaw } from "vue";
 
 import type { IChatRoom } from "../domain/IChatRoom";
 import type { WorkspaceUser } from "../domain/WorkspaceUser";
@@ -14,7 +14,10 @@ import { syncChatsUseCase } from "../application/use-cases/syncChatsUseCase";
 import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
 import type { IDevice } from "@/features/device/domain/IDevice";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
-import { getUserPermissionsApi } from "../infrastructure/api/chatApi";
+import {
+  getUserPermissionsApi,
+  updateChatRoomNameApi,
+} from "../infrastructure/api/chatApi";
 
 const selectedChat = ref<IChatRoom | null>(null);
 const selectedProfileUser = ref<WorkspaceUser | null>(null);
@@ -143,11 +146,51 @@ export const useChatStore = () => {
       (permission) => permission.code === "CAN_SEND_MESSAGE",
     );
 
-    if (hasSendMessagePermission) {
+    return hasSendMessagePermission ?? false;
+  };
+
+  const canEditChat = async (chatId: string | undefined) => {
+    const chat = chats.value.find((chat) => chat.id === chatId);
+
+    if (!chat || !currentUser.value) return false;
+
+    const userFoundParticipant = chat?.participants?.find(
+      (participant) => participant.userId === currentUser.value.id,
+    );
+
+    if (!userFoundParticipant) {
+      console.error("User not found in chat participants");
       return false;
     }
 
-    return true;
+    const userPermissions = await getUserPermissionsApi(
+      userFoundParticipant.id,
+      chat.id,
+    );
+
+    return (
+      userPermissions.permissions?.some(
+        (permission) => permission.code === "CAN_MODIFY_CHAT",
+      ) ?? false
+    );
+  };
+
+  const updateChatRoomName = async (chatId: string, name: string) => {
+    const result = await updateChatRoomNameApi(chatId, name);
+
+    const chat = chats.value.find((chat) => chat.id === chatId);
+
+    if (chat) {
+      chat.name = result.name;
+      chat.updatedAt = result.updatedAt;
+      await chatStorage.save(toRaw(chat));
+    }
+
+    if (selectedChat.value?.id === chatId) {
+      selectedChat.value = { ...selectedChat.value, name: result.name };
+    }
+
+    return result;
   };
 
   return {
@@ -176,5 +219,7 @@ export const useChatStore = () => {
     isUserProfilePanelOpen,
 
     canUserWriteInChat,
+    canEditChat,
+    updateChatRoomName,
   };
 };

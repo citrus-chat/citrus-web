@@ -7,6 +7,7 @@ import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import { ChatRoomType } from "../../domain/ChatRoomType";
 import type { StompSubscription } from "@stomp/stompjs";
 import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeService";
+import EditGroupModal from "./EditGroupModal.vue";
 
 const {
   selectedChat,
@@ -15,6 +16,7 @@ const {
   openUserProfile,
   currentUser,
   canUserWriteInChat,
+  canEditChat,
 } = useChatStore();
 
 const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
@@ -22,12 +24,20 @@ const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
 const messageChat = ref("");
 const messagesContainer = ref<HTMLElement | null>(null);
 const firstNewMessageIndex = ref<number | null>(null);
+const showChatMenu = ref(false);
+const showEditGroupModal = ref(false);
+const canWrite = ref(false);
+const canEdit = ref(false);
 
 const selectedChatUser = computed(() => {
   if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
     return null;
   return findWorkspaceUserByName(selectedChat.value.name);
 });
+
+const isGroupChat = computed(
+  () => selectedChat.value?.type === ChatRoomType.GROUP,
+);
 
 const scrollToBottom = async () => {
   await nextTick();
@@ -38,12 +48,11 @@ const scrollToBottom = async () => {
 
 let subscription: StompSubscription | undefined;
 
-const canWrite = ref(false);
-
 watch(
   () => selectedChat.value?.id,
   async (chatId) => {
     canWrite.value = await canUserWriteInChat(chatId);
+    canEdit.value = await canEditChat(chatId);
   },
   { immediate: true },
 );
@@ -74,6 +83,15 @@ const handleMessage = async () => {
   await sendMessage(selectedChat.value.id, messageChat.value);
   messageChat.value = "";
   await scrollToBottom();
+};
+
+const toggleChatMenu = () => {
+  showChatMenu.value = !showChatMenu.value;
+};
+
+const openEditGroup = () => {
+  showChatMenu.value = false;
+  showEditGroupModal.value = true;
 };
 </script>
 
@@ -128,11 +146,28 @@ const handleMessage = async () => {
             class="pi pi-phone cursor-pointer text-xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
           />
         </button>
-        <button>
-          <i
-            class="pi pi-ellipsis-v cursor-pointer text-xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
-          />
-        </button>
+        <div class="relative">
+          <button type="button" @click="toggleChatMenu">
+            <i
+              class="pi pi-ellipsis-v cursor-pointer text-xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
+            />
+          </button>
+
+          <div
+            v-if="showChatMenu"
+            class="absolute right-0 top-full z-20 mt-2 w-48 rounded-2xl border border-slate-200 bg-white p-1.5 shadow-[0_20px_50px_rgba(15,23,42,0.18)] dark:border-white/10 dark:bg-slate-900"
+          >
+            <button
+              v-if="isGroupChat && canEdit"
+              type="button"
+              class="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-slate-700 transition hover:bg-slate-100 dark:text-slate-200 dark:hover:bg-white/5"
+              @click="openEditGroup"
+            >
+              <i class="pi pi-pencil text-sm" />
+              Editar grupo
+            </button>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -239,7 +274,7 @@ const handleMessage = async () => {
           type="text"
           placeholder="Escribe un mensaje..."
           class="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-500/60 focus:ring-2 focus:ring-sky-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 disabled:placeholder:text-slate-400 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500 dark:disabled:bg-slate-800/50 dark:disabled:text-slate-500"
-          :disabled="canWrite"
+          :disabled="!canWrite"
           @keypress.enter="handleMessage"
         />
         <label for="file-upload">
@@ -248,12 +283,18 @@ const handleMessage = async () => {
         </label>
         <button
           class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:hover:bg-slate-300 dark:disabled:bg-slate-700 dark:disabled:text-slate-400"
-          :disabled="canWrite"
+          :disabled="!canWrite"
           @click="handleMessage"
         >
           Enviar
         </button>
       </div>
     </div>
+
+    <EditGroupModal
+      :show="showEditGroupModal"
+      :chat-id="selectedChat?.id ?? null"
+      @close="showEditGroupModal = false"
+    />
   </section>
 </template>
