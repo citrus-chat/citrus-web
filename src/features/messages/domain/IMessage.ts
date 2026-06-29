@@ -5,6 +5,8 @@ export interface IMessage {
 
   senderDeviceId: string;
 
+  senderUserId: string;
+
   replyToMessageId: string | null;
 
   content: string;

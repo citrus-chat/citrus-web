@@ -22,8 +22,13 @@ export const useMessageStore = () => {
   };
 
   const syncMessages = async (conversationId: string) => {
+    const previousCount =
+      await messageStorage.countByConversationId(conversationId);
     await syncMessagesUseCase(conversationId);
     messages.value = await messageStorage.getByConversationId(conversationId);
+
+    const newCount = messages.value.length;
+    return newCount > previousCount ? previousCount : null;
   };
 
   const sendMessage = async (conversationId: string, content: string) => {

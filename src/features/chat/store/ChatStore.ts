@@ -13,11 +13,14 @@ import { useProfileStore } from "@/features/profile/Store/ProfileStore";
 import { syncChatsUseCase } from "../application/use-cases/syncChatsUseCase";
 import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
 import type { IDevice } from "@/features/device/domain/IDevice";
+import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
+import { getUserPermissionsApi } from "../infrastructure/api/chatApi";
 
 const selectedChat = ref<IChatRoom | null>(null);
 const selectedProfileUser = ref<WorkspaceUser | null>(null);
 
 const chats = ref<IChatRoom[]>([]);
+const currentUserId = ref<string | null>(null);
 
 export const useChatStore = () => {
   const chatsIsEmpty = computed(() => chats.value.length === 0);
@@ -25,16 +28,28 @@ export const useChatStore = () => {
   const { profile } = useProfileStore();
   const currentUser = computed<WorkspaceUser>(() => ({
     ...currentWorkspaceUser,
+    id: currentUserId.value ?? currentWorkspaceUser.id,
     name: profile.value?.username ?? currentWorkspaceUser.name,
     avatar:
       profile.value?.avatarUrl ?? currentWorkspaceUser.avatar ?? undefined,
   }));
+
+  const initCurrentUser = async () => {
+    const user = await getCurrentUserUseCase();
+    if (!user) throw new Error("Current user not found");
+    currentUserId.value = user.userId;
+  };
+
+  const findWorkspaceUserById = (id: string): WorkspaceUser | null => {
+    return mockWorkspaceUsers.find((user) => user.id === id) ?? null;
+  };
 
   const isUserProfilePanelOpen = computed(
     () => selectedProfileUser.value !== null,
   );
 
   const loadChats = async () => {
+    initCurrentUser();
     const device: IDevice | null = await deviceStorage.get();
     if (device) {
       try {
@@ -105,6 +120,36 @@ export const useChatStore = () => {
     );
   };
 
+  const canUserWriteInChat = async (chatId: string | undefined) => {
+    const chat = chats.value.find((chat) => chat.id === chatId);
+
+    if (!chat || !currentUser.value) return false;
+
+    const userFoundParticipant = chat?.participants?.find(
+      (participant) => participant.userId === currentUser.value.id,
+    );
+
+    if (!userFoundParticipant) {
+      console.error("User not found in chat participants");
+      return false;
+    }
+
+    const userPermissions = await getUserPermissionsApi(
+      userFoundParticipant.id,
+      chat.id,
+    );
+
+    const hasSendMessagePermission = userPermissions.permissions?.some(
+      (permission) => permission.code === "CAN_SEND_MESSAGE",
+    );
+
+    if (hasSendMessagePermission) {
+      return false;
+    }
+
+    return true;
+  };
+
   return {
     chats,
     selectedChat,
@@ -124,9 +169,12 @@ export const useChatStore = () => {
     currentUser,
     workspaceUsers: computed(() => mockWorkspaceUsers),
 
+    findWorkspaceUserById,
     findWorkspaceUserByName,
 
     chatsIsEmpty,
     isUserProfilePanelOpen,
+
+    canUserWriteInChat,
   };
 };

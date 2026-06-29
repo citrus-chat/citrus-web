@@ -9,6 +9,7 @@ import { encryptedMessageStorage } from "@/features/crypto/infraestructure/index
 import { outgoingQueueStorage } from "../../infrastructure/indexedDb/outgoingQueueStorage";
 import { OutgoingQueueItemType } from "../../domain/OutgoingQueueItemType";
 import { outgoingQueueProcessor } from "../../handlers/OutgoingQueueProcessor";
+import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
 
 export class SendMessageUseCase {
   constructor(
@@ -25,12 +26,22 @@ export class SendMessageUseCase {
       throw new Error("Current device not found");
     }
 
+    const currentUser = await getCurrentUserUseCase();
+
+    if (!currentUser) {
+      throw new Error("Current user not found");
+    }
+
     const message: IMessage = {
       id: crypto.randomUUID(),
       conversationId: request.conversationId,
       senderDeviceId: currentDevice.deviceId,
+      senderUserId: currentUser.userId,
+      replyToMessageId: null,
       content: request.content,
-      createdAt: new Date().toISOString(),
+      createdAt: Date.now().toString(),
+      editedAt: undefined,
+      deletedAt: undefined,
       status: "pending",
     };
 

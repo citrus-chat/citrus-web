@@ -4,7 +4,8 @@ import ChatsList from "../components/ChatsList.vue";
 import ChatWindow from "../components/ChatWindow.vue";
 import UserProfilePanel from "../components/UserProfilePanel.vue";
 import { useChatStore } from "../../store/ChatStore";
-import { useUserStore } from "../../store/UserStore";
+import { tokenService } from "@/core/auth/tokenService.ts";
+import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeService.ts";
 
 const {
   selectedChat,
@@ -16,6 +17,10 @@ const {
 const { loadUsers } = useUserStore();
 
 onMounted(async () => {
+  const token = tokenService.getAccessToken();
+  if (token) {
+    chatRealtimeService.connect(token);
+  }
   await loadChats();
   restoreSelectedChat();
   // Cargar usuarios reales del backend para poder obtener sus UUIDs al navegar al perfil

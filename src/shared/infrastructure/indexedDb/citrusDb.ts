@@ -78,5 +78,9 @@ export const citrusDb = openDB("citrus-chat", 6, {
         keyPath: "userId",
       });
     }
+
+    if (!db.objectStoreNames.contains("sync")) {
+      db.createObjectStore("sync");
+    }
   },
 });

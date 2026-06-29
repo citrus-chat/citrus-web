@@ -1,19 +1,28 @@
 <script setup lang="ts">
-import { computed, ref, watch } from "vue";
-import { useRouter } from "vue-router";
+import { computed, ref, watch, nextTick } from "vue";
 import "primeicons/primeicons.css";
 import { useChatStore } from "../../store/ChatStore";
 import { useUserStore } from "../../store/UserStore";
 import { useMessageStore } from "../../../messages/store/MessageStore";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import { ChatRoomType } from "../../domain/ChatRoomType";
+import type { StompSubscription } from "@stomp/stompjs";
+import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeService";
 
-const router = useRouter();
-const { selectedChat, findWorkspaceUserByName } = useChatStore();
-const { getUserByName } = useUserStore();
+const {
+  selectedChat,
+  findWorkspaceUserByName,
+  findWorkspaceUserById,
+  openUserProfile,
+  currentUser,
+  canUserWriteInChat,
+} = useChatStore();
+
 const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
 
 const messageChat = ref("");
+const messagesContainer = ref<HTMLElement | null>(null);
+const firstNewMessageIndex = ref<number | null>(null);
 
 const selectedChatUser = computed(() => {
   if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
@@ -21,34 +30,51 @@ const selectedChatUser = computed(() => {
   return findWorkspaceUserByName(selectedChat.value.name);
 });
 
-// UUID real del backend: el nombre del chat room directo es el username del backend
-// (así se creó el chat room), así que se busca por ese nombre en el UserStore
-const selectedChatUserRealId = computed(() => {
-  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
-    return null;
-  return getUserByName(selectedChat.value.name)?.id ?? null;
-});
+const scrollToBottom = async () => {
+  await nextTick();
+  if (messagesContainer.value) {
+    messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
+  }
+};
 
-function verPerfilUsuario() {
-  if (!selectedChatUserRealId.value) return;
-  router.push(`/profile/${selectedChatUserRealId.value}`);
-}
+let subscription: StompSubscription | undefined;
+
+const canWrite = ref(false);
+
+watch(
+  () => selectedChat.value?.id,
+  async (chatId) => {
+    canWrite.value = await canUserWriteInChat(chatId);
+  },
+  { immediate: true },
+);
 
 watch(
   () => selectedChat.value?.id,
   async (id) => {
+    subscription?.unsubscribe();
     if (id) {
+      subscription = chatRealtimeService.subscribeToChatRoom(id, async () => {
+        await syncMessages(id);
+        await scrollToBottom();
+      });
+      firstNewMessageIndex.value = null;
       await loadMessages(id);
-      await syncMessages(id);
+      firstNewMessageIndex.value = await syncMessages(id);
+      await scrollToBottom();
     }
   },
   { immediate: true },
 );
 
+const isOwnMessage = (senderUserId: string) =>
+  senderUserId === currentUser.value.id;
+
 const handleMessage = async () => {
   if (!selectedChat.value) return;
   await sendMessage(selectedChat.value.id, messageChat.value);
   messageChat.value = "";
+  await scrollToBottom();
 };
 </script>
 
@@ -56,6 +82,7 @@ const handleMessage = async () => {
   <section
     class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white/80 shadow-[0_20px_80px_rgba(15,23,42,0.15)] dark:border-white/10 dark:bg-slate-950/80 dark:shadow-[0_20px_80px_rgba(0,0,0,0.35)]"
   >
+    <!-- Header -->
     <div
       class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
     >
@@ -118,28 +145,100 @@ const handleMessage = async () => {
       </div>
     </div>
 
-    <div class="flex-1 overflow-auto px-4 py-4 space-y-4">
-      <div
-        v-for="message in messages"
-        :key="message.id"
-        class="flex justify-end"
-      >
-        <div class="max-w-[70%]">
-          <div class="flex flex-col bg-blue-600 px-4 py-2.5 rounded-xl">
-            <span class="text-sm text-white">{{ message.content }}</span>
-            <p class="mt-1 text-right text-[10px] text-blue-200">
-              {{
-                new Date(message.createdAt).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              }}
-            </p>
-          </div>
+    <!-- Messages -->
+    <div
+      ref="messagesContainer"
+      class="flex-1 overflow-auto px-4 py-4 space-y-4"
+    >
+      <template v-for="(message, index) in messages" :key="message.id">
+        <!-- Separador de mensajes nuevos -->
+        <div
+          v-if="firstNewMessageIndex !== null && index === firstNewMessageIndex"
+          class="flex items-center gap-3 my-2"
+        >
+          <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+          <span
+            class="text-xs text-slate-400 dark:text-slate-500 whitespace-nowrap"
+          >
+            Mensajes nuevos
+          </span>
+          <div class="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
         </div>
-      </div>
+
+        <!-- Burbuja -->
+        <div
+          class="flex"
+          :class="
+            isOwnMessage(message.senderUserId) ? 'justify-end' : 'justify-start'
+          "
+        >
+          <!-- Mensaje ajeno -->
+          <template v-if="!isOwnMessage(message.senderUserId)">
+            <div class="flex items-end gap-2 max-w-[70%]">
+              <img
+                :src="
+                  findWorkspaceUserById(message.senderUserId)?.avatar ??
+                  avatarProfile
+                "
+                :alt="
+                  findWorkspaceUserById(message.senderUserId)?.name ?? 'Usuario'
+                "
+                class="h-7 w-7 rounded-full object-cover flex-shrink-0"
+              />
+              <div class="flex flex-col">
+                <span
+                  class="text-xs text-slate-500 dark:text-slate-400 mb-1 ml-1"
+                >
+                  {{
+                    findWorkspaceUserById(message.senderUserId)?.name ??
+                    "Usuario"
+                  }}
+                </span>
+                <div
+                  class="bg-slate-100 dark:bg-slate-800 px-4 py-2.5 rounded-xl"
+                >
+                  <span class="text-sm text-slate-900 dark:text-slate-100">
+                    {{ message.content }}
+                  </span>
+                  <p
+                    class="mt-1 text-right text-[10px] text-slate-400 dark:text-slate-500"
+                  >
+                    {{
+                      new Date(Number(message.createdAt)).toLocaleTimeString(
+                        [],
+                        {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        },
+                      )
+                    }}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </template>
+
+          <!-- Mensaje propio -->
+          <template v-else>
+            <div class="max-w-[70%]">
+              <div class="flex flex-col bg-blue-600 px-4 py-2.5 rounded-xl">
+                <span class="text-sm text-white">{{ message.content }}</span>
+                <p class="mt-1 text-right text-[10px] text-blue-200">
+                  {{
+                    new Date(Number(message.createdAt)).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })
+                  }}
+                </p>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
     </div>
 
+    <!-- Input -->
     <div
       class="border-t border-slate-200 bg-white/80 p-4 backdrop-blur dark:border-white/10 dark:bg-slate-950/90"
     >
@@ -148,16 +247,17 @@ const handleMessage = async () => {
           v-model="messageChat"
           type="text"
           placeholder="Escribe un mensaje..."
-          class="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-500/60 focus:ring-2 focus:ring-sky-500/20 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500"
+          class="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2.5 text-sm text-slate-900 outline-none placeholder:text-slate-400 focus:border-sky-500/60 focus:ring-2 focus:ring-sky-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 disabled:placeholder:text-slate-400 dark:border-white/10 dark:bg-slate-900/80 dark:text-slate-100 dark:placeholder:text-slate-500 dark:disabled:bg-slate-800/50 dark:disabled:text-slate-500"
+          :disabled="canWrite"
           @keypress.enter="handleMessage"
         />
         <label for="file-upload">
           <i class="pi pi-paperclip cursor-pointer text-2xl" />
           <input id="file-upload" type="file" class="hidden" />
         </label>
-
         <button
-          class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500"
+          class="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-500 disabled:hover:bg-slate-300 dark:disabled:bg-slate-700 dark:disabled:text-slate-400"
+          :disabled="canWrite"
           @click="handleMessage"
         >
           Enviar

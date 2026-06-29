@@ -6,4 +6,6 @@ export interface IMessageStorage {
   saveMany(messages: IMessage[]): Promise<void>;
 
   getByConversationId(conversationId: string): Promise<IMessage[]>;
+
+  countByConversationId(conversationId: string): Promise<number>;
 }

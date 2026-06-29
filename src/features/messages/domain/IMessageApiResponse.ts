@@ -1,5 +1,5 @@
 export interface IMessageApiResponse {
-  messageId: string;
+  id: string;
   chatRoomId: string; //conversationId == chatRoomId
   senderUserId: string;
   senderDeviceId: string;
