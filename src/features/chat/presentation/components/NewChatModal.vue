@@ -4,6 +4,7 @@ import { useChatStore } from "../../store/ChatStore";
 import { useUserStore } from "../../store/UserStore";
 import { createChatRoomUseCase } from "../../application/use-cases/createChatroomUseCase";
 import { ChatRoomType } from "../../domain/ChatRoomType";
+import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
 
 const props = defineProps<{ show: boolean }>();
 const emit = defineEmits<{
@@ -78,6 +79,7 @@ const toggleContact = (contactId: string) => {
 };
 
 const onSubmit = async () => {
+  const currentUser = await getCurrentUserUseCase();
   if (isGroupTab.value) {
     const chatName = groupName.value.trim();
 
@@ -105,6 +107,16 @@ const onSubmit = async () => {
     );
 
     if (!contact) {
+      return;
+    }
+
+    if (selectedContactIds.value.length !== 1) {
+      errorMessage.value = "Solo puedes iniciar un chat directo con 1 persona.";
+      return;
+    }
+
+    if (selectedContactIds.value.includes(currentUser.userId)) {
+      errorMessage.value = "No puedes iniciar un chat contigo mismo.";
       return;
     }
 

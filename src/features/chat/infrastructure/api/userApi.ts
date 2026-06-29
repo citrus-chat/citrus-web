@@ -8,6 +8,12 @@ export async function getUsersApi(): Promise<IUserResponse[]> {
   return data;
 }
 
+export async function getUserApi(userId: string): Promise<IUserResponse> {
+  const data = await apiClient.get<IUserResponse>(`/users/${userId}`);
+
+  return data;
+}
+
 export async function getUserKeysApi(
   userId: string,
 ): Promise<IUserDeviceKeysResponse> {

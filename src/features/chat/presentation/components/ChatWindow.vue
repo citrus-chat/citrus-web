@@ -11,7 +11,6 @@ import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeS
 const {
   selectedChat,
   findWorkspaceUserByName,
-  findWorkspaceUserById,
   openUserProfile,
   currentUser,
   canUserWriteInChat,
@@ -61,6 +60,7 @@ watch(
       await loadMessages(id);
       firstNewMessageIndex.value = await syncMessages(id);
       await scrollToBottom();
+      console.log("Messages after sync:", messages.value);
     }
   },
   { immediate: true },
@@ -94,7 +94,7 @@ const handleMessage = async () => {
         >
           <img
             :src="selectedChatUser.avatar ?? avatarProfile"
-            :alt="selectedChatUser.name"
+            :alt="selectedChatUser.username"
             class="h-9 w-9 rounded-full object-cover"
           />
           <div>
@@ -167,23 +167,15 @@ const handleMessage = async () => {
           <template v-if="!isOwnMessage(message.senderUserId)">
             <div class="flex items-end gap-2 max-w-[70%]">
               <img
-                :src="
-                  findWorkspaceUserById(message.senderUserId)?.avatar ??
-                  avatarProfile
-                "
-                :alt="
-                  findWorkspaceUserById(message.senderUserId)?.name ?? 'Usuario'
-                "
+                :src="message.sender?.avatar_url ?? avatarProfile"
+                :alt="message.sender?.username ?? 'Usuario'"
                 class="h-7 w-7 rounded-full object-cover flex-shrink-0"
               />
               <div class="flex flex-col">
                 <span
                   class="text-xs text-slate-500 dark:text-slate-400 mb-1 ml-1"
                 >
-                  {{
-                    findWorkspaceUserById(message.senderUserId)?.name ??
-                    "Usuario"
-                  }}
+                  {{ message.sender?.username ?? "Usuario" }}
                 </span>
                 <div
                   class="bg-slate-100 dark:bg-slate-800 px-4 py-2.5 rounded-xl"

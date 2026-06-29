@@ -2,12 +2,13 @@ import { ref } from "vue";
 import { messageStorage } from "../infrastructure/indexedDb/messageStorage";
 import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
 import { SendMessageUseCase } from "../application/use-cases/SendMessageUseCase";
-import type { IMessage } from "../domain/IMessage";
+import type { IMessageView } from "../domain/IMessageView";
 import { cryptoService } from "@/features/crypto/infraestructure/services/cryptoService";
 import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
 import { syncMessagesUseCase } from "../application/use-cases/SyncMessagesUseCase";
+import { getUserApi } from "@/features/chat/infrastructure/api/userApi";
 
-const messages = ref<IMessage[]>([]);
+const messages = ref<IMessageView[]>([]);
 
 const sendMessageUseCase = new SendMessageUseCase(
   messageStorage,
@@ -18,14 +19,24 @@ const sendMessageUseCase = new SendMessageUseCase(
 
 export const useMessageStore = () => {
   const loadMessages = async (conversationId: string) => {
-    messages.value = await messageStorage.getByConversationId(conversationId);
+    const storedMessages =
+      await messageStorage.getByConversationId(conversationId);
+
+    messages.value = await Promise.all(
+      storedMessages.map(async (message) => ({
+        ...message,
+        sender: await getUserApi(message.senderUserId),
+      })),
+    );
+
+    console.log("Loaded messages:", messages.value);
   };
 
   const syncMessages = async (conversationId: string) => {
     const previousCount =
       await messageStorage.countByConversationId(conversationId);
     await syncMessagesUseCase(conversationId);
-    messages.value = await messageStorage.getByConversationId(conversationId);
+    loadMessages(conversationId);
 
     const newCount = messages.value.length;
     return newCount > previousCount ? previousCount : null;
