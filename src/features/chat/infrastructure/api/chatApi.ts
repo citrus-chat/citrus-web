@@ -6,6 +6,7 @@ import type { ISyncChatRoomsResponse } from "../../domain/ISyncChatRoomsResponse
 import type { IUploadConversationKeyRequest } from "../../domain/IUploadConversationKeyRequest";
 import type { IUploadConversationKeyResponse } from "../../domain/IUploadConversationKeyResponse";
 import type { IUserPermissionResponse } from "../../domain/IUserPermissionResponse";
+import type { IUpdateChatRoomResponse } from "../../domain/IUpdateChatRoomResponse";
 
 export async function createChatRoomApi(
   request: ICreateChatRoomRequest,
@@ -48,5 +49,17 @@ export async function getUserPermissionsApi(
   const data = await apiClient.get<IUserPermissionResponse>(
     `/chatroom/${chatId}/participant/${participantId}/permission`,
   );
+  return data;
+}
+
+export async function updateChatRoomNameApi(
+  chatRoomId: string,
+  newName: string,
+): Promise<IUpdateChatRoomResponse> {
+  const data = await apiClient.patch<IUpdateChatRoomResponse>(
+    `/chatroom/${chatRoomId}/name`,
+    { name: newName },
+  );
+
   return data;
 }
