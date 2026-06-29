@@ -2,11 +2,34 @@
 import { ref, computed, onMounted, onUnmounted, watch, nextTick } from "vue";
 import "primeicons/primeicons.css";
 import type { WorkspaceUser } from "@/features/chat/domain/WorkspaceUser";
+import type { IOrgUser } from "@/features/profile/infrastructure/api/orgApi";
+
+const treeRoot = computed(() => {
+  if (!props.isOpen) return null;
+
+  if (!props.focusId) {
+    console.warn("focusId vacío");
+    return null;
+  }
+
+  if (!byId.value.has(props.focusId)) {
+    console.warn("Usuario no encontrado en organigrama:", props.focusId);
+    return null;
+  }
+
+  return layout(rootId.value, 0, 0).node;
+});
+
+const viewingMyself = computed(() => {
+  return props.currentUserId === props.focusId;
+});
 
 const props = defineProps<{
-  users: WorkspaceUser[];
+  users: WorkspaceUser[]; // usuarios del mock (fallback)
   focusId: string;
+  currentUserId: string;
   isOpen: boolean;
+  orgUsers?: IOrgUser[]; // usuarios reales del backend (tiene prioridad si se pasa)
 }>();
 
 const emit = defineEmits<{ close: [] }>();
@@ -80,16 +103,35 @@ function statusColor(s: WorkspaceUser["status"]) {
   return s === "online" ? "#10b981" : s === "away" ? "#f59e0b" : "#94a3b8";
 }
 
+// ── Normalización de la fuente de usuarios ───────────────────────────────────
+// Si se pasan orgUsers (datos reales del backend), se convierten al formato
+// WorkspaceUser que el organigrama ya sabe renderizar.
+const resolvedUsers = computed<WorkspaceUser[]>(() => {
+  if (props.orgUsers && props.orgUsers.length > 0) {
+    return props.orgUsers.map((u) => ({
+      id: u.id,
+      name: u.username,
+      username: u.username,
+      email: "",
+      role: u.position ?? undefined,
+      status: "offline" as const, // estado real no disponible en este endpoint
+      avatar: u.avatarUrl ?? undefined,
+      managerId: u.managerId ?? undefined,
+    }));
+  }
+  return props.users;
+});
+
 // ── Tree maps ─────────────────────────────────────────────────────────────────
 const byId = computed(() => {
   const m = new Map<string, WorkspaceUser>();
-  for (const u of props.users) m.set(u.id, u);
+  for (const u of resolvedUsers.value) m.set(u.id, u);
   return m;
 });
 
 const childrenOf = computed(() => {
   const m = new Map<string, WorkspaceUser[]>();
-  for (const u of props.users) {
+  for (const u of resolvedUsers.value) {
     if (u.managerId) {
       if (!m.has(u.managerId)) m.set(u.managerId, []);
       m.get(u.managerId)!.push(u);
@@ -164,12 +206,14 @@ interface TNode {
 }
 
 // Returns subtree width (for centering parent)
-function layout(
-  id: string,
-  depth: number,
-  xOffset: number,
-): { node: TNode; totalWidth: number } {
-  const user = byId.value.get(id)!;
+function layout(id: string, depth: number, xOffset: number) {
+  //const user = byId.value.get(id)!;
+
+  const user = byId.value.get(id);
+
+  if (!user) {
+    throw new Error(`Usuario no encontrado: ${id}`);
+  }
   const kids = childrenOf.value.get(id) ?? [];
   const isCol = collapsed.value.has(id);
   const hasMore = kids.length > 0 && isCol;
@@ -212,10 +256,10 @@ function layout(
   };
 }
 
-const treeRoot = computed(() => {
-  if (!props.isOpen) return null;
-  return layout(rootId.value, 0, 0).node;
-});
+// const treeRoot = computed(() => {
+//   if (!props.isOpen) return null;
+//   return layout(rootId.value, 0, 0).node;
+// });
 
 interface FlatNode {
   user: WorkspaceUser;
@@ -224,6 +268,7 @@ interface FlatNode {
   hasMore: boolean;
   childCount: number;
   isFocus: boolean;
+  isCurrentUser: boolean;
   px?: number;
   py?: number; // parent connector point
 }
@@ -237,6 +282,7 @@ function flatten(n: TNode, parent?: TNode): FlatNode[] {
       hasMore: n.hasMore,
       childCount: n.childCount,
       isFocus: n.user.id === props.focusId,
+      isCurrentUser: n.user.id === props.currentUserId,
       px: parent ? parent.x + NODE_W / 2 : undefined,
       py: parent ? parent.y + NODE_H : undefined,
     },
@@ -256,6 +302,45 @@ const ty = ref(60);
 const scale = ref(1);
 const dragging = ref(false);
 const drag0 = ref({ mx: 0, my: 0, tx: 0, ty: 0 });
+
+function centerOnNode(id: string, animated = false) {
+  const node = flatNodes.value.find((n) => n.user.id === id);
+
+  if (!node || !svgRef.value) return;
+
+  const rect = svgRef.value.getBoundingClientRect();
+
+  const targetX = rect.width / 2 - (node.x + NODE_W / 2) * scale.value;
+
+  const targetY = rect.height / 2 - (node.y + NODE_H / 2) * scale.value;
+
+  if (!animated) {
+    tx.value = targetX;
+    ty.value = targetY;
+    return;
+  }
+
+  const startX = tx.value;
+  const startY = ty.value;
+
+  const dx = targetX - startX;
+  const dy = targetY - startY;
+
+  const duration = 400;
+  const start = performance.now();
+
+  function step(now: number) {
+    const p = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - p, 3);
+
+    tx.value = startX + dx * ease;
+    ty.value = startY + dy * ease;
+
+    if (p < 1) requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
 
 function centerOnFocus(animated = false) {
   const focus = flatNodes.value.find((n) => n.isFocus);
@@ -403,7 +488,8 @@ function hideTip() {
                 Organigrama
               </h3>
               <p class="text-xs" :style="`color: ${C.textMuted}`">
-                {{ users.length }} personas · Click para expandir/colapsar
+                {{ resolvedUsers.length }} personas · Click para
+                expandir/colapsar
               </p>
             </div>
           </div>
@@ -414,12 +500,21 @@ function hideTip() {
               class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition"
               :style="`background: #f97316; color: white`"
               title="Centrar en mi posición"
-              @click="centerOnFocus(true)"
+              @click="centerOnNode(currentUserId, true)"
             >
               <i class="pi pi-crosshairs text-xs" />
               Mi posición
             </button>
-
+            <!--Ir a la posición del usuario que estas mirando-->
+            <button
+              v-if="!viewingMyself"
+              class="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold transition"
+              :style="`background:#0ea5e9;color:white`"
+              @click="centerOnNode(focusId, true)"
+            >
+              <i class="pi pi-user" />
+              Posición de {{ byId.get(focusId)?.name }}
+            </button>
             <!-- Zoom -->
             <div
               class="flex items-center gap-1 rounded-xl border p-1"
@@ -539,9 +634,21 @@ function hideTip() {
                   :width="NODE_W"
                   :height="NODE_H"
                   rx="12"
-                  :fill="n.isFocus ? C.focusBg : C.nodeBg"
-                  :stroke="n.isFocus ? C.focusBorder : C.nodeBorder"
-                  :stroke-width="n.isFocus ? 2 : 1"
+                  :fill="
+                    n.isCurrentUser
+                      ? C.focusBg
+                      : n.isFocus
+                        ? '#082f49'
+                        : C.nodeBg
+                  "
+                  :stroke="
+                    n.isCurrentUser
+                      ? '#f97316'
+                      : n.isFocus
+                        ? '#0ea5e9'
+                        : C.nodeBorder
+                  "
+                  :stroke-width="n.isCurrentUser || n.isFocus ? 2 : 1"
                 />
 
                 <!-- Status dot -->
@@ -559,7 +666,9 @@ function hideTip() {
                   text-anchor="middle"
                   font-size="12"
                   font-weight="600"
-                  :fill="n.isFocus ? '#f97316' : C.text"
+                  :fill="
+                    n.isCurrentUser ? '#f97316' : n.isFocus ? '#38bdf8' : C.text
+                  "
                 >
                   {{
                     n.user.name.length > 19
@@ -602,7 +711,7 @@ function hideTip() {
                 </text>
 
                 <!-- "Vos" label for focus node -->
-                <g v-if="n.isFocus">
+                <g v-if="n.isCurrentUser">
                   <rect
                     :x="NODE_W / 2 - 15"
                     :y="NODE_H - 8"
@@ -620,6 +729,28 @@ function hideTip() {
                     fill="white"
                   >
                     VOS
+                  </text>
+                </g>
+
+                <!-- Perfil que estoy viendo -->
+                <g v-else-if="n.isFocus">
+                  <rect
+                    :x="NODE_W / 2 - 24"
+                    :y="NODE_H - 8"
+                    width="48"
+                    height="14"
+                    rx="7"
+                    fill="#0ea5e9"
+                  />
+                  <text
+                    :x="NODE_W / 2"
+                    :y="NODE_H + 3"
+                    text-anchor="middle"
+                    font-size="8"
+                    font-weight="700"
+                    fill="white"
+                  >
+                    PERFIL
                   </text>
                 </g>
 

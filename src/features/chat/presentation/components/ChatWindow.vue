@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import { computed, ref, watch } from "vue";
+import { useRouter } from "vue-router";
 import "primeicons/primeicons.css";
 import { useChatStore } from "../../store/ChatStore";
+import { useUserStore } from "../../store/UserStore";
 import { useMessageStore } from "../../../messages/store/MessageStore";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import { ChatRoomType } from "../../domain/ChatRoomType";
 
-const { selectedChat, findWorkspaceUserByName, openUserProfile } =
-  useChatStore();
-
+const router = useRouter();
+const { selectedChat, findWorkspaceUserByName } = useChatStore();
+const { getUserByName } = useUserStore();
 const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
 
 const messageChat = ref("");
@@ -16,9 +18,21 @@ const messageChat = ref("");
 const selectedChatUser = computed(() => {
   if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
     return null;
-
   return findWorkspaceUserByName(selectedChat.value.name);
 });
+
+// UUID real del backend: el nombre del chat room directo es el username del backend
+// (así se creó el chat room), así que se busca por ese nombre en el UserStore
+const selectedChatUserRealId = computed(() => {
+  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
+    return null;
+  return getUserByName(selectedChat.value.name)?.id ?? null;
+});
+
+function verPerfilUsuario() {
+  if (!selectedChatUserRealId.value) return;
+  router.push(`/profile/${selectedChatUserRealId.value}`);
+}
 
 watch(
   () => selectedChat.value?.id,
@@ -46,26 +60,34 @@ const handleMessage = async () => {
       class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
     >
       <div class="flex items-center w-full space-x-3">
+        <!-- Chat directo: el header completo es clickeable para ir al perfil -->
         <button
-          v-if="selectedChatUser"
+          v-if="selectedChat?.type === 'DIRECT'"
           type="button"
           class="flex items-center gap-3 rounded-2xl px-2 py-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-white/5"
-          @click="openUserProfile(selectedChatUser)"
+          :class="{
+            'cursor-pointer': selectedChatUserRealId,
+            'cursor-default': !selectedChatUserRealId,
+          }"
+          @click="verPerfilUsuario"
         >
           <img
-            :src="selectedChatUser.avatar ?? avatarProfile"
-            :alt="selectedChatUser.name"
+            :src="selectedChatUser?.avatar ?? avatarProfile"
+            :alt="selectedChat.name"
             class="h-9 w-9 rounded-full object-cover"
           />
           <div>
             <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
-              {{ selectedChat?.name }}
+              {{ selectedChat.name }}
             </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Ver perfil</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              {{ selectedChatUserRealId ? "Ver perfil" : "Chat directo" }}
+            </p>
           </div>
         </button>
 
-        <div v-else class="flex items-center gap-3">
+        <!-- Grupo u otro tipo: no clickeable -->
+        <div v-else class="flex items-center gap-3 px-2 py-1.5">
           <img
             :src="avatarProfile"
             alt="Group Avatar"

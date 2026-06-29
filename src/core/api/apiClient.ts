@@ -24,6 +24,9 @@ function buildUrl(path: string, params?: ApiOptions["params"]): string {
 
 function buildHeaders(extra?: Record<string, string>): HeadersInit {
   const token = tokenService.getToken();
+
+  console.log("TOKEN:", token);
+
   return {
     "Content-Type": "application/json",
     Accept: "application/json",
@@ -32,7 +35,7 @@ function buildHeaders(extra?: Record<string, string>): HeadersInit {
   };
 }
 
-// 👉 core: devuelve SIEMPRE T (no ApiResponse<T>)
+// devuelve SIEMPRE T (no ApiResponse<T>)
 async function request<T>(
   path: string,
   method: string,
