@@ -18,6 +18,8 @@ import {
   getUserPermissionsApi,
   updateChatRoomNameApi,
 } from "../infrastructure/api/chatApi";
+import { getUserPermissionsApi } from "../infrastructure/api/chatApi";
+import { getUserApi } from "../infrastructure/api/userApi";
 
 const selectedChat = ref<IChatRoom | null>(null);
 const selectedProfileUser = ref<WorkspaceUser | null>(null);
@@ -32,7 +34,7 @@ export const useChatStore = () => {
   const currentUser = computed<WorkspaceUser>(() => ({
     ...currentWorkspaceUser,
     id: currentUserId.value ?? currentWorkspaceUser.id,
-    name: profile.value?.username ?? currentWorkspaceUser.name,
+    username: profile.value?.username ?? currentWorkspaceUser.username,
     avatar:
       profile.value?.avatarUrl ?? currentWorkspaceUser.avatar ?? undefined,
   }));
@@ -43,8 +45,14 @@ export const useChatStore = () => {
     currentUserId.value = user.userId;
   };
 
-  const findWorkspaceUserById = (id: string): WorkspaceUser | null => {
-    return mockWorkspaceUsers.find((user) => user.id === id) ?? null;
+  const findWorkspaceUserById = async (
+    id: string,
+  ): Promise<WorkspaceUser | null> => {
+    return (
+      (await getUserApi(id)) ??
+      mockWorkspaceUsers.find((user) => user.id === id) ??
+      null
+    );
   };
 
   const isUserProfilePanelOpen = computed(
@@ -97,7 +105,8 @@ export const useChatStore = () => {
 
   const openDirectMessage = (user: WorkspaceUser) => {
     const existingChat = chats.value.find(
-      (chat) => chat.type === ChatRoomType.DIRECT && chat.name === user.name,
+      (chat) =>
+        chat.type === ChatRoomType.DIRECT && chat.name === user.username,
     );
 
     if (!existingChat) {
@@ -118,7 +127,7 @@ export const useChatStore = () => {
   const findWorkspaceUserByName = (name: string) => {
     return (
       mockWorkspaceUsers.find(
-        (user) => user.name.toLowerCase() === name.toLowerCase(),
+        (user) => user.username.toLowerCase() === name.toLowerCase(),
       ) ?? null
     );
   };

@@ -10,6 +10,7 @@ import { loadUsersDeviceKeysUseCase } from "./loadUsersDeviceKeysUseCase";
 import { uploadConversationKeyUseCase } from "./uploadConversationKeyUseCase";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
 import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
+import { resolveDirectChatName } from "../../utils/resolveDirectChatName";
 
 export async function createChatRoomUseCase(
   request: ICreateChatRoomRequest,
@@ -82,6 +83,8 @@ export async function createChatRoomUseCase(
     });
   }
   await cryptoStorage.saveConversationKey(conversationKey);
+
+  await resolveDirectChatName(data, currentUser.userId);
 
   await chatStorage.save(data);
 
