@@ -6,7 +6,6 @@ import {
   mockWorkspaceUsers,
   currentWorkspaceUser,
 } from "../infrastructure/mock/workspaceUsers";
-
 import { ChatRoomType } from "../domain/ChatRoomType";
 import { chatStorage } from "../infrastructure/indexedDb/chatStorage";
 import { useProfileStore } from "@/features/profile/Store/ProfileStore";
@@ -18,7 +17,6 @@ import {
   getUserPermissionsApi,
   updateChatRoomNameApi,
 } from "../infrastructure/api/chatApi";
-import { getUserPermissionsApi } from "../infrastructure/api/chatApi";
 import { getUserApi } from "../infrastructure/api/userApi";
 
 const selectedChat = ref<IChatRoom | null>(null);
