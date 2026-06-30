@@ -44,7 +44,7 @@ const corporate = reactive<ICorporateData>({
     const mgr = mockWorkspaceUsers.find(
       (u) => u.id === currentWorkspaceUser.managerId,
     );
-    return mgr ? mgr.name : "Sin asignar";
+    return mgr ? mgr.username : "Sin asignar";
   })(),
 });
 

@@ -9,7 +9,7 @@ import avatarProfile from "@/shared/assets/avatar-profile.svg";
 const router = useRouter();
 const { selectedProfileUser, closeUserProfile, openDirectMessage } =
   useChatStore();
-const { getUserByName } = useUserStore();
+const { getUserById } = useUserStore();
 
 const copiedEmail = ref(false);
 
@@ -18,13 +18,13 @@ const profile = computed(() => selectedProfileUser.value);
 // UUID real del backend — se busca por username en el UserStore
 const realUserId = computed(() => {
   if (!profile.value) return null;
-  const user = getUserByName(profile.value.username);
+  const user = getUserById(profile.value.id);
   return user?.id ?? null;
 });
 
 // Navega al perfil completo del usuario
 function verPerfilCompleto() {
-  if (!realUserId.value) return;
+  if (!profile.value || !realUserId.value || realUserId.value === null) return;
   closeUserProfile();
   router.push(`/profile/${realUserId.value}`);
 }
@@ -117,7 +117,7 @@ const sendMessage = (user: WorkspaceUser) => {
           <div class="relative">
             <img
               :src="profile.avatar ?? avatarProfile"
-              :alt="profile.name"
+              :alt="profile.username"
               class="h-24 w-24 rounded-full object-cover ring-4 ring-white shadow-sm dark:ring-slate-950"
             />
             <span
@@ -128,7 +128,7 @@ const sendMessage = (user: WorkspaceUser) => {
 
           <div class="mt-4 space-y-1">
             <h3 class="text-xl font-semibold text-slate-950 dark:text-slate-50">
-              {{ profile.name }}
+              {{ profile.username }}
             </h3>
             <p class="text-sm text-slate-500 dark:text-slate-400">
               @{{ profile.username }}

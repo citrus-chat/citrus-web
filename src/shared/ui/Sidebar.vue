@@ -7,6 +7,7 @@ import "primeicons/primeicons.css";
 import { tokenService } from "@/core/auth/tokenService";
 import { checkAdminAccess } from "@/features/admin/application/use-cases/checkAdminAccess";
 import { useLogout } from "@/shared/composables/useLogout";
+import { useProfileStore } from "@/features/profile/Store/ProfileStore";
 
 const ThemeToggle = defineAsyncComponent(
   () => import("@/shared/ui/ThemeToggle.vue"),
@@ -14,6 +15,7 @@ const ThemeToggle = defineAsyncComponent(
 
 const router = useRouter();
 const { currentUser } = useChatStore();
+const { loadProfile } = useProfileStore();
 const goChats = () => router.push("/");
 const goProfile = () => router.push("/profile");
 
@@ -33,6 +35,7 @@ onMounted(async () => {
   const token = tokenService.getAccessToken();
   if (!token) return;
   isAdmin.value = await checkAdminAccess();
+  loadProfile(currentUser.value.id);
 });
 
 const { isLoggingOut, logout } = useLogout();
@@ -103,7 +106,7 @@ const { isLoggingOut, logout } = useLogout();
             />
             <div class="min-w-0 text-sm">
               <div class="font-semibold text-slate-900 dark:text-slate-100">
-                {{ currentUser.name }}
+                {{ currentUser.username }}
               </div>
               <div class="truncate text-xs text-slate-500 dark:text-slate-400">
                 {{
