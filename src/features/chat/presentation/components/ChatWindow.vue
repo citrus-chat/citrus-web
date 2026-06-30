@@ -104,26 +104,34 @@ const openEditGroup = () => {
       class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
     >
       <div class="flex items-center w-full space-x-3">
+        <!-- Chat directo: el header completo es clickeable para ir al perfil -->
         <button
-          v-if="selectedChatUser"
+          v-if="selectedChat?.type === 'DIRECT'"
           type="button"
           class="flex items-center gap-3 rounded-2xl px-2 py-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-white/5"
+          :class="{
+            'cursor-pointer': selectedChatUser?.id,
+            'cursor-default': !selectedChatUser?.id,
+          }"
           @click="openUserProfile(selectedChatUser)"
         >
           <img
-            :src="selectedChatUser.avatar ?? avatarProfile"
-            :alt="selectedChatUser.username"
+            :src="selectedChatUser?.avatar ?? avatarProfile"
+            :alt="selectedChatUser?.username"
             class="h-9 w-9 rounded-full object-cover"
           />
           <div>
             <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
-              {{ selectedChat?.name }}
+              {{ selectedChat.name }}
             </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">Ver perfil</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400">
+              {{ selectedChatUser?.id ? "Ver perfil" : "Chat directo" }}
+            </p>
           </div>
         </button>
 
-        <div v-else class="flex items-center gap-3">
+        <!-- Grupo u otro tipo: no clickeable -->
+        <div v-else class="flex items-center gap-3 px-2 py-1.5">
           <img
             :src="avatarProfile"
             alt="Group Avatar"

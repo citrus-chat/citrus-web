@@ -13,6 +13,10 @@ import {
   currentWorkspaceUser,
 } from "@/features/chat/infrastructure/mock/workspaceUsers";
 import OrgChart from "./OrgChart.vue";
+import {
+  getOrgUsersApi,
+  type IOrgUser,
+} from "@/features/profile/infrastructure/api/orgApi";
 import EditProfileModal from "./EditProfileModal.vue";
 import type { ProfileFormData } from "./EditProfileModal.vue";
 import { useProfileStore } from "@/features/profile/Store/ProfileStore.ts";
@@ -46,6 +50,18 @@ const corporate = reactive<ICorporateData>({
 
 const isEditOpen = ref(false);
 const isOrgOpen = ref(false);
+const orgUsers = ref<IOrgUser[]>([]);
+
+// Busca el ID del usuario actual dentro del array de orgUsers (por username).
+// Esto garantiza que el focusId coincide con los IDs que maneja OrgChart,
+// ya que el ID del ProfileStore puede tener formato distinto al de /users/org.
+const orgFocusId = computed(() => {
+  if (!user.value || orgUsers.value.length === 0) return "";
+  const found = orgUsers.value.find(
+    (u) => u.username.toLowerCase() === user.value!.username.toLowerCase(),
+  );
+  return found?.id ?? "";
+});
 
 // El avatar siempre deriva del ProfileStore (fuente de verdad reactiva).
 // No se usa un ref local separado para evitar desincronizaciones.
@@ -157,6 +173,9 @@ onMounted(async () => {
 
     // Load from IndexedDB cache then sync from API
     await profileStore.loadProfile(backendUser.userId);
+
+    // Cargar el árbol del organigrama desde el back
+    orgUsers.value = await getOrgUsersApi();
 
     const p = profileStore.profile.value!;
     form.username = p.username || backendUser.username;
@@ -570,8 +589,10 @@ const privacyLabel: Record<IPersonalData["privacy"], string> = {
   </div>
 
   <OrgChart
-    :users="mockWorkspaceUsers"
-    :focus-id="currentWorkspaceUser.id"
+    :users="[]"
+    :org-users="orgUsers"
+    :focus-id="orgFocusId"
+    :current-user-id="profileStore.profile.value?.userId ?? ''"
     :is-open="isOrgOpen"
     @close="isOrgOpen = false"
   />

@@ -114,7 +114,11 @@ export const useChatStore = () => {
     selectChat(existingChat.id);
   };
 
-  const openUserProfile = (user: WorkspaceUser) => {
+  const openUserProfile = (user: WorkspaceUser | null) => {
+    if (!user) {
+      selectedProfileUser.value = null;
+      return;
+    }
     selectedProfileUser.value = user;
   };
 

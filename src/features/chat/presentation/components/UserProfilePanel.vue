@@ -1,15 +1,33 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import { useRouter } from "vue-router";
 import { useChatStore } from "@/features/chat/store/ChatStore";
+import { useUserStore } from "@/features/chat/store/UserStore";
 import type { WorkspaceUser } from "@/features/chat/domain/WorkspaceUser";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 
+const router = useRouter();
 const { selectedProfileUser, closeUserProfile, openDirectMessage } =
   useChatStore();
+const { getUserByName } = useUserStore();
 
 const copiedEmail = ref(false);
 
 const profile = computed(() => selectedProfileUser.value);
+
+// UUID real del backend — se busca por username en el UserStore
+const realUserId = computed(() => {
+  if (!profile.value) return null;
+  const user = getUserByName(profile.value.username);
+  return user?.id ?? null;
+});
+
+// Navega al perfil completo del usuario
+function verPerfilCompleto() {
+  if (!realUserId.value) return;
+  closeUserProfile();
+  router.push(`/profile/${realUserId.value}`);
+}
 
 const statusLabel = computed(() => {
   if (!profile.value) return "";
@@ -146,6 +164,17 @@ const sendMessage = (user: WorkspaceUser) => {
             {{ copiedEmail ? "Copiado" : "Copiar email" }}
           </button>
         </div>
+
+        <!-- Botón para ver el perfil completo con todos los datos y organigrama -->
+        <button
+          v-if="realUserId"
+          type="button"
+          class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-2xl border border-sky-200 bg-sky-500/5 px-4 py-2.5 text-sm font-medium text-sky-600 transition hover:bg-sky-500/10 dark:border-sky-500/20 dark:text-sky-400 dark:hover:bg-sky-500/10"
+          @click="verPerfilCompleto"
+        >
+          <i class="pi pi-external-link text-xs" />
+          Ver perfil completo
+        </button>
 
         <div
           class="mt-5 space-y-4 rounded-2xl border border-slate-200/80 bg-slate-50/80 p-4 text-sm text-slate-700 dark:border-white/10 dark:bg-slate-950/40 dark:text-slate-300"
