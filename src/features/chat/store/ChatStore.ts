@@ -28,7 +28,7 @@ const currentUserId = ref<string | null>(null);
 export const useChatStore = () => {
   const chatsIsEmpty = computed(() => chats.value.length === 0);
 
-  const { profile } = useProfileStore();
+  const { loadProfile, setProfile, profile } = useProfileStore();
   const currentUser = computed<WorkspaceUser>(() => ({
     ...currentWorkspaceUser,
     id: currentUserId.value ?? currentWorkspaceUser.id,
@@ -40,6 +40,23 @@ export const useChatStore = () => {
   const initCurrentUser = async () => {
     const user = await getCurrentUserUseCase();
     if (!user) throw new Error("Current user not found");
+    setProfile({
+      userId: user.userId,
+      email: user.email,
+      username: user.username,
+      avatarUrl: null,
+      description: "",
+      privacy: "public",
+
+      privacySettings: {
+        showPhone: false,
+        showEmail: false,
+        showStatus: false,
+        showDescription: false,
+        allowGroupInvites: false,
+      },
+    });
+    await loadProfile(user.userId);
     currentUserId.value = user.userId;
   };
 
@@ -58,7 +75,7 @@ export const useChatStore = () => {
   );
 
   const loadChats = async () => {
-    initCurrentUser();
+    await initCurrentUser();
     const device: IDevice | null = await deviceStorage.get();
     if (device) {
       try {
