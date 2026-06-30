@@ -48,6 +48,7 @@ export const useProfileStore = () => {
 
     // 2. Obtener datos del backend y sincronizar (fuente de verdad)
     try {
+      console.log("Fetching profile from API for userId:", userId);
       const remote = await getMyProfileApi();
       if (profile.value) {
         // Fusionar la privacidad/descripcion remota con los datos de perfil existentes

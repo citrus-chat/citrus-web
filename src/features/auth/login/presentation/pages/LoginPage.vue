@@ -207,6 +207,7 @@ import { loginUserUseCase } from "@/features/auth/login/application/use-cases/lo
 import { tokenService } from "@/core/auth/tokenService";
 import { getUserFriendlyErrorMessage } from "@/core/api/apiErrorMapper";
 import { chatRealtimeService } from "@/features/chat/infrastructure/services/ChatRealtimeService";
+import { useChatStore } from "@/features/chat/store/ChatStore";
 
 const router = useRouter();
 
@@ -223,12 +224,15 @@ function toggleShowPassword() {
   showPassword.value = !showPassword.value;
 }
 
-onMounted(() => {
+const { initCurrentUser } = useChatStore();
+
+onMounted(async () => {
   if (tokenService.hasAccessToken()) {
     const token = tokenService.getAccessToken();
     if (token) {
       chatRealtimeService.connect(token);
     }
+    await initCurrentUser();
     router.push({ name: "chat" }).catch(() => {});
   }
 });

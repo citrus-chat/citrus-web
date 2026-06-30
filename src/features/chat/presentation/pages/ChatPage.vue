@@ -15,6 +15,7 @@ const {
   restoreSelectedChat,
   isUserProfilePanelOpen,
 } = useChatStore();
+
 const { loadUsers } = useUserStore();
 
 onMounted(async () => {
