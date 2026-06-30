@@ -5,6 +5,7 @@ export interface IChatRoom {
   id: string;
   type: ChatRoomType;
   name: string;
+  avatarUrl?: string;
   createdBy: string;
   // Not implemented yet.
   participants: IChatParticipant[];

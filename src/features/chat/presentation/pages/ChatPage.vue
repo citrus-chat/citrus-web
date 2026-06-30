@@ -6,6 +6,7 @@ import UserProfilePanel from "../components/UserProfilePanel.vue";
 import { useChatStore } from "../../store/ChatStore";
 import { tokenService } from "@/core/auth/tokenService.ts";
 import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeService.ts";
+import { useUserStore } from "../../store/UserStore.ts";
 
 const {
   selectedChat,

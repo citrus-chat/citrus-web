@@ -25,8 +25,6 @@ function buildUrl(path: string, params?: ApiOptions["params"]): string {
 function buildHeaders(extra?: Record<string, string>): HeadersInit {
   const token = tokenService.getToken();
 
-  console.log("TOKEN:", token);
-
   return {
     "Content-Type": "application/json",
     Accept: "application/json",

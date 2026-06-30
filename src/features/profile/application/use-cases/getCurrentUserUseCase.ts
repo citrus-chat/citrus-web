@@ -1,4 +1,3 @@
-//Api yo te invoco
 import { getCurrentUserApi } from "@/features/profile/infrastructure/api/profileApi";
 import type { ICurrentUserResponse } from "@/features/profile/domain/ICurrentUserResponse";
 

@@ -4,8 +4,11 @@ import { syncChatRoomApi } from "../../infrastructure/api/chatApi";
 import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
 import { cryptoService } from "@/features/crypto/infraestructure/services/cryptoService";
 import { getDeviceKeysApi } from "../../infrastructure/api/deviceApi";
+import { resolveDirectChatName } from "../../utils/resolveDirectChatName";
+import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
 
 export async function syncChatsUseCase(request: IDevice) {
+  const currentUser = await getCurrentUserUseCase();
   const myPrivateKey = await cryptoStorage.getIdentityKey();
 
   if (!myPrivateKey) {
@@ -13,6 +16,12 @@ export async function syncChatsUseCase(request: IDevice) {
   }
 
   const data = await syncChatRoomApi(request);
+
+  await Promise.all(
+    data.chatRooms.map((chatRoom) =>
+      resolveDirectChatName(chatRoom, currentUser.userId),
+    ),
+  );
 
   await chatStorage.saveMany(data.chatRooms);
 
