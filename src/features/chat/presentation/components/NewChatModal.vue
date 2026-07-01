@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import { useChatStore } from "../../store/ChatStore";
 import { useUserStore } from "../../store/UserStore";
 import { createChatRoomUseCase } from "../../application/use-cases/createChatroomUseCase";
@@ -324,7 +325,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
             >
               <div class="flex items-center gap-3">
                 <img
-                  src="@/shared/assets/avatar-profile.svg"
+                  :src="contact.avatarUrl ?? avatarProfile"
                   alt="Avatar"
                   class="h-10 w-10 rounded-full object-cover ring-1 ring-slate-200/80 dark:ring-white/10"
                 />
