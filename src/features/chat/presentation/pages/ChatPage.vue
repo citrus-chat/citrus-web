@@ -71,7 +71,7 @@ onMounted(async () => {
       >
         <template v-if="chatsIsEmpty">
           <img
-            src="@/shared/assets/citrus-chat.png"
+            src="@/shared/assets/CitrusChatNoLetters.png"
             alt="No chats"
             class="w-36 rounded-[50%]"
           />
