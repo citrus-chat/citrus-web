@@ -23,6 +23,7 @@ import {
 } from "../../utils/groupPermissions";
 import { toAbsoluteAvatarUrl } from "@/features/profile/infrastructure/api/publicProfileApi";
 import type { WorkspaceUser } from "../../domain/WorkspaceUser.ts";
+import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage.ts";
 
 const {
   selectedChat,
@@ -152,11 +153,12 @@ const canViewMessages = computed(
     hasCanViewMessages(currentParticipantPermissions.value),
 );
 
-const canSendMessages = computed(
-  () =>
+const canSendMessages = computed(() => {
+  return (
     !isGroupChat.value ||
-    hasCanSendMessages(currentParticipantPermissions.value),
-);
+    hasCanSendMessages(currentParticipantPermissions.value)
+  );
+});
 
 const canAttachFiles = computed(
   () =>
@@ -249,6 +251,7 @@ watch(
 
     if (subscribedChatId !== id) {
       subscription = chatRealtimeService.subscribeToChatRoom(id, async () => {
+        sendMessageError.value = null;
         await loadChats();
         firstNewMessageIndex.value = await syncMessages(id);
         await scrollToBottom();
@@ -276,13 +279,25 @@ const isOwnMessage = (senderUserId: string) =>
   senderUserId === currentUser.value.id;
 
 const handleMessage = async () => {
+  sendMessageError.value = null;
   if (!selectedChat.value || !canSendMessages.value) return;
+  const conversationKey = await cryptoStorage.getActiveConversationKey(
+    selectedChat.value?.id ?? "",
+  );
+
+  if (!conversationKey) {
+    sendMessageError.value = new Error(
+      "No se puede enviar el mensaje, no se ha obtenido la clave de cifrado para esta conversación.",
+    );
+    return;
+  }
 
   try {
     await sendMessage(selectedChat.value.id, messageChat.value);
     messageChat.value = "";
     await scrollToBottom();
   } catch {
+    sendMessageError.value = new Error("Error al enviar el mensaje.");
     return;
   }
 };
