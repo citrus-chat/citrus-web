@@ -28,8 +28,6 @@ export const useMessageStore = () => {
         sender: await getUserApi(message.senderUserId),
       })),
     );
-
-    console.log("Loaded messages:", messages.value);
   };
 
   const syncMessages = async (conversationId: string) => {
