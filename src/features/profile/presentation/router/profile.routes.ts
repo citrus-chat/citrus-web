@@ -14,6 +14,18 @@ export const profileRoutes: RouteRecordRaw[] = [
     ],
   },
   {
+    path: "/profile/:userId",
+    component: () => import("@/app/layouts/AppLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "user-profile",
+        component: () =>
+          import("@/features/profile/presentation/pages/UserProfilePage.vue"),
+      },
+    ],
+  },
+  {
     path: "/organigrama",
     component: () => import("@/app/layouts/AppLayout.vue"),
     children: [

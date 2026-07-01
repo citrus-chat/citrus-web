@@ -28,7 +28,6 @@ const filteredUsers = computed(() => {
 
   return workspaceUsers.value.filter(
     (user) =>
-      user.name.toLowerCase().includes(query) ||
       user.username.toLowerCase().includes(query) ||
       user.email.toLowerCase().includes(query),
   );
@@ -123,7 +122,7 @@ const hasResults = computed(
                 >
                   <img
                     :src="user.avatar ?? avatarProfile"
-                    :alt="user.name"
+                    :alt="user.username"
                     class="h-8 w-8 rounded-full object-cover ring-1 ring-slate-200 dark:ring-white/10"
                   />
                   <span
@@ -140,7 +139,7 @@ const hasResults = computed(
                   <p
                     class="text-sm font-medium text-slate-900 dark:text-slate-100"
                   >
-                    {{ user.name }}
+                    {{ user.username }}
                   </p>
                   <p
                     class="truncate text-xs text-slate-500 dark:text-slate-400"

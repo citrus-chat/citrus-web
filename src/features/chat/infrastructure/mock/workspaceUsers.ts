@@ -15,6 +15,19 @@ export const mockWorkspaceUsers: WorkspaceUser[] = [
     phoneNumber: "+54 11 5555 0001",
     bio: "Director general.",
   },
+  {
+    id: "user-101",
+    name: "Agricultor Uno",
+    username: "agricultor1",
+    email: "agricultor1@citrus.com",
+    status: "online",
+    role: "Manager",
+    department: "Operations",
+    managerId: "user-2",
+    timezone: "America/Argentina/Buenos_Aires",
+    phoneNumber: "+54 11 5555 0101",
+    bio: "Usuario de prueba",
+  },
 ];
 
 for (let i = 2; i <= 100; i++) {

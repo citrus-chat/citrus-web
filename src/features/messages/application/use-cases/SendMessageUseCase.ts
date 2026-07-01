@@ -10,7 +10,7 @@ import { outgoingQueueStorage } from "../../infrastructure/indexedDb/outgoingQue
 import { OutgoingQueueItemType } from "../../domain/OutgoingQueueItemType";
 import { outgoingQueueProcessor } from "../../handlers/OutgoingQueueProcessor";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
-import { MissingConversationKeyError } from "@/features/crypto/domain/MissingConversationKeyError";
+import { syncPendingConversationKeyRequestsUseCase } from "./syncPendingConversationKeyRequestsUseCase";
 
 export class SendMessageUseCase {
   constructor(
@@ -31,6 +31,12 @@ export class SendMessageUseCase {
 
     if (!currentUser) {
       throw new Error("Current user not found");
+    }
+
+    try {
+      await syncPendingConversationKeyRequestsUseCase(request.conversationId);
+    } catch (error) {
+      console.error("Error syncing pending conversation key requests:", error);
     }
 
     const message: IMessage = {

@@ -36,77 +36,16 @@ const sendMessageUseCase = new SendMessageUseCase(
 );
 
 export const useMessageStore = () => {
-  const findSenderById = async (
-    userId: string,
-  ): Promise<IUserResponse | null> => {
-    if (senderUsersById.has(userId)) {
-      return senderUsersById.get(userId) ?? null;
-    }
+  const loadMessages = async (conversationId: string) => {
+    const storedMessages =
+      await messageStorage.getByConversationId(conversationId);
 
-    const pendingRequest = senderUserRequestsById.get(userId);
-
-    if (pendingRequest) {
-      return pendingRequest;
-    }
-
-    const request = getUserApi(userId)
-      .then((user) => {
-        senderUsersById.set(userId, user);
-        return user;
-      })
-      .catch(() => {
-        senderUsersById.set(userId, null);
-        return null;
-      })
-      .finally(() => {
-        senderUserRequestsById.delete(userId);
-      });
-
-    senderUserRequestsById.set(userId, request);
-
-    return request;
-  };
-
-  const loadMessages = async (
-    conversationId: string,
-    options?: { forceRefresh?: boolean },
-  ): Promise<IMessageView[]> => {
-    const pendingRequest =
-      loadMessagesRequestsByConversationId.get(conversationId);
-
-    if (pendingRequest && !options?.forceRefresh) {
-      return pendingRequest;
-    }
-
-    if (options?.forceRefresh) {
-      loadMessagesRequestsByConversationId.delete(conversationId);
-    }
-
-    const request = messageStorage
-      .getByConversationId(conversationId)
-      .then(async (storedMessages) => {
-        const hydratedMessages = await Promise.all(
-          storedMessages.map(async (message) => ({
-            ...message,
-            sender: (await findSenderById(message.senderUserId)) ?? undefined,
-          })),
-        );
-        console.log("[MessageStore] loaded from storage", {
-          conversationId,
-          count: hydratedMessages.length,
-          hydratedMessages,
-        });
-        messages.value = hydratedMessages;
-
-        return hydratedMessages;
-      })
-      .finally(() => {
-        loadMessagesRequestsByConversationId.delete(conversationId);
-      });
-
-    loadMessagesRequestsByConversationId.set(conversationId, request);
-
-    return request;
+    messages.value = await Promise.all(
+      storedMessages.map(async (message) => ({
+        ...message,
+        sender: await getUserApi(message.senderUserId),
+      })),
+    );
   };
 
   const syncMessages = async (conversationId: string) => {

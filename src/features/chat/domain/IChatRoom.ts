@@ -6,7 +6,7 @@ export interface IChatRoom {
   id: string;
   type: ChatRoomType;
   name: string;
-  avatarUrl?: string | null;
+  avatarUrl?: string;
   createdBy: string;
   participants: IChatParticipant[];
   roles?: Record<string, IChatRole> | null;

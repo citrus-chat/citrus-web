@@ -50,7 +50,7 @@ const showHeader = computed(() => route.name !== "login");
     <section class="w-full max-w-md">
       <div v-if="showHeader" class="text-center mb-6">
         <img
-          src="@/shared/assets/citrus-chat.png"
+          src="@/shared/assets/CitrusChatNoLetters.png"
           alt="Citrus Chat"
           class="mx-auto mb-4 auth-logo rounded-full shadow-sm"
         />

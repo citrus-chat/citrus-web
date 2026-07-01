@@ -6,6 +6,7 @@ export interface ICreateChatRoomResponse {
   id: string;
   type: ChatRoomType;
   name: string;
+  avatarUrl?: string;
   createdBy: string;
   participants: IChatParticipant[];
   roles?: Record<string, IChatRole> | null;

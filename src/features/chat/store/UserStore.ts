@@ -11,6 +11,7 @@ export const useUserStore = () => {
   const usersIsEmpty = computed(() => users.value.length === 0);
 
   const loadUsers = async () => {
+    console.log("Loading users...");
     try {
       await loadUsersUseCase();
     } catch (error) {
@@ -33,6 +34,7 @@ export const useUserStore = () => {
     return users.value.find((u) => u.id === id) ?? null;
   };
 
+<<<<<<< HEAD
   const getUserByName = (name: string) => {
     return (
       users.value.find((u) => u.name.toLowerCase() === name.toLowerCase()) ??
@@ -40,6 +42,8 @@ export const useUserStore = () => {
     );
   };
 
+=======
+>>>>>>> main
   return {
     users,
     selectedUser,
@@ -48,7 +52,6 @@ export const useUserStore = () => {
     selectUser,
 
     getUserById,
-    getUserByName,
 
     usersIsEmpty,
   };

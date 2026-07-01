@@ -10,12 +10,21 @@ import {
   getLastSync,
   setLastSync,
 } from "../../infrastructure/indexedDb/syncStorage";
+import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
+import { requestConversationKeyUseCase } from "./requestConversationKeyUseCase";
 
 export const MESSAGE_DECRYPTION_ERROR_CONTENT =
   "No se pudo desencriptar este mensaje en este dispositivo.";
 
 export async function syncMessagesUseCase(chatroomId: string): Promise<void> {
   const lastSync = await getLastSync(chatroomId);
+
+  const conversationKey =
+    await cryptoStorage.getActiveConversationKey(chatroomId);
+
+  if (!conversationKey) {
+    await requestConversationKeyUseCase(chatroomId);
+  }
 
   const data = await syncMessagesApi({
     chatroomId,

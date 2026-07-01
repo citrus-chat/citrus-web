@@ -15,6 +15,7 @@ import type { IDevice } from "@/features/device/domain/IDevice";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
 import { updateChatRoomNameApi } from "../infrastructure/api/chatApi";
 import { getUserApi } from "../infrastructure/api/userApi";
+import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
 import type { IChatPermission } from "../domain/IChatPermission";
 import type { IChatRole } from "../domain/IChatRole";
 import type { ICreateChatRoleRequest } from "../domain/ICreateChatRoleRequest";
@@ -188,7 +189,7 @@ function mapChatRoleDeleteError(error: unknown): string {
 export const useChatStore = () => {
   const chatsIsEmpty = computed(() => chats.value.length === 0);
 
-  const { profile } = useProfileStore();
+  const { loadProfile, setProfile, profile } = useProfileStore();
   const currentUser = computed<WorkspaceUser>(() => ({
     ...currentWorkspaceUser,
     id: currentUserId.value ?? currentWorkspaceUser.id,
@@ -216,6 +217,23 @@ export const useChatStore = () => {
   const initCurrentUser = async () => {
     const user = await getCurrentUserUseCase();
     if (!user) throw new Error("Current user not found");
+    setProfile({
+      userId: user.userId,
+      email: user.email,
+      username: user.username,
+      avatarUrl: null,
+      description: "",
+      privacy: "public",
+
+      privacySettings: {
+        showPhone: false,
+        showEmail: false,
+        showStatus: false,
+        showDescription: false,
+        allowGroupInvites: false,
+      },
+    });
+    await loadProfile(user.userId);
     currentUserId.value = user.userId;
   };
 
@@ -282,6 +300,7 @@ export const useChatStore = () => {
 
   const loadChats = async () => {
     await initCurrentUser();
+    await initCurrentUser();
     const device: IDevice | null = await deviceStorage.get();
     if (device) {
       try {
@@ -337,7 +356,11 @@ export const useChatStore = () => {
     selectChat(existingChat.id);
   };
 
-  const openUserProfile = (user: WorkspaceUser) => {
+  const openUserProfile = (user: WorkspaceUser | null) => {
+    if (!user) {
+      selectedProfileUser.value = null;
+      return;
+    }
     selectedProfileUser.value = user;
   };
 
@@ -357,6 +380,14 @@ export const useChatStore = () => {
     const chat = chats.value.find((chat) => chat.id === chatId);
 
     if (!chat || !currentUser.value) return false;
+
+    const conversationKey = await cryptoStorage.getActiveConversationKey(
+      chat.id,
+    );
+
+    if (!conversationKey) {
+      return false;
+    }
 
     const userFoundParticipant = chat?.participants?.find(
       (participant) => participant.userId === currentUser.value.id,
@@ -965,6 +996,7 @@ export const useChatStore = () => {
     openUserProfile,
     closeUserProfile,
 
+    initCurrentUser,
     currentUser,
     currentUserParticipant,
     currentParticipantPermissions,
