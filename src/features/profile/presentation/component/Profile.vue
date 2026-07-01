@@ -20,6 +20,8 @@ import {
 import EditProfileModal from "./EditProfileModal.vue";
 import type { ProfileFormData } from "./EditProfileModal.vue";
 import { useProfileStore } from "@/features/profile/Store/ProfileStore.ts";
+import { useChatStore } from "@/features/chat/store/ChatStore.ts";
+import { useMessageStore } from "@/features/messages/store/MessageStore";
 import type { IProfileData } from "@/features/profile/domain/IProfileData";
 import { uploadAvatarApi } from "@/features/profile/infrastructure/api/avatarApi";
 import { env } from "@/core/config/env";
@@ -134,6 +136,20 @@ const handleSave = async (payload: ProfileFormData) => {
   //    lo que propaga el avatar al ChatStore (sidebar/header) automáticamente.
   await profileStore.saveProfile(updatedProfile);
 
+  // 4. Forzar recarga de chats y mensajes para que las UIs dependientes
+  // hagan re-query a sus fuentes y muestren el avatar actualizado.
+  try {
+    const chatStore = useChatStore();
+    const messageStore = useMessageStore();
+    await chatStore.loadChats();
+    if (chatStore.selectedChat.value?.id) {
+      await messageStore.loadMessages(chatStore.selectedChat.value.id);
+    }
+  } catch (err) {
+    // No crítico — si algo falla, la UI seguirá mostrando el preview del perfil
+    console.warn("No se pudieron recargar chats/mensajes:", err);
+  }
+
   // 4. Actualizar el resto del estado de la UI
   user.value.username = payload.username;
   personal.description = payload.description;
@@ -172,7 +188,7 @@ onMounted(async () => {
     }
 
     // Load from IndexedDB cache then sync from API
-    await profileStore.loadProfile(backendUser.userId);
+    await profileStore.loadProfile();
 
     // Cargar el árbol del organigrama desde el back
     orgUsers.value = await getOrgUsersApi();

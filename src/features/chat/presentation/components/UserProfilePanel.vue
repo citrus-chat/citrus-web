@@ -2,24 +2,21 @@
 import { computed, ref } from "vue";
 import { useRouter } from "vue-router";
 import { useChatStore } from "@/features/chat/store/ChatStore";
-import { useUserStore } from "@/features/chat/store/UserStore";
 import type { WorkspaceUser } from "@/features/chat/domain/WorkspaceUser";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 
 const router = useRouter();
 const { selectedProfileUser, closeUserProfile, openDirectMessage } =
   useChatStore();
-const { getUserById } = useUserStore();
 
 const copiedEmail = ref(false);
 
 const profile = computed(() => selectedProfileUser.value);
 
-// UUID real del backend — se busca por username en el UserStore
+// El id del WorkspaceUser ya es el UUID real del backend (viene de findWorkspaceUserByName)
 const realUserId = computed(() => {
-  if (!profile.value) return null;
-  const user = getUserById(profile.value.id);
-  return user?.id ?? null;
+  if (!profile.value?.id) return null;
+  return profile.value.id;
 });
 
 // Navega al perfil completo del usuario
