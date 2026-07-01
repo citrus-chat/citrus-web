@@ -24,6 +24,7 @@ export async function syncMessagesUseCase(chatroomId: string): Promise<void> {
 
   if (!conversationKey) {
     await requestConversationKeyUseCase(chatroomId);
+    return;
   }
 
   const data = await syncMessagesApi({
