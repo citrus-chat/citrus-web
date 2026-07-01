@@ -1,4 +1,4 @@
-export function clearClientSession(): void {
+export async function clearClientSession(): Promise<void> {
   try {
     localStorage.removeItem("selectedChat");
   } catch {

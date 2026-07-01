@@ -48,7 +48,27 @@ export async function logoutUseCase(): Promise<void> {
 
   // 6. Limpiar todo lo demás: localStorage residual, sessionStorage
   //    y cookies no-httpOnly accesibles desde JS.
-  clearClientSession();
+  // Limpiar stores de IndexedDB (chats, mensajes, usuarios, etc.)
+  try {
+    const db = await (
+      await import("@/shared/infrastructure/indexedDb/citrusDb")
+    ).citrusDb;
+    const storeNames = [
+      "chatRooms",
+      "messages",
+      "encryptedMessages",
+      "outgoingQueue",
+      "users",
+      "profile",
+      "metadata",
+      "sync",
+    ];
+    await Promise.all(storeNames.map((store) => db.clear(store)));
+  } catch {
+    // ignore
+  }
+
+  await clearClientSession();
 
   // 7. Redirigir al login
   await router.push({ name: "login" });
