@@ -490,7 +490,7 @@ async function handleQrConfirmed(result: IWebLoginSessionResult) {
 async function enterAuthenticatedApp() {
   const token = tokenService.getAccessToken();
   if (token) {
-    chatRealtimeService.connect(token);
+    await chatRealtimeService.connect(token);
   }
   await initCurrentUser();
   await router.push({ name: "chat" }).catch(() => {});
