@@ -7,8 +7,14 @@ import { tokenService } from "@/core/auth/tokenService.ts";
 import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeService.ts";
 import { useUserStore } from "../../store/UserStore.ts";
 
-const { selectedChat, chatsIsEmpty, loadChats, restoreSelectedChat } =
-  useChatStore();
+const {
+  selectedChat,
+  chats,
+  chatsIsEmpty,
+  loadChats,
+  restoreSelectedChat,
+  notifyIncomingMessage,
+} = useChatStore();
 
 const { loadUsers } = useUserStore();
 
@@ -19,8 +25,29 @@ onMounted(async () => {
   }
   await loadChats();
   restoreSelectedChat();
+
   // Cargar usuarios reales del backend para poder obtener sus UUIDs al navegar al perfil
   await loadUsers();
+
+  // Deshabilitamos la regla de 'any' para todo este bloque de suscripción de WebSockets
+  /* eslint-disable @typescript-eslint/no-explicit-any */
+  chats.value.forEach((c: any) => {
+    // Agregamos 'as any' al final de la función callback para resolver el error de tipado
+    chatRealtimeService.subscribeToChatRoom(c.id, ((frame: any) => {
+      try {
+        const body =
+          typeof frame.body === "string" ? JSON.parse(frame.body) : frame.body;
+        // body may contain minimal fields — pass what we can
+        void notifyIncomingMessage(c.id, {
+          content: body?.content ?? undefined,
+          createdAt: body?.createdAt ?? undefined,
+          senderUserId: body?.senderUserId ?? body?.sender_user_id ?? undefined,
+        });
+      } catch {
+        void notifyIncomingMessage(c.id);
+      }
+    }) as any);
+  });
 });
 </script>
 

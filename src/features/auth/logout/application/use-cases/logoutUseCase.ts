@@ -4,12 +4,14 @@ import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/de
 import { logoutApi } from "@/features/auth/logout/Infraestructure/api/logoutApi";
 import { clearClientSession } from "@/features/auth/logout/application/clearClientSession";
 import { router } from "@/app/router";
+import { useProfileStore } from "@/features/profile/Store/ProfileStore";
+import { profileStorage } from "@/features/profile/infrastructure/indexedDb/profileStorage";
 
 export async function logoutUseCase(): Promise<void> {
-  // 1. Notificar al backend (opcional — si falla igual limpiamos localmente).
+  // 1. Notificar al backend que el usuario se está deslogueando, para que invalide el token de sesión
   //    Si en el futuro el backend usa cookies httpOnly de sesión, este es
   //    el lugar donde el servidor debería responder con un Set-Cookie
-  //    expirado para invalidarlas; desde el cliente no se puede.
+  //    expirado para invalidarlas
   try {
     await logoutApi();
   } catch {
@@ -33,10 +35,21 @@ export async function logoutUseCase(): Promise<void> {
     // ignore
   }
 
-  // 5. Limpiar todo lo demás: localStorage residual, sessionStorage
+  // 5. Limpiar perfil en memoria y en IndexedDB
+  try {
+    const { profile, clearProfile } = useProfileStore();
+    if (profile.value?.userId) {
+      await profileStorage.remove(profile.value.userId);
+    }
+    clearProfile();
+  } catch {
+    // ignore
+  }
+
+  // 6. Limpiar todo lo demás: localStorage residual, sessionStorage
   //    y cookies no-httpOnly accesibles desde JS.
   clearClientSession();
 
-  // 6. Redirigir al login
+  // 7. Redirigir al login
   await router.push({ name: "login" });
 }

@@ -35,7 +35,7 @@ onMounted(async () => {
   const token = tokenService.getAccessToken();
   if (!token) return;
   isAdmin.value = await checkAdminAccess();
-  loadProfile(currentUser.value.id);
+  loadProfile();
 });
 
 const { isLoggingOut, logout } = useLogout();
