@@ -17,10 +17,6 @@ class ChatRealtimeService {
 
       reconnectDelay: 5000,
 
-      onConnect: () => {
-        console.log("WS connected");
-      },
-
       onStompError: (frame) => {
         console.error("STOMP error", frame);
       },

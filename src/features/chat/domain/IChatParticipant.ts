@@ -3,7 +3,7 @@ export interface IChatParticipant {
   chatRoomId: string;
   userId: string;
   roleIds: string[];
-  joinedAt: string;
-  leftAt: string | null;
-  lastReadMessageId: string | null;
+  joinedAt?: string | null;
+  leftAt?: string | null;
+  lastReadMessageId?: string | null;
 }

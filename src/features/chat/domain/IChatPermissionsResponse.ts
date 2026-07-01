@@ -1,5 +1,5 @@
 import type { IChatPermission } from "./IChatPermission";
 
-export interface IUserPermissionResponse {
+export interface IChatPermissionsResponse {
   permissions: IChatPermission[];
 }

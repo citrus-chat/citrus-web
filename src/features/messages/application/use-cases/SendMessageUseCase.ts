@@ -10,6 +10,7 @@ import { outgoingQueueStorage } from "../../infrastructure/indexedDb/outgoingQue
 import { OutgoingQueueItemType } from "../../domain/OutgoingQueueItemType";
 import { outgoingQueueProcessor } from "../../handlers/OutgoingQueueProcessor";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
+import { MissingConversationKeyError } from "@/features/crypto/domain/MissingConversationKeyError";
 
 export class SendMessageUseCase {
   constructor(
@@ -50,7 +51,7 @@ export class SendMessageUseCase {
     );
 
     if (!conversationKey) {
-      throw new Error("Conversation key not found");
+      throw new MissingConversationKeyError(request.conversationId);
     }
 
     const { iv, ciphertext } = await this.cryptoService.encrypt(

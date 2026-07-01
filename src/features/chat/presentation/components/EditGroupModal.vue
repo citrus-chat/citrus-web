@@ -1,8 +1,16 @@
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useChatStore } from "../../store/ChatStore";
+import {
+  CAN_MODIFY_CHAT,
+  permissionDeniedMessage,
+} from "../../utils/groupPermissions";
 
-const props = defineProps<{ show: boolean; chatId: string | null }>();
+const props = defineProps<{
+  show: boolean;
+  chatId: string | null;
+  canModify: boolean;
+}>();
 const emit = defineEmits<{
   close: [];
 }>();
@@ -23,6 +31,11 @@ const closeModal = () => {
 const onSubmit = async () => {
   if (!props.chatId) return;
 
+  if (!props.canModify) {
+    errorMessage.value = permissionDeniedMessage(CAN_MODIFY_CHAT);
+    return;
+  }
+
   const trimmedName = name.value.trim();
 
   if (!trimmedName) {
@@ -37,8 +50,10 @@ const onSubmit = async () => {
     await updateChatRoomName(props.chatId, trimmedName);
     closeModal();
   } catch (error) {
-    console.error("Failed to update chat room name", error);
-    errorMessage.value = "No se pudo actualizar el grupo. Intentá de nuevo.";
+    errorMessage.value =
+      error instanceof Error
+        ? error.message
+        : "No se pudo actualizar el grupo. Intenta de nuevo.";
   } finally {
     isLoading.value = false;
   }
@@ -127,6 +142,7 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
               type="text"
               placeholder="Nombre del grupo..."
               class="w-full bg-transparent text-sm text-slate-700 outline-none placeholder:text-slate-400 dark:text-slate-200 dark:placeholder:text-slate-500"
+              :disabled="!canModify || isLoading"
             />
           </div>
 
@@ -153,7 +169,8 @@ onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
           <button
             type="submit"
             class="inline-flex items-center gap-2 rounded-xl bg-orange-600 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-orange-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-orange-300/70 disabled:cursor-not-allowed disabled:bg-orange-300 dark:bg-orange-500 dark:hover:bg-orange-400 dark:disabled:bg-orange-900/70"
-            :disabled="isLoading"
+            :disabled="isLoading || !canModify"
+            :title="canModify ? '' : permissionDeniedMessage(CAN_MODIFY_CHAT)"
           >
             <i v-if="isLoading" class="pi pi-spin pi-spinner text-sm" />
             Guardar

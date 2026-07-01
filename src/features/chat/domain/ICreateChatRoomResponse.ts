@@ -1,14 +1,14 @@
 import type { ChatRoomType } from "./ChatRoomType";
 import type { IChatParticipant } from "./IChatParticipant";
+import type { IChatRole } from "./IChatRole";
 
 export interface ICreateChatRoomResponse {
   id: string;
   type: ChatRoomType;
   name: string;
   createdBy: string;
-  // Not implemented yet.
   participants: IChatParticipant[];
-  // roles: Record<string, IChatRole>;
+  roles?: Record<string, IChatRole> | null;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
