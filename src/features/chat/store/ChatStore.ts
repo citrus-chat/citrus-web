@@ -8,6 +8,7 @@ import {
 } from "../infrastructure/mock/workspaceUsers";
 import { ChatRoomType } from "../domain/ChatRoomType";
 import { chatStorage } from "../infrastructure/indexedDb/chatStorage";
+import { messageStorage } from "@/features/messages/infrastructure/indexedDb/messageStorage";
 import { useProfileStore } from "@/features/profile/Store/ProfileStore";
 import { syncChatsUseCase } from "../application/use-cases/syncChatsUseCase";
 import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
@@ -15,6 +16,13 @@ import type { IDevice } from "@/features/device/domain/IDevice";
 import { getCurrentUserUseCase } from "@/features/profile/application/use-cases/getCurrentUserUseCase";
 import { updateChatRoomNameApi } from "../infrastructure/api/chatApi";
 import { getUserApi } from "../infrastructure/api/userApi";
+import {
+  getUserPermissionsApi,
+  updateChatRoomNameApi,
+} from "../infrastructure/api/chatApi";
+import { useUserStore } from "./UserStore";
+import type { IUserResponse } from "../domain/IUserResponse";
+import { toAbsoluteAvatarUrl } from "@/features/profile/infrastructure/api/publicProfileApi";
 import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
 import type { IChatPermission } from "../domain/IChatPermission";
 import type { IChatRole } from "../domain/IChatRole";
@@ -189,7 +197,8 @@ function mapChatRoleDeleteError(error: unknown): string {
 export const useChatStore = () => {
   const chatsIsEmpty = computed(() => chats.value.length === 0);
 
-  const { loadProfile, setProfile, profile } = useProfileStore();
+  const { loadProfile, profile } = useProfileStore();
+  const { users } = useUserStore();
   const currentUser = computed<WorkspaceUser>(() => ({
     ...currentWorkspaceUser,
     id: currentUserId.value ?? currentWorkspaceUser.id,
@@ -215,83 +224,64 @@ export const useChatStore = () => {
   });
 
   const initCurrentUser = async () => {
-    const user = await getCurrentUserUseCase();
-    if (!user) throw new Error("Current user not found");
-    setProfile({
-      userId: user.userId,
-      email: user.email,
-      username: user.username,
-      avatarUrl: null,
-      description: "",
-      privacy: "public",
-
-      privacySettings: {
-        showPhone: false,
-        showEmail: false,
-        showStatus: false,
-        showDescription: false,
-        allowGroupInvites: false,
-      },
-    });
-    await loadProfile(user.userId);
-    currentUserId.value = user.userId;
+    try {
+      const user = await getCurrentUserUseCase();
+      if (!user) throw new Error("Current user not found");
+      // Setear currentUserId antes de loadProfile para que currentUser ya tenga el ID real
+      currentUserId.value = user.userId;
+      // loadProfile ya no recibe parámetro — el backend confirma el userId internamente
+      await loadProfile();
+    } catch (err) {
+      console.error("[ChatStore] initCurrentUser falló:", err);
+      // No re-lanzar: si falla, currentUserId queda null y se usa el fallback del mock
+    }
   };
 
-  const findWorkspaceUserById = async (
-    id: string,
-  ): Promise<WorkspaceUser | null> => {
-    const cleanId = id.trim();
+  const toWorkspaceUser = (user: IUserResponse): WorkspaceUser => ({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    avatar: toAbsoluteAvatarUrl(user.avatar_url) ?? undefined,
+    status: user.active ? "online" : "offline",
+    isCurrentUser: user.id === currentUserId.value,
+  });
 
-    if (!cleanId) {
-      return null;
+  // Definimos una interfaz con las propiedades posibles de ambos tipos de datos
+  interface RuntimeUser {
+    id: string;
+    avatar_url?: string;
+    username?: string;
+    name?: string;
+    avatarUrl?: string;
+    email?: string;
+    active?: boolean;
+  }
+
+  const findWorkspaceUserById = (id: string): WorkspaceUser | null => {
+    const anyUsers = users.value as unknown as RuntimeUser[];
+    const backendEntry = anyUsers.find((u) => u?.id === id);
+
+    if (backendEntry) {
+      // Si la entrada tiene la forma del backend (avatar_url), usamos toWorkspaceUser
+      if (backendEntry.avatar_url !== undefined) {
+        return toWorkspaceUser(backendEntry as IUserResponse);
+      }
+
+      // De lo contrario, es la forma local de IUser
+      const username = backendEntry.username ?? backendEntry.name ?? "";
+      const avatar = backendEntry.avatarUrl ?? undefined;
+
+      return {
+        id: backendEntry.id,
+        username,
+        email: backendEntry.email ?? "",
+        avatar,
+        status: backendEntry.active ? "online" : "offline",
+        isCurrentUser: backendEntry.id === currentUserId.value,
+      } as WorkspaceUser;
     }
 
-    if (cleanId in workspaceUsersById.value) {
-      return workspaceUsersById.value[cleanId] ?? null;
-    }
-
-    const pendingRequest = workspaceUserRequestsById.get(cleanId);
-
-    if (pendingRequest) {
-      return pendingRequest;
-    }
-
-    const request = getUserApi(cleanId)
-      .then((user) => {
-        const workspaceUser = {
-          id: user.id,
-          name: user.username,
-          username: user.username,
-          email: user.email,
-          avatar: user.avatar_url ?? undefined,
-          status: user.active ? "online" : "offline",
-        } satisfies WorkspaceUser;
-
-        workspaceUsersById.value = {
-          ...workspaceUsersById.value,
-          [cleanId]: workspaceUser,
-        };
-
-        return workspaceUser;
-      })
-      .catch(() => {
-        const fallback =
-          mockWorkspaceUsers.find((user) => user.id === cleanId) ?? null;
-
-        workspaceUsersById.value = {
-          ...workspaceUsersById.value,
-          [cleanId]: fallback,
-        };
-
-        return fallback;
-      })
-      .finally(() => {
-        workspaceUserRequestsById.delete(cleanId);
-      });
-
-    workspaceUserRequestsById.set(cleanId, request);
-
-    return request;
+    return mockWorkspaceUsers.find((user) => user.id === id) ?? null;
   };
 
   const isUserProfilePanelOpen = computed(
@@ -306,10 +296,36 @@ export const useChatStore = () => {
       try {
         await syncChatsUseCase(device);
       } catch (error) {
-        console.error("Failed to sync chats", error);
+        console.error("Falla al sincronizar los chats", error);
       }
     }
-    chats.value = await chatStorage.getAll();
+    const loadedChats = await chatStorage.getAll();
+
+    const normalizedChats = new Map<string, IChatRoom>();
+
+    for (const chat of loadedChats) {
+      const key =
+        chat.type === ChatRoomType.DIRECT && chat.participants?.length
+          ? chat.participants
+              .map((participant) => participant.userId)
+              .sort()
+              .join("|")
+          : chat.id;
+
+      const existing = normalizedChats.get(key);
+      if (!existing) {
+        normalizedChats.set(key, chat);
+        continue;
+      }
+
+      const existingUpdated = existing.updatedAt ?? "";
+      const currentUpdated = chat.updatedAt ?? "";
+      if (currentUpdated > existingUpdated) {
+        normalizedChats.set(key, chat);
+      }
+    }
+
+    chats.value = Array.from(normalizedChats.values());
   };
 
   const restoreSelectedChat = () => {
@@ -319,8 +335,7 @@ export const useChatStore = () => {
       return;
     }
 
-    selectedChat.value =
-      chats.value.find((chat) => chat.id === selectedChatId) ?? null;
+    selectChat(selectedChatId);
   };
 
   const chatExists = (name: string) => {
@@ -329,7 +344,7 @@ export const useChatStore = () => {
     );
   };
 
-  const selectChat = (chatId: string | null) => {
+  const selectChat = async (chatId: string | null) => {
     if (!chatId) {
       selectedChat.value = null;
       localStorage.removeItem("selectedChatId");
@@ -340,7 +355,51 @@ export const useChatStore = () => {
 
     selectedChat.value = chat;
 
+    // reseteamos unread count cuando el chat es seleccionado
+    if (chat) {
+      chat.unreadCount = 0;
+
+      const storedMessages = await messageStorage.getByConversationId(chat.id);
+      const lastMessage = storedMessages[storedMessages.length - 1];
+      if (lastMessage) {
+        chat.lastMessage = {
+          content: lastMessage.content,
+          createdAt: lastMessage.createdAt,
+          senderUserId: lastMessage.senderUserId,
+        };
+      }
+
+      await chatStorage.save(toRaw(chat));
+    }
+
     localStorage.setItem("selectedChatId", chatId);
+  };
+
+  const notifyIncomingMessage = async (
+    chatId: string,
+    payload?: { content?: string; createdAt?: string; senderUserId?: string },
+  ) => {
+    const chat = chats.value.find((c) => c.id === chatId) ?? null;
+    const now = new Date().toISOString();
+
+    if (!chat) return;
+
+    // actualizar lastMessage al ver el mensaje
+    chat.lastMessage = {
+      content: payload?.content ?? "Nuevo mensaje",
+      createdAt: payload?.createdAt ?? now,
+      senderUserId: payload?.senderUserId,
+    };
+
+    // If the user currently has the chat open, mark read; otherwise increment unread
+    if (selectedChat.value?.id === chatId) {
+      chat.unreadCount = 0;
+    } else {
+      chat.unreadCount = (chat.unreadCount ?? 0) + 1;
+    }
+
+    // Persist change
+    await chatStorage.save(toRaw(chat));
   };
 
   const openDirectMessage = (user: WorkspaceUser) => {
@@ -369,6 +428,15 @@ export const useChatStore = () => {
   };
 
   const findWorkspaceUserByName = (name: string) => {
+    // Primero buscar en los usuarios reales cargados desde el backend
+    // users.value es IUser[] pero en runtime contiene IUserResponse — casteamos para acceder a los campos reales
+    const fromBackend = (users.value as unknown as IUserResponse[]).find(
+      (user) => user.username?.toLowerCase() === name.toLowerCase(),
+    );
+    if (fromBackend) {
+      return toWorkspaceUser(fromBackend);
+    }
+    // Fallback al mock si no se encontró en backend
     return (
       mockWorkspaceUsers.find(
         (user) => user.username.toLowerCase() === name.toLowerCase(),
@@ -1032,5 +1100,6 @@ export const useChatStore = () => {
     createRole,
     updateRole,
     deleteRole,
+    notifyIncomingMessage,
   };
 };

@@ -5,5 +5,6 @@ export function mapUserResponseToUser(response: IUserResponse): IUser {
   return {
     id: response.id,
     name: response.username,
+    avatarUrl: response.avatar_url ?? null,
   };
 }

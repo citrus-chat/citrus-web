@@ -11,7 +11,7 @@ import {
   setLastSync,
 } from "../../infrastructure/indexedDb/syncStorage";
 import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
-import { requestConversationKeyUseCase } from "./requestConversationKeyUseCase";
+import { requestConversationKeyUseCase } from "./RequestConversationKeyUseCase";
 
 export const MESSAGE_DECRYPTION_ERROR_CONTENT =
   "No se pudo desencriptar este mensaje en este dispositivo.";

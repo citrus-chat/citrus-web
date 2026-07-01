@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch, nextTick } from "vue";
+import { computed, ref, watch, nextTick } from "vue";
+import { useRouter } from "vue-router";
 import "primeicons/primeicons.css";
 import { useChatStore } from "../../store/ChatStore";
 import { useMessageStore } from "../../../messages/store/MessageStore";
@@ -20,10 +22,12 @@ import {
   canViewMessages as hasCanViewMessages,
   permissionDeniedMessage,
 } from "../../utils/groupPermissions";
+import { toAbsoluteAvatarUrl } from "@/features/profile/infrastructure/api/publicProfileApi";
 
 const {
   selectedChat,
   findWorkspaceUserByName,
+  findWorkspaceUserById,
   openUserProfile,
   currentUser,
   canUserWriteInChat,
@@ -36,6 +40,8 @@ const {
 
 const { messages, sendMessageError, loadMessages, sendMessage, syncMessages } =
   useMessageStore();
+const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
+const router = useRouter();
 
 const messageChat = ref("");
 const messagesContainer = ref<HTMLElement | null>(null);
@@ -45,10 +51,49 @@ const showEditGroupModal = ref(false);
 const showMembersPermissionsModal = ref(false);
 
 const selectedChatUser = computed(() => {
-  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT)
+  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT) {
     return null;
-  return findWorkspaceUserByName(selectedChat.value.name);
+  }
+
+  const byName = findWorkspaceUserByName(selectedChat.value.name);
+  if (byName) {
+    return byName;
+  }
+
+  const otherParticipant = selectedChat.value.participants?.find(
+    (participant) => participant.userId !== currentUser.value.id,
+  );
+
+  return otherParticipant
+    ? findWorkspaceUserById(otherParticipant.userId)
+    : null;
 });
+
+const selectedChatAvatar = computed(() => {
+  const userAvatar = selectedChatUser.value?.avatar;
+  if (userAvatar) return userAvatar;
+
+  const messageAvatar = messages.value.find(
+    (message) => message.senderUserId === selectedChatUser.value?.id,
+  )?.sender?.avatar_url;
+
+  return toAbsoluteAvatarUrl(messageAvatar ?? null) ?? avatarProfile;
+});
+
+const canViewDirectProfile = computed(
+  () =>
+    selectedChat.value?.type === ChatRoomType.DIRECT &&
+    !!selectedChatUser.value?.id,
+);
+
+const goToSelectedUserProfile = () => {
+  if (!selectedChatUser.value?.id) return;
+  showChatMenu.value = false;
+  router.push({
+    name: "user-profile",
+    params: { userId: selectedChatUser.value.id },
+  });
+};
 
 const isGroupChat = computed(
   () => selectedChat.value?.type === ChatRoomType.GROUP,
@@ -261,31 +306,43 @@ const openMembersPermissions = () => {
       class="flex items-center justify-between gap-3 border-b border-slate-200 px-4 py-3 dark:border-white/10"
     >
       <div class="flex items-center w-full space-x-3">
-        <!-- Chat directo: el header completo es clickeable para ir al perfil -->
-        <button
+        <!-- Chat directo -->
+        <div
           v-if="selectedChat?.type === 'DIRECT'"
-          type="button"
-          class="flex items-center gap-3 rounded-2xl px-2 py-1.5 text-left transition hover:bg-slate-100 dark:hover:bg-white/5"
-          :class="{
-            'cursor-pointer': selectedChatUser?.id,
-            'cursor-default': !selectedChatUser?.id,
-          }"
-          @click="openUserProfile(selectedChatUser)"
+          class="flex min-w-0 items-center gap-3 rounded-2xl px-2 py-1.5"
         >
-          <img
-            :src="selectedChatUser?.avatar ?? avatarProfile"
-            :alt="selectedChatUser?.username"
-            class="h-9 w-9 rounded-full object-cover"
-          />
-          <div>
-            <h2 class="text-lg font-semibold text-slate-900 dark:text-slate-50">
+          <button
+            type="button"
+            class="shrink-0 rounded-full transition hover:ring-2 hover:ring-sky-400/40"
+            :disabled="!selectedChatUser?.id"
+            @click="openUserProfile(selectedChatUser)"
+          >
+            <img
+              :src="selectedChatAvatar"
+              :alt="selectedChatUser?.username"
+              class="h-9 w-9 rounded-full object-cover"
+            />
+          </button>
+
+          <div class="min-w-0">
+            <h2
+              class="truncate text-lg font-semibold text-slate-900 dark:text-slate-50"
+            >
               {{ selectedChat.name }}
             </h2>
-            <p class="text-xs text-slate-500 dark:text-slate-400">
-              {{ selectedChatUser?.id ? "Ver perfil" : "Chat directo" }}
+            <button
+              v-if="canViewDirectProfile"
+              type="button"
+              class="inline-flex whitespace-nowrap text-xs font-medium text-sky-600 transition hover:text-sky-500 hover:underline dark:text-sky-300 dark:hover:text-sky-200"
+              @click="goToSelectedUserProfile"
+            >
+              Ver perfil
+            </button>
+            <p v-else class="text-xs text-slate-500 dark:text-slate-400">
+              Chat directo
             </p>
           </div>
-        </button>
+        </div>
 
         <!-- Grupo u otro tipo: no clickeable -->
         <div v-else class="flex items-center gap-3 px-2 py-1.5">
@@ -307,6 +364,8 @@ const openMembersPermissions = () => {
           :title="canStartCall ? '' : startCallDeniedMessage"
           class="disabled:cursor-not-allowed disabled:opacity-40"
         >
+      <div class="flex items-center gap-2 sm:gap-3">
+        <button>
           <i
             class="pi pi-video cursor-pointer text-2xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
           />

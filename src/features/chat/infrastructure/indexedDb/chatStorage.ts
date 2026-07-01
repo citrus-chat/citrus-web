@@ -58,7 +58,12 @@ class IndexedDbChatStorage implements IChatStorage {
   async getAll(): Promise<IChatRoom[]> {
     const db = await citrusDb;
 
-    return (await db.getAll("chatRooms")).map(normalizeChatRoomForStorage);
+    const all = await db.getAll("chatRooms");
+    const seen = new Map<string, IChatRoom>();
+    for (const chatRoom of all) {
+      seen.set(chatRoom.id, chatRoom);
+    }
+    return Array.from(seen.values());
   }
 
   async remove(id: string): Promise<void> {
