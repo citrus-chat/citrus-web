@@ -33,7 +33,11 @@ export class SendMessageUseCase {
       throw new Error("Current user not found");
     }
 
-    await syncPendingConversationKeyRequestsUseCase(request.conversationId);
+    try {
+      await syncPendingConversationKeyRequestsUseCase(request.conversationId);
+    } catch (error) {
+      console.error("Error syncing pending conversation key requests:", error);
+    }
 
     const message: IMessage = {
       id: crypto.randomUUID(),

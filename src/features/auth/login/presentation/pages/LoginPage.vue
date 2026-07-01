@@ -230,7 +230,7 @@ onMounted(async () => {
   if (tokenService.hasAccessToken()) {
     const token = tokenService.getAccessToken();
     if (token) {
-      chatRealtimeService.connect(token);
+      await chatRealtimeService.connect(token);
     }
     await initCurrentUser();
     router.push({ name: "chat" }).catch(() => {});
@@ -251,7 +251,7 @@ async function onSubmit() {
     await loginUserUseCase({ ...form });
     const token = tokenService.getAccessToken();
     if (token) {
-      chatRealtimeService.connect(token);
+      await chatRealtimeService.connect(token);
     }
     await router.push({ name: "chat" });
   } catch (err: unknown) {
