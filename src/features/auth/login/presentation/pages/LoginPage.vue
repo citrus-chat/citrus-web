@@ -404,8 +404,17 @@ function toggleShowPassword() {
 
 onMounted(async () => {
   if (tokenService.hasAccessToken()) {
+<<<<<<< HEAD
     await enterAuthenticatedApp();
     return;
+=======
+    const token = tokenService.getAccessToken();
+    if (token) {
+      await chatRealtimeService.connect(token);
+    }
+    await initCurrentUser();
+    router.push({ name: "chat" }).catch(() => {});
+>>>>>>> main
   }
 
   await startQrLogin();
@@ -522,7 +531,15 @@ async function onSubmit() {
 
   try {
     await loginUserUseCase({ ...form });
+<<<<<<< HEAD
     await enterAuthenticatedApp();
+=======
+    const token = tokenService.getAccessToken();
+    if (token) {
+      await chatRealtimeService.connect(token);
+    }
+    await router.push({ name: "chat" });
+>>>>>>> main
   } catch (err: unknown) {
     if (import.meta.env.DEV) {
       console.error("Login failed", err);

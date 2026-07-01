@@ -11,6 +11,7 @@ export const useUserStore = () => {
   const usersIsEmpty = computed(() => users.value.length === 0);
 
   const loadUsers = async () => {
+    console.log("Loading users...");
     try {
       await loadUsersUseCase();
     } catch (error) {

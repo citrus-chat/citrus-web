@@ -15,11 +15,14 @@ const { loadUsers } = useUserStore();
 onMounted(async () => {
   const token = tokenService.getAccessToken();
   if (token) {
-    chatRealtimeService.connect(token);
+    await chatRealtimeService.connect(token);
+    chatRealtimeService.subscribeToChatList(async () => {
+      await loadChats();
+      restoreSelectedChat();
+    });
   }
   await loadChats();
   restoreSelectedChat();
-  // Cargar usuarios reales del backend para poder obtener sus UUIDs al navegar al perfil
   await loadUsers();
 });
 </script>
