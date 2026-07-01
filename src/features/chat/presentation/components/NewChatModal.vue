@@ -121,7 +121,15 @@ const onSubmit = async () => {
     }
 
     const existingChat = chats.value.find(
-      (chat) => chat.type === ChatRoomType.DIRECT && chat.name === contact.name,
+      (chat) =>
+        chat.type === ChatRoomType.DIRECT &&
+        chat.participants?.length === 2 &&
+        chat.participants.some(
+          (participant) => participant.userId === contact.id,
+        ) &&
+        chat.participants.some(
+          (participant) => participant.userId === currentUser.userId,
+        ),
     );
 
     if (existingChat) {
