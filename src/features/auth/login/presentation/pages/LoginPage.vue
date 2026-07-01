@@ -405,6 +405,7 @@ function toggleShowPassword() {
 onMounted(async () => {
   if (tokenService.hasAccessToken()) {
 <<<<<<< HEAD
+<<<<<<< HEAD
     await enterAuthenticatedApp();
     return;
 =======
@@ -415,6 +416,10 @@ onMounted(async () => {
     await initCurrentUser();
     router.push({ name: "chat" }).catch(() => {});
 >>>>>>> main
+=======
+    await enterAuthenticatedApp();
+    return;
+>>>>>>> bf3dd6f886a3d9867da3c562f77186c60200466a
   }
 
   await startQrLogin();
@@ -532,6 +537,7 @@ async function onSubmit() {
   try {
     await loginUserUseCase({ ...form });
 <<<<<<< HEAD
+<<<<<<< HEAD
     await enterAuthenticatedApp();
 =======
     const token = tokenService.getAccessToken();
@@ -540,6 +546,9 @@ async function onSubmit() {
     }
     await router.push({ name: "chat" });
 >>>>>>> main
+=======
+    await enterAuthenticatedApp();
+>>>>>>> bf3dd6f886a3d9867da3c562f77186c60200466a
   } catch (err: unknown) {
     if (import.meta.env.DEV) {
       console.error("Login failed", err);
