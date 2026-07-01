@@ -19,6 +19,7 @@ const {
   currentUser,
   canUserWriteInChat,
   canEditChat,
+  loadChats,
 } = useChatStore();
 
 const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
@@ -105,6 +106,9 @@ watch(
     subscription?.unsubscribe();
     if (id) {
       subscription = chatRealtimeService.subscribeToChatRoom(id, async () => {
+        await loadChats();
+        canWrite.value = await canUserWriteInChat(id);
+        canEdit.value = await canEditChat(id);
         await syncMessages(id);
         await scrollToBottom();
       });
@@ -112,7 +116,6 @@ watch(
       await loadMessages(id);
       firstNewMessageIndex.value = await syncMessages(id);
       await scrollToBottom();
-      console.log("Messages after sync:", messages.value);
     }
   },
   { immediate: true },

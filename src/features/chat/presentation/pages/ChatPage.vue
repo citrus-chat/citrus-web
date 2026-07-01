@@ -21,7 +21,11 @@ const { loadUsers } = useUserStore();
 onMounted(async () => {
   const token = tokenService.getAccessToken();
   if (token) {
-    chatRealtimeService.connect(token);
+    await chatRealtimeService.connect(token);
+    chatRealtimeService.subscribeToChatList(async () => {
+      await loadChats();
+      restoreSelectedChat();
+    });
   }
   await loadChats();
   restoreSelectedChat();

@@ -160,7 +160,11 @@ watch(
   () => props.show,
   (newValue) => {
     visible.value = newValue;
-    if (!newValue) clearModalState();
+    if (!newValue) {
+      clearModalState();
+    } else {
+      loadUsers();
+    }
   },
 );
 
@@ -170,7 +174,6 @@ watch(visible, (newValue) => {
 
 onMounted(() => {
   window.addEventListener("keydown", onEscape);
-  loadUsers();
 });
 onBeforeUnmount(() => window.removeEventListener("keydown", onEscape));
 </script>
