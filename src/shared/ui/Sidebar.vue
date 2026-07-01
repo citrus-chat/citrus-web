@@ -35,6 +35,7 @@ onMounted(async () => {
   const token = tokenService.getAccessToken();
   if (!token) return;
   isAdmin.value = await checkAdminAccess();
+  console.log("isAdmin", isAdmin.value);
   loadProfile();
 });
 
