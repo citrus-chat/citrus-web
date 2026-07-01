@@ -57,7 +57,7 @@ export class SendMessageUseCase {
     );
 
     if (!conversationKey) {
-      throw new MissingConversationKeyError(request.conversationId);
+      throw new Error("Conversation key not found");
     }
 
     const { iv, ciphertext } = await this.cryptoService.encrypt(

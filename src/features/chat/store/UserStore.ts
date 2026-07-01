@@ -34,7 +34,6 @@ export const useUserStore = () => {
     return users.value.find((u) => u.id === id) ?? null;
   };
 
-<<<<<<< HEAD
   const getUserByName = (name: string) => {
     return (
       users.value.find((u) => u.name.toLowerCase() === name.toLowerCase()) ??
@@ -42,8 +41,6 @@ export const useUserStore = () => {
     );
   };
 
-=======
->>>>>>> main
   return {
     users,
     selectedUser,

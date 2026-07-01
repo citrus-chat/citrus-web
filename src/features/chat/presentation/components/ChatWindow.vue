@@ -200,16 +200,10 @@ watch(
     if (subscribedChatId !== id) {
       subscription = chatRealtimeService.subscribeToChatRoom(id, async () => {
         await loadChats();
-        canWrite.value = await canUserWriteInChat(id);
-        canEdit.value = await canEditChat(id);
-        await syncMessages(id);
+        firstNewMessageIndex.value = await syncMessages(id);
         await scrollToBottom();
       });
-      firstNewMessageIndex.value = null;
-      await loadMessages(id);
-      firstNewMessageIndex.value = await syncMessages(id);
-      await scrollToBottom();
-    }
+
       subscribedChatId = id;
     }
 
