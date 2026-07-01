@@ -965,6 +965,7 @@ export const useChatStore = () => {
     openUserProfile,
     closeUserProfile,
 
+    initCurrentUser,
     currentUser,
     currentUserParticipant,
     currentParticipantPermissions,
