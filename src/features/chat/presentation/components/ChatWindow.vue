@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, watch, nextTick } from "vue";
-import { computed, ref, watch, nextTick } from "vue";
 import { useRouter } from "vue-router";
 import "primeicons/primeicons.css";
 import { useChatStore } from "../../store/ChatStore";
@@ -30,8 +29,6 @@ const {
   findWorkspaceUserById,
   openUserProfile,
   currentUser,
-  canUserWriteInChat,
-  canEditChat,
   loadChats,
   loadParticipantPermissions,
   participantPermissionsById,
@@ -40,7 +37,6 @@ const {
 
 const { messages, sendMessageError, loadMessages, sendMessage, syncMessages } =
   useMessageStore();
-const { messages, loadMessages, sendMessage, syncMessages } = useMessageStore();
 const router = useRouter();
 
 const messageChat = ref("");
@@ -364,12 +360,11 @@ const openMembersPermissions = () => {
           :title="canStartCall ? '' : startCallDeniedMessage"
           class="disabled:cursor-not-allowed disabled:opacity-40"
         >
-      <div class="flex items-center gap-2 sm:gap-3">
-        <button>
           <i
             class="pi pi-video cursor-pointer text-2xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
           />
         </button>
+
         <button
           type="button"
           :disabled="!canStartCall"
@@ -380,6 +375,7 @@ const openMembersPermissions = () => {
             class="pi pi-phone cursor-pointer text-xl text-slate-500 transition hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200"
           />
         </button>
+
         <div class="relative">
           <button type="button" @click="toggleChatMenu">
             <i
@@ -415,6 +411,8 @@ const openMembersPermissions = () => {
         </div>
       </div>
     </div>
+
+    <!-- Messages -->
 
     <!-- Messages -->
     <div
