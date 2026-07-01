@@ -34,13 +34,6 @@ export const useUserStore = () => {
     return users.value.find((u) => u.id === id) ?? null;
   };
 
-  const getUserByName = (name: string) => {
-    return (
-      users.value.find((u) => u.name.toLowerCase() === name.toLowerCase()) ??
-      null
-    );
-  };
-
   return {
     users,
     selectedUser,
