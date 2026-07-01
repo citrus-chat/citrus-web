@@ -26,6 +26,7 @@ export interface IRemoteProfile {
 
 export interface IUpdateProfilePayload {
   username: string;
+  avatarUrl?: string | null;
 
   description: string;
   privacy: "public" | "contacts" | "private";

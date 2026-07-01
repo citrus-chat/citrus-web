@@ -13,8 +13,11 @@ import {
 import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
 import { requestConversationKeyUseCase } from "./RequestConversationKeyUseCase";
 
+export const MESSAGE_DECRYPTION_ERROR_CONTENT =
+  "No se pudo desencriptar este mensaje en este dispositivo.";
+
 export async function syncMessagesUseCase(chatroomId: string): Promise<void> {
-  const lastSync = await getLastSync();
+  const lastSync = await getLastSync(chatroomId);
 
   const conversationKey =
     await cryptoStorage.getActiveConversationKey(chatroomId);
@@ -35,12 +38,32 @@ export async function syncMessagesUseCase(chatroomId: string): Promise<void> {
   const encryptedMessages = data.messages.map(encryptedMessageApiMapper);
 
   await encryptedMessageStorage.saveMany(encryptedMessages);
+  console.log("[SyncMessagesUseCase] saved messages", {
+    chatroomId,
+    count: encryptedMessages.length,
+    encryptedMessages,
+  });
 
   const messages = await Promise.all(
     data.messages.map(async (dto) => {
       const encrypted = encryptedMessageApiMapper(dto);
 
-      const decryptedContent = await decryptMessageUseCase(encrypted);
+      const decryptedContent = await decryptMessageUseCase(encrypted).catch(
+        (error) => {
+          console.warn("[SyncMessagesUseCase] decrypt failed", {
+            chatroomId,
+            messageId: dto.id,
+            conversationId: encrypted.conversationId,
+            keyVersion: encrypted.keyVersion,
+            errorName: error instanceof Error ? error.name : undefined,
+            errorMessage:
+              error instanceof Error ? error.message : String(error),
+            error,
+          });
+
+          return MESSAGE_DECRYPTION_ERROR_CONTENT;
+        },
+      );
 
       return decryptedMessageMapper(dto, decryptedContent);
     }),
@@ -48,12 +71,9 @@ export async function syncMessagesUseCase(chatroomId: string): Promise<void> {
 
   await messageStorage.saveMany(messages);
 
-  const maxCreatedAt = messages.reduce((max, msg) => {
-    const createdAt = Number(msg.createdAt);
-    return createdAt > max ? createdAt : max;
-  }, 0);
+  const lastMessage = data.messages[data.messages.length - 1];
 
-  if (maxCreatedAt > 0) {
-    await setLastSync(new Date(maxCreatedAt).toISOString());
+  if (lastMessage?.createdAt) {
+    await setLastSync(chatroomId, lastMessage.createdAt);
   }
 }

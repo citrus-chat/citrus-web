@@ -1,5 +1,6 @@
 import type { ChatRoomType } from "./ChatRoomType";
 import type { IChatParticipant } from "./IChatParticipant";
+import type { IChatRole } from "./IChatRole";
 
 export interface IChatRoom {
   id: string;
@@ -7,9 +8,8 @@ export interface IChatRoom {
   name: string;
   avatarUrl?: string;
   createdBy: string;
-  // Not implemented yet.
   participants: IChatParticipant[];
-  // roles: IChatRole[];
+  roles?: Record<string, IChatRole> | null;
   createdAt: string;
   updatedAt: string;
   deletedAt: string | null;
@@ -21,14 +21,4 @@ export interface IChatRoom {
   } | null;
   // Number of unread messages for this chat
   unreadCount?: number;
-}
-
-export interface IChatPermission {
-  userId: string;
-  chatRoomId: string;
-  canWrite: boolean;
-  canRead: boolean;
-  canDeleteMessages: boolean;
-  canAddParticipants: boolean;
-  canRemoveParticipants: boolean;
 }

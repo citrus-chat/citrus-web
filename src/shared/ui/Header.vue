@@ -2,6 +2,7 @@
 import { defineAsyncComponent, ref, computed } from "vue";
 import { useChatStore } from "@/features/chat/store/ChatStore";
 import type { WorkspaceUser } from "@/features/chat/domain/WorkspaceUser";
+import { ChatRoomType } from "@/features/chat/domain/ChatRoomType";
 import avatarProfile from "@/shared/assets/avatar-profile.svg";
 import "primeicons/primeicons.css";
 
@@ -166,7 +167,11 @@ const hasResults = computed(
               >
                 <i
                   class="pi text-slate-400 flex-shrink-0"
-                  :class="[chat.type === 'DIRECT' ? 'pi-user' : 'pi-hashtag']"
+                  :class="[
+                    chat.type === ChatRoomType.DIRECT
+                      ? 'pi-user'
+                      : 'pi-hashtag',
+                  ]"
                 />
                 <span>{{ chat.name }}</span>
               </button>

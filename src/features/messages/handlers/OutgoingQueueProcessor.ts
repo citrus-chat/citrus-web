@@ -3,6 +3,7 @@ import { OutgoingQueueItemType } from "../domain/OutgoingQueueItemType";
 import { outgoingQueueStorage } from "../infrastructure/indexedDb/outgoingQueueStorage";
 import type { IOutgoingQueueHandler } from "./IOutgoingQueueHandler";
 import { sendMessageQueueHandler } from "./SendMessageHandler";
+import { normalizeApiError } from "@/core/api/apiErrorMapper";
 
 export class OutgoingQueueProcessor {
   private isProcessing = false;
@@ -19,26 +20,34 @@ export class OutgoingQueueProcessor {
 
     this.isProcessing = true;
 
-    const items = await this.queueStorage.getAll();
+    try {
+      const items = await this.queueStorage.getAll();
 
-    for (const item of items) {
-      const handler = this.handlers.get(item.type);
+      for (const item of items) {
+        const handler = this.handlers.get(item.type);
 
-      if (!handler) {
-        continue;
+        if (!handler) {
+          continue;
+        }
+
+        try {
+          await handler.handle(item);
+
+          await this.queueStorage.remove(item.id);
+        } catch (error) {
+          console.error("Failed to process queue item", item.id, error);
+
+          if (normalizeApiError(error).statusCode === 403) {
+            // ponytail: permission denials are not transient; add a failed outbox state if resend-after-grant becomes a requirement.
+            await this.queueStorage.remove(item.id);
+            throw error;
+          }
+
+          break;
+        }
       }
-
-      try {
-        await handler.handle(item);
-
-        await this.queueStorage.remove(item.id);
-      } catch (error) {
-        console.error("Failed to process queue item", item.id, error);
-
-        break;
-      } finally {
-        this.isProcessing = false;
-      }
+    } finally {
+      this.isProcessing = false;
     }
   }
 }
