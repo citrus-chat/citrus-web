@@ -2,8 +2,11 @@ import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/crypt
 import { cryptoService } from "@/features/crypto/infraestructure/services/cryptoService";
 import { deviceStorage } from "@/features/device/infraestructure/indexedDb.ts/deviceStorage";
 import { uploadConversationKeyUseCase } from "@/features/chat/application/use-cases/uploadConversationKeyUseCase";
+import { getPendingConversationKeyRequestsApi } from "@/features/messages/infrastructure/api/conversationKeyApi";
 
-export const syncPendingConversationKeyRequestsUseCase = async () => {
+export const syncPendingConversationKeyRequestsUseCase = async (
+  conversationId: string,
+) => {
   const senderDevice = await deviceStorage.get();
 
   if (!senderDevice || !senderDevice.deviceId) {
@@ -20,7 +23,8 @@ export const syncPendingConversationKeyRequestsUseCase = async () => {
     );
   }
 
-  const pendingRequests = await getPendingConversationKeyRequestsApi();
+  const pendingRequests =
+    await getPendingConversationKeyRequestsApi(conversationId);
 
   if (!pendingRequests.length) return;
 
@@ -33,6 +37,14 @@ export const syncPendingConversationKeyRequestsUseCase = async () => {
       console.log(
         "This device does not have the conversation key for conversation",
         request.conversationId,
+      );
+      continue;
+    }
+
+    if (request.targetDeviceId === senderDevice.deviceId) {
+      console.log(
+        "Skipping request for the same device",
+        request.targetDeviceId,
       );
       continue;
     }
