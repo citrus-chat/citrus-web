@@ -69,7 +69,6 @@ watch(
       await loadMessages(id);
       firstNewMessageIndex.value = await syncMessages(id);
       await scrollToBottom();
-      console.log("Messages after sync:", messages.value);
     }
   },
   { immediate: true },

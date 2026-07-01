@@ -10,9 +10,23 @@ import {
   getLastSync,
   setLastSync,
 } from "../../infrastructure/indexedDb/syncStorage";
+import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
+import { requestConversationKeyUseCase } from "./requestConversationKeyUseCase";
 
 export async function syncMessagesUseCase(chatroomId: string): Promise<void> {
   const lastSync = await getLastSync();
+
+  const conversationKey =
+    await cryptoStorage.getActiveConversationKey(chatroomId);
+
+  if (!conversationKey) {
+    console.log(
+      "No conversation key found for chatroom",
+      chatroomId,
+      ". Requesting conversation key...",
+    );
+    await requestConversationKeyUseCase(chatroomId);
+  }
 
   const data = await syncMessagesApi({
     chatroomId,
@@ -47,4 +61,8 @@ export async function syncMessagesUseCase(chatroomId: string): Promise<void> {
   if (maxCreatedAt > 0) {
     await setLastSync(new Date(maxCreatedAt).toISOString());
   }
+
+  console.log(
+    `Synced ${messages.length} messages for chatroom ${chatroomId}. Last sync updated to ${new Date(maxCreatedAt).toISOString()}`,
+  );
 }

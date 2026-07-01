@@ -18,6 +18,7 @@ import {
   updateChatRoomNameApi,
 } from "../infrastructure/api/chatApi";
 import { getUserApi } from "../infrastructure/api/userApi";
+import { cryptoStorage } from "@/features/crypto/infraestructure/indexedDb/cryptoStorage";
 
 const selectedChat = ref<IChatRoom | null>(null);
 const selectedProfileUser = ref<WorkspaceUser | null>(null);
@@ -155,6 +156,14 @@ export const useChatStore = () => {
     const chat = chats.value.find((chat) => chat.id === chatId);
 
     if (!chat || !currentUser.value) return false;
+
+    const conversationKey = await cryptoStorage.getActiveConversationKey(
+      chat.id,
+    );
+
+    if (!conversationKey) {
+      return false;
+    }
 
     const userFoundParticipant = chat?.participants?.find(
       (participant) => participant.userId === currentUser.value.id,
