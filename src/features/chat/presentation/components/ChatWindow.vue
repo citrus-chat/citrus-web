@@ -22,6 +22,7 @@ import {
   permissionDeniedMessage,
 } from "../../utils/groupPermissions";
 import { toAbsoluteAvatarUrl } from "@/features/profile/infrastructure/api/publicProfileApi";
+import type { WorkspaceUser } from "../../domain/WorkspaceUser.ts";
 
 const {
   selectedChat,
@@ -35,7 +36,7 @@ const {
   participantPermissionsLoadingById,
 } = useChatStore();
 
-const { messages, sendMessageError, loadMessages, sendMessage, syncMessages } =
+const { messages, loadMessages, sendMessage, sendMessageError, syncMessages } =
   useMessageStore();
 const router = useRouter();
 
@@ -46,24 +47,32 @@ const showChatMenu = ref(false);
 const showEditGroupModal = ref(false);
 const showMembersPermissionsModal = ref(false);
 
-const selectedChatUser = computed(() => {
-  if (!selectedChat.value || selectedChat.value.type !== ChatRoomType.DIRECT) {
-    return null;
-  }
+const selectedChatUser = ref<WorkspaceUser | null>(null);
 
-  const byName = findWorkspaceUserByName(selectedChat.value.name);
-  if (byName) {
-    return byName;
-  }
+watch(
+  () => selectedChat.value,
+  async (chat) => {
+    if (!chat || chat.type !== ChatRoomType.DIRECT) {
+      selectedChatUser.value = null;
+      return;
+    }
 
-  const otherParticipant = selectedChat.value.participants?.find(
-    (participant) => participant.userId !== currentUser.value.id,
-  );
+    const byName = findWorkspaceUserByName(chat.name);
+    if (byName) {
+      selectedChatUser.value = byName;
+      return;
+    }
 
-  return otherParticipant
-    ? findWorkspaceUserById(otherParticipant.userId)
-    : null;
-});
+    const otherParticipant = chat.participants?.find(
+      (participant) => participant.userId !== currentUser.value.id,
+    );
+
+    selectedChatUser.value = otherParticipant
+      ? await findWorkspaceUserById(otherParticipant.userId)
+      : null;
+  },
+  { immediate: true },
+);
 
 const selectedChatAvatar = computed(() => {
   const userAvatar = selectedChatUser.value?.avatar;
@@ -311,7 +320,7 @@ const openMembersPermissions = () => {
             type="button"
             class="shrink-0 rounded-full transition hover:ring-2 hover:ring-sky-400/40"
             :disabled="!selectedChatUser?.id"
-            @click="openUserProfile(selectedChatUser)"
+            @click="selectedChatUser && openUserProfile(selectedChatUser)"
           >
             <img
               :src="selectedChatAvatar"

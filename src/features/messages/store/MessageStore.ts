@@ -49,10 +49,13 @@ export const useMessageStore = () => {
     messages.value.push(message);
   };
 
+  const sendMessageError = ref<Error | null>(null);
+
   return {
     messages,
     loadMessages,
     sendMessage,
     syncMessages,
+    sendMessageError,
   };
 };
