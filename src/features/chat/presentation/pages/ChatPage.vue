@@ -2,19 +2,13 @@
 import { onMounted } from "vue";
 import ChatsList from "../components/ChatsList.vue";
 import ChatWindow from "../components/ChatWindow.vue";
-import UserProfilePanel from "../components/UserProfilePanel.vue";
 import { useChatStore } from "../../store/ChatStore";
 import { tokenService } from "@/core/auth/tokenService.ts";
 import { chatRealtimeService } from "../../infrastructure/services/ChatRealtimeService.ts";
 import { useUserStore } from "../../store/UserStore.ts";
 
-const {
-  selectedChat,
-  chatsIsEmpty,
-  loadChats,
-  restoreSelectedChat,
-  isUserProfilePanelOpen,
-} = useChatStore();
+const { selectedChat, chatsIsEmpty, loadChats, restoreSelectedChat } =
+  useChatStore();
 
 const { loadUsers } = useUserStore();
 
@@ -72,8 +66,5 @@ onMounted(async () => {
         </template>
       </div>
     </div>
-
-    <!-- Panel lateral de perfil de usuario -->
-    <UserProfilePanel v-if="isUserProfilePanelOpen" />
   </div>
 </template>
