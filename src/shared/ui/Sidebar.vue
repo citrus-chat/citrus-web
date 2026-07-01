@@ -49,7 +49,7 @@ const { isLoggingOut, logout } = useLogout();
       <div class="flex items-center gap-3 px-4 py-4">
         <button class="-ml-1" @click="goChats">
           <img
-            src="@/shared/assets/citrus-chat.png"
+            src="@/shared/assets/CitrusChatNoLetters.png"
             alt="Citrus Chat logo"
             class="h-14 w-14 rounded-full object-cover"
           />
