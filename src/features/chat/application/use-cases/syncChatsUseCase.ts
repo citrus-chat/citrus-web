@@ -28,10 +28,6 @@ export async function syncChatsUseCase(request: IDevice) {
   for (const encryptedKey of data.conversationKeys) {
     const senderDevice = await getDeviceKeysApi(encryptedKey.senderDeviceId);
 
-    console.log(
-      `Decrypting conversation key for conversation ${encryptedKey.conversationId} from sender device ${encryptedKey.senderDeviceId}`,
-    );
-
     if (!senderDevice) {
       continue;
     }
