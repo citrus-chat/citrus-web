@@ -1,6 +1,5 @@
 import type { IUser } from "../domain/IUser";
 import type { IUserResponse } from "../domain/IUserResponse";
-import { toAbsoluteAvatarUrl } from "@/features/profile/infrastructure/api/publicProfileApi";
 
 export function mapUserResponseToUser(response: IUserResponse): IUser {
   return {
